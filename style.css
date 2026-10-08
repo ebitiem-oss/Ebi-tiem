@@ -1,24 +1,66 @@
 body {
-    background-color: #2c3e50;
+    background-color: #1a1a1a; /* پس‌زمینه تیره برای اتاق */
     color: white;
     font-family: sans-serif;
     margin: 0;
-    padding: 5px;
+    padding: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
-    overflow-x: hidden; /* جلوگیری از اسکرول افقی */
+    overflow: hidden;
 }
 
+/* استایل میز بازی */
 #game-container {
-    text-align: center;
-    width: 100%;
+    width: 100vw;
+    height: 100vh;
+    background: radial-gradient(circle, #2e7d32 0%, #1b5e20 100%); /* رنگ میز سبز */
+    border: 15px solid #5d4037; /* حاشیه چوبی میز */
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
 }
 
-/* کارت‌های بسیار کوچک و ظریف */
+/* بخش نمایش بازیکنان دیگر (۱۰ نفر) دور میز */
+.other-players {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.player-slot {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    background: rgba(0,0,0,0.5);
+    border: 2px solid #f1c40f;
+    border-radius: 50%;
+    font-size: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+/* موقعیت ۱۰ نفر دور میز */
+.p1 { top: 10%; left: 50%; transform: translateX(-50%); }
+.p2 { top: 25%; left: 10%; }
+.p3 { top: 50%; left: 5%; transform: translateY(-50%); }
+.p4 { top: 75%; left: 10%; }
+.p5 { top: 85%; left: 50%; transform: translateX(-50%); }
+.p6 { top: 75%; left: 90%; }
+.p7 { top: 50%; left: 95%; transform: translateY(-50%); }
+.p8 { top: 25%; left: 90%; }
+.p9 { top: 5%; left: 50%; transform: translateX(-50%); }
+.p10 { top: 40%; left: 15%; }
+
+/* کارت‌ها */
 .card {
-    width: 35px;  /* خیلی کوچک‌تر شد */
-    height: 50px; /* خیلی کوچک‌تر شد */
+    width: 35px;
+    height: 50px;
     border-radius: 4px;
     border: 1.5px solid white;
     display: flex;
@@ -26,11 +68,11 @@ body {
     align-items: center;
     font-weight: bold;
     color: black;
-    position: relative;
-    overflow: hidden;
-    margin: 2px; 
-    box-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+    margin: 2px;
+    box-shadow: 1px 1px 3px rgba(0,0,0,0.4);
     cursor: pointer;
+    position: relative;
+    z-index: 10;
 }
 
 .card::before {
@@ -41,31 +83,25 @@ body {
     background-color: white;
     transform: rotate(-25deg);
     z-index: 1;
-    opacity: 0.3; /* کمی شفاف‌تر برای زیبایی */
+    opacity: 0.3;
 }
 
-.card span {
-    position: relative;
-    z-index: 2;
-}
+.card span { position: relative; z-index: 2; font-size: 14px; }
 
 .red { background-color: #e74c3c !important; }
 .blue { background-color: #3498db !important; }
 .green { background-color: #27ae60 !important; }
 .yellow { background-color: #f1c40f !important; }
 
-#player-hand {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    margin-top: 10px;
-    width: 95%; /* استفاده از بیشتر فضای عرضی */
+#game-area {
+    margin-top: 40px;
+    text-align: center;
 }
 
 #discard-pile {
-    width: 40px;
-    height: 55px;
-    border: 2px dashed white;
+    width: 45px;
+    height: 60px;
+    border: 2px dashed rgba(255,255,255,0.5);
     margin: 10px auto;
     display: flex;
     justify-content: center;
@@ -73,16 +109,13 @@ body {
     border-radius: 4px;
 }
 
-.error-shake {
-    animation: shake 0.2s ease-in-out;
-}
-
-@keyframes shake {
-    0% { transform: translateX(0); }
-    25% { transform: translateX(4px); }
-    50% { transform: translateX(-4px); }
-    75% { transform: translateX(4px); }
-    100% { transform: translateX(0); }
+#player-hand {
+    position: absolute;
+    bottom: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 95%;
 }
 
 button {
@@ -91,5 +124,6 @@ button {
     border-radius: 4px;
     border: none;
     background-color: #ecf0f1;
-    margin: 5px;
+    cursor: pointer;
+    z-index: 20;
 }
