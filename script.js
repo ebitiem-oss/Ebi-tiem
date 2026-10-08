@@ -32,19 +32,6 @@ function drawCard() {
     updateUI();
 }
 
-function playCard(index) {
-    const card = playerHand[index];
-    
-    // بررسی قانون: رنگ یا عدد یکی باشد
-    if (card.color === topCard.color || card.value === topCard.value) {
-        topCard = card; 
-        playerHand.splice(index, 1); 
-        updateUI();
-    } else {
-        alert("این کارت را نمی‌توانی بازی کنی! رنگ یا عددش با کارت روی زمین یکی نیست.");
-    }
-}
-
 function updateUI() {
     // ۱. آپدیت کارت روی زمین
     const pile = document.getElementById('discard-pile');
