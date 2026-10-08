@@ -14,7 +14,7 @@ body {
     width: 100%;
 }
 
-/* ظاهر کارت */
+/* استایل اصلی کارت */
 .card {
     width: 60px;
     height: 90px;
@@ -30,16 +30,10 @@ body {
     overflow: hidden;
     margin: 5px;
     box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+    cursor: pointer;
+    transition: transform 0.2s;
 }
 
-/* این خط را به کلاس .card در فایل style.css اضافه کن */
-.card {
-    /* ... کدهای قبلی ... */
-    cursor: pointer; /* اضافه کردن این خط باعث می‌شود نشانگر ماوس شکل دست شود */
-    transition: transform 0.2s; /* افکت نرم هنگام بازی کردن */
-}
-
-/* این هم برای اینکه وقتی بازی کردیم، کارت با افکت برود */
 .card:active {
     transform: scale(0.9);
 }
@@ -61,22 +55,24 @@ body {
     z-index: 2;
 }
 
-/* رنگ‌های کارت */
-.red { background-color: #e74c3c; }
-.blue { background-color: #3498db; }
-.green { background-color: #27ae60; }
-.yellow { background-color: #f1c40f; }
+/* رنگ‌های کارت - بسیار مهم */
+.red { background-color: #e74c3c !important; }
+.blue { background-color: #3498db !important; }
+.green { background-color: #27ae60 !important; }
+.yellow { background-color: #f1c40f !important; }
 
-/* ردیف کارت‌ها */
 #player-hand {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     margin-top: 20px;
+    min-height: 100px; /* برای اینکه وقتی خالی است هم فضا داشته باشد */
 }
+
 #game-area {
     margin-bottom: 20px;
 }
+
 #discard-pile {
     width: 60px;
     height: 90px;
@@ -87,3 +83,14 @@ body {
     align-items: center;
     border-radius: 8px;
 }
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    border: none;
+    background-color: #ecf0f1;
+    margin: 10px;
+        }
+    
