@@ -11,7 +11,6 @@ function startGame() {
     document.getElementById('game-area').style.display = 'block';
     
     topCard = generateRandomCard();
-    
     playerHand = [];
     for (let i = 0; i < 7; i++) {
         playerHand.push(generateRandomCard());
@@ -28,16 +27,10 @@ function generateRandomCard() {
 
 function drawCard() {
     if (!gameActive) return;
-    
-    // محدودیت ۲۵ کارت
-    if (playerHand.length < 25) {
+    // محدودیت ۲۰ کارت
+    if (playerHand.length < 20) {
         playerHand.push(generateRandomCard());
         updateUI();
-    } else {
-        // وقتی ۲۵ تا پر شد، فقط یک لرزش کوچک می‌دهد (بدون پیام)
-        const handDiv = document.getElementById('player-hand');
-        handDiv.classList.add('error-shake');
-        setTimeout(() => handDiv.classList.remove('error-shake'), 200);
     }
 }
 
@@ -45,7 +38,6 @@ function playCard(index) {
     if (!gameActive) return;
 
     const card = playerHand[index];
-    
     if (card.color === topCard.color || card.value === topCard.value) {
         topCard = card; 
         playerHand.splice(index, 1); 
@@ -55,12 +47,8 @@ function playCard(index) {
         } else {
             updateUI();
         }
-    } else {
-        // لرزش برای کارت اشتباه (بدون Alert)
-        const handDiv = document.getElementById('player-hand');
-        handDiv.classList.add('error-shake');
-        setTimeout(() => handDiv.classList.remove('error-shake'), 200);
     }
+    // لرزش حذف شد!
 }
 
 function winGame() {
@@ -93,5 +81,4 @@ function updateUI() {
         cardElement.onclick = () => playCard(index);
         handDiv.appendChild(cardElement);
     });
-                                                }
-        
+}
