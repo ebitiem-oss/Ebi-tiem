@@ -74,3 +74,16 @@ body {
     justify-content: center;
     margin-top: 20px;
 }
+#game-area {
+    margin-bottom: 20px;
+}
+#discard-pile {
+    width: 60px;
+    height: 90px;
+    border: 3px dashed white;
+    margin: 20px auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 8px;
+}
