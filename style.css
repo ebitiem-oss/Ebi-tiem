@@ -1,131 +1,140 @@
 body {
-    background-color: #1a1a1a; /* پس‌زمینه تیره برای اتاق */
-    color: white;
-    font-family: sans-serif;
     margin: 0;
     padding: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    background-color: #1a1a1a;
+    font-family: 'Tahoma', sans-serif;
     overflow: hidden;
-}
-
-/* استایل میز بازی */
-#game-container {
-    width: 100vw;
-    height: 100vh;
-    background: radial-gradient(circle, #2e7d32 0%, #1b5e20 100%); /* رنگ میز سبز */
-    border: 15px solid #5d4037; /* حاشیه چوبی میز */
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    position: relative;
-}
-
-/* بخش نمایش بازیکنان دیگر (۱۰ نفر) دور میز */
-.other-players {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-}
-
-.player-slot {
-    position: absolute;
-    width: 45px;
-    height: 45px;
-    background: rgba(0,0,0,0.6);
-    border: 2px solid #f1c40f;
-    border-radius: 50%;
-    font-size: 10px;
     display: flex;
     justify-content: center;
     align-items: center;
-    text-align: center;
-    color: white;
-    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    height: 100vh;
 }
 
-/* موقعیت ۱۰ نفر دور میز */
-.p1 { top: 10%; left: 50%; transform: translateX(-50%); }
-.p2 { top: 25%; left: 10%; }
-.p3 { top: 50%; left: 5%; transform: translateY(-50%); }
-.p4 { top: 75%; left: 10%; }
-.p5 { top: 85%; left: 50%; transform: translateX(-50%); }
-.p6 { top: 75%; left: 90%; }
-.p7 { top: 50%; left: 95%; transform: translateY(-50%); }
-.p8 { top: 25%; left: 90%; }
-.p9 { top: 5%; left: 50%; transform: translateX(-50%); }
-.p10 { top: 40%; left: 15%; }
+/* صفحه تنظیمات */
+#setup-screen {
+    text-align: center;
+    color: white;
+    background: #2c3e50;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
 
-/* کارت‌ها */
+.setup-box input {
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+    width: 50px;
+    margin: 10px;
+    text-align: center;
+}
+
+#start-btn {
+    padding: 10px 25px;
+    border-radius: 10px;
+    border: none;
+    background: #2ecc71;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* میز بازی */
+#game-area {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+}
+
+#table {
+    width: 90%;
+    height: 70%;
+    background: radial-gradient(circle, #27ae60 0%, #1e8449 100%);
+    border: 15px solid #3e2723; /* حاشیه چوبی */
+    border-radius: 50%;
+    margin: 5% auto;
+    position: relative;
+    box-shadow: inset 0 0 50px rgba(0,0,0,0.5);
+}
+
+/* کارت‌ها (بر اساس عکس تو) */
 .card {
-    width: 35px;
-    height: 50px;
-    border-radius: 4px;
-    border: 1.5px solid white;
+    width: 60px;
+    height: 90px;
+    border-radius: 10px;
     display: flex;
     justify-content: center;
     align-items: center;
     font-weight: bold;
-    color: black;
-    margin: 2px;
-    box-shadow: 1px 1px 3px rgba(0,0,0,0.4);
-    cursor: pointer;
+    font-size: 18px;
+    color: white;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
     position: relative;
-    z-index: 10;
+    border: 3px solid white;
 }
 
-.card::before {
-    content: "";
-    position: absolute;
-    width: 100%;
-    height: 120%;
-    background-color: white;
-    transform: rotate(-25deg);
-    z-index: 1;
-    opacity: 0.3;
-}
+/* رنگ‌های کارت‌ها */
+.red { background: linear-gradient(135deg, #ff4d4d, #b30000); }
+.blue { background: linear-gradient(135deg, #4d79ff, #002b80); }
+.green { background: linear-gradient(135deg, #4dff88, #00802b); }
+.yellow { background: linear-gradient(135deg, #ffff4d, #b3b300); }
 
-.card span { position: relative; z-index: 2; font-size: 14px; }
-
-.red { background-color: #e74c3c !important; }
-.blue { background-color: #3498db !important; }
-.green { background-color: #27ae60 !important; }
-.yellow { background-color: #f1c40f !important; }
-
-#game-area {
-    margin-top: 40px;
-    text-align: center;
-}
-
+/* جایگاه کارت وسط */
 #discard-pile {
-    width: 45px;
-    height: 60px;
-    border: 2px dashed rgba(255,255,255,0.5);
-    margin: 10px auto;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* پروفایل بازیکنان دور میز */
+.player-slot {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    background: #ecf0f1;
+    border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
-    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+    border: 3px solid transparent;
+    transition: all 0.3s ease;
+}
+
+/* پنل بازیکن اصلی (پایین صفحه) */
+#player-controls {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    height: 25%;
+    background: rgba(0,0,0,0.8);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 10px;
 }
 
 #player-hand {
-    position: absolute;
-    bottom: 20px;
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+    gap: 5px;
+    overflow-x: auto;
+    padding: 10px;
     width: 95%;
 }
 
-button {
-    padding: 8px 15px;
-    font-size: 14px;
-    border-radius: 4px;
-    border: none;
-    background-color: #ecf0f1;
-    cursor: pointer;
-    z-index: 20;
+.controls {
+    margin-top: 5px;
 }
+
+#draw-btn {
+    padding: 10px 20px;
+    border-radius: 20px;
+    border: none;
+    background: #e67e22;
+    color: white;
+    font-weight: bold;
+        }
+    
