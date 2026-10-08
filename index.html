@@ -3,26 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nivra Uno Game</title>
+    <title>Nivra Online Table</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <div id="game-container">
-        <h1>Nivra Uno</h1>
-        
-        <button id="start-btn" onclick="startGame()">شروع بازی</button>
-        
+        <!-- دکمه شروع -->
+        <button id="start-btn" onclick="startGame()" style="margin-top: 50%;">شروع بازی</button>
+
+        <!-- نمایش بازیکنان دیگر دور میز -->
+        <div class="other-players">
+            <div class="player-slot p1">P2</div>
+            <div class="player-slot p2">P3</div>
+            <div class="player-slot p3">P4</div>
+            <div class="player-slot p4">P5</div>
+            <div class="player-slot p5">P6</div>
+            <div class="player-slot p6">P7</div>
+            <div class="player-slot p7">P8</div>
+            <div class="player-slot p8">P9</div>
+            <div class="player-slot p9">P10</div>
+            <div class="player-slot p10">P11</div>
+        </div>
+
+        <!-- محیط بازی -->
         <div id="game-area" style="display:none;">
-            <p>کارت روی زمین:</p>
             <div id="discard-pile"></div>
             <div class="controls">
                 <button id="draw-btn" onclick="drawCard()">کارت کشیدن</button>
             </div>
         </div>
 
-        <hr>
-        <h3>دست شما:</h3>
+        <!-- دست بازیکن اصلی -->
         <div id="player-hand"></div>
     </div>
 
