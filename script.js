@@ -5,8 +5,8 @@ let playerHand = [];
 let topCard = null;
 let activePlayers = 4; 
 let gameActive = false;
-let currentTurn = 0; // 0 یعنی نوبت بازیکن اصلی است
-let direction = 1;   // 1 یعنی ساعتگرد، -1 یعنی پادساعتگرد
+let currentTurn = 0; // 0 یعنی نوبت توست، 1 یعنی نوبت هوش مصنوعی است
+let direction = 1;
 
 function setupPlayers() {
     const container = document.getElementById('other-players-container');
@@ -16,6 +16,7 @@ function setupPlayers() {
     for (let i = 1; i < activePlayers; i++) {
         const slot = document.createElement('div');
         slot.className = 'player-slot';
+        slot.id = 'player-' + i; // آیدی برای مشخص کردن نوبت
         slot.innerText = 'P' + (i + 1);
         const angle = (i / (activePlayers - 1)) * 2 * Math.PI;
         const x = 50 + 40 * Math.cos(angle - Math.PI/2);
@@ -49,13 +50,48 @@ function generateRandomCard() {
     return { color, value };
 }
 
+// --- سیستم نوبت‌دهی خودکار ---
+function nextTurn() {
+    // تغییر نوبت بین 0 و 1
+    currentTurn = (currentTurn === 0) ? 1 : 0;
+    updateUI();
+
+    // اگر نوبت هوش مصنوعی بود (currentTurn === 1)
+    if (gameActive && currentTurn === 1) {
+        setTimeout(aiTurn, 1500); // 1.5 ثانیه صبر کن تا طبیعی به نظر برسد
+    }
+}
+
+// --- هوش مصنوعی ساده ---
+function aiTurn() {
+    if (!gameActive) return;
+
+    // هوش مصنوعی یک کارت تصادفی برای خودش در نظر می‌گیرد (شبیه‌سازی)
+    // در واقع اینجا ما فقط شبیه‌سازی می‌کنیم که هوش مصنوعی کار می‌کند
+    console.log("AI is thinking...");
+
+    // شبیه‌سازی: هوش مصنوعی یا کارت بازی می‌کند یا کارت می‌کشد
+    const randomAction = Math.random();
+
+    if (randomAction > 0.3) { 
+        // 70% احتمال دارد کارت بازی کند (شبیه‌سازی با یک کارت تصادفی)
+        topCard = generateRandomCard();
+        console.log("AI played a card");
+    } else {
+        // 30% احتمال دارد کارت بکشد
+        console.log("AI drew a card");
+    }
+
+    nextTurn(); // بعد از حرکت هوش مصنوعی، نوبت برمی‌گردد به تو
+}
+
 function drawCard() {
-    if (!gameActive || currentTurn !== 0) return; // فقط در نوبت خودت می‌توانی کارت بکشی
+    if (!gameActive || currentTurn !== 0) return;
 
     if (playerHand.length < 20) {
         playerHand.push(generateRandomCard());
         updateUI();
-        nextTurn(); // بعد از کشیدن کارت، نوبت تمام می‌شود
+        nextTurn(); 
     }
 }
 
@@ -78,34 +114,11 @@ function playCard(index) {
     }
 }
 
-// مدیریت کارت‌های خاص
 function handleSpecialCard(value) {
     if (value === 'Skip') {
-        // نوبت را دو بار رد می‌کنیم (یعنی نوبت بعدی را هم می‌پریم)
-        nextTurn();
+        nextTurn(); // نوبت را یک بار دیگر رد کن
     } else if (value === 'Reverse') {
-        direction *= -1; // جهت بازی عوض می‌شود
-    } else if (value === '+2') {
-        // در این نسخه ساده، فعلاً فقط یک پیام منطقی در کنسول یا برای بازیکن بعدی (فرضی) است
-        console.log("Next player draws 2 cards!");
-    }
-}
-
-function nextTurn() {
-    // در این نسخه، ما فقط نوبت بازیکن اصلی را مدیریت می‌کنیم
-    // برای تست، هر بار که کارت بازی می‌کنی، نوبت به "غیرفعال" می‌رود تا بفهمی سیستم کار می‌کند
-    currentTurn = (currentTurn === 0) ? 1 : 0;
-    
-    // اگر نوبت بازیکن اصلی نباشد، یک دکمه "ادامه بازی" نشان می‌دهیم
-    if (currentTurn !== 0) {
-        const btn = document.getElementById('draw-btn');
-        btn.innerText = "نوبت بازیکن دیگر است (کلیک برای ادامه)";
-        btn.onclick = () => {
-            currentTurn = 0;
-            btn.innerText = "کارت کشیدن";
-            btn.onclick = drawCard;
-            updateUI();
-        };
+        direction *= -1;
     }
 }
 
@@ -117,9 +130,25 @@ function winGame() {
     winMessage.innerText = "🎉 برنده شدی! 🎉";
     winMessage.style.color = "#2ecc71";
     gameArea.appendChild(winMessage);
+    
+    const restartBtn = document.createElement('button');
+    restartBtn.innerText = "دوباره بازی کن";
+    restartBtn.onclick = () => location.reload();
+    gameArea.appendChild(restartBtn);
 }
 
 function updateUI() {
+    // هایلایت کردن پروفایلی که نوبتش است
+    document.querySelectorAll('.player-slot').forEach((slot, idx) => {
+        if (idx === currentTurn) {
+            slot.style.borderColor = "#2ecc71"; // سبز برای نوبت فعال
+            slot.style.boxShadow = "0 0 15px #2ecc71";
+        } else {
+            slot.style.borderColor = "#f1c40f";
+            slot.style.boxShadow = "none";
+        }
+    });
+
     const pile = document.getElementById('discard-pile');
     pile.className = `card ${topCard.color}`;
     pile.innerHTML = `<span style="font-size:14px">${topCard.value}</span>`;
@@ -133,4 +162,15 @@ function updateUI() {
         cardElement.onclick = () => playCard(index);
         handDiv.appendChild(cardElement);
     });
-            }
+
+    // غیرفعال کردن دکمه کشیدن اگر نوبت تو نیست
+    const drawBtn = document.getElementById('draw-btn');
+    if (currentTurn !== 0) {
+        drawBtn.disabled = true;
+        drawBtn.style.opacity = "0.5";
+    } else {
+        drawBtn.disabled = false;
+        drawBtn.style.opacity = "1";
+    }
+}
+    
