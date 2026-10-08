@@ -11,20 +11,8 @@
     <div id="game-container">
         <!-- دکمه شروع -->
         <button id="start-btn" onclick="startGame()" style="margin-top: 50%;">شروع بازی</button>
-
-        <!-- نمایش بازیکنان دیگر دور میز -->
-        <div class="other-players">
-            <div class="player-slot p1">P2</div>
-            <div class="player-slot p2">P3</div>
-            <div class="player-slot p3">P4</div>
-            <div class="player-slot p4">P5</div>
-            <div class="player-slot p5">P6</div>
-            <div class="player-slot p6">P7</div>
-            <div class="player-slot p7">P8</div>
-            <div class="player-slot p8">P9</div>
-            <div class="player-slot p9">P10</div>
-            <div class="player-slot p10">P11</div>
-        </div>
+<!-- بخش بازیکنان دور میز - این بخش توسط جاوااسکریپت پر می‌شود -->
+<div id="other-players-container" class="other-players"></div>
 
         <!-- محیط بازی -->
         <div id="game-area" style="display:none;">
