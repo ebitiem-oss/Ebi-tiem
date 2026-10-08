@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بازی آنو - Nivra</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game-container">
+        <h1>بازی آنو (Uno)</h1>
+        <div id="status-bar">
+            <p id="game-status">منتظر شروع بازی...</p>
+        </div>
+        <div id="center-area">
+            <div id="deck" class="card back">کارت‌ها</div>
+            <div id="discard-pile" class="card">کارت وسط</div>
+        </div>
+        <div id="player-hand-container">
+            <h3>کارت‌های شما:</h3>
+            <div id="player-hand"></div>
+        </div>
+        <div id="controls">
+            <button onclick="startGame()">شروع بازی جدید</button>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
