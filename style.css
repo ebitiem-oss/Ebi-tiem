@@ -3,10 +3,11 @@ body {
     color: white;
     font-family: sans-serif;
     margin: 0;
-    padding: 10px;
+    padding: 5px;
     display: flex;
     flex-direction: column;
     align-items: center;
+    overflow-x: hidden; /* جلوگیری از اسکرول افقی */
 }
 
 #game-container {
@@ -14,121 +15,81 @@ body {
     width: 100%;
 }
 
-/* استایل اصلی کارت */
+/* کارت‌های بسیار کوچک و ظریف */
 .card {
-    width: 60px;
-    height: 90px;
-    border-radius: 8px;
-    border: 3px solid white;
+    width: 35px;  /* خیلی کوچک‌تر شد */
+    height: 50px; /* خیلی کوچک‌تر شد */
+    border-radius: 4px;
+    border: 1.5px solid white;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 20px;
     font-weight: bold;
     color: black;
     position: relative;
     overflow: hidden;
-    margin: 5px;
-    box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+    margin: 2px; 
+    box-shadow: 1px 1px 3px rgba(0,0,0,0.3);
     cursor: pointer;
-    transition: transform 0.2s;
 }
 
-.card:active {
-    transform: scale(0.9);
-}
-
-/* نوار سفید مورب وسط کارت */
 .card::before {
     content: "";
     position: absolute;
-    width: 80%;
+    width: 100%;
     height: 120%;
     background-color: white;
     transform: rotate(-25deg);
     z-index: 1;
+    opacity: 0.3; /* کمی شفاف‌تر برای زیبایی */
 }
 
-/* عدد داخل کارت */
 .card span {
     position: relative;
     z-index: 2;
 }
 
-/* رنگ‌های کارت - بسیار مهم */
 .red { background-color: #e74c3c !important; }
 .blue { background-color: #3498db !important; }
 .green { background-color: #27ae60 !important; }
 .yellow { background-color: #f1c40f !important; }
 
-/* کارت‌ها کوچک‌تر شدند */
-.card {
-    width: 45px; /* از 60 به 45 تغییر کرد */
-    height: 65px; /* از 90 به 65 تغییر کرد */
-    border-radius: 6px;
-    border: 2px solid white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 16px; /* فونت کوچکتر */
-    font-weight: bold;
-    color: black;
-    position: relative;
-    overflow: hidden;
-    margin: 3px; /* فاصله کمتر بین کارت‌ها */
-    box-shadow: 1px 1px 3px rgba(0,0,0,0.3);
-    cursor: pointer;
-    transition: transform 0.1s;
-}
-
-/* نمایش کارت‌ها در یک ردیف و کنار هم */
 #player-hand {
     display: flex;
-    flex-wrap: wrap; /* اگر تعداد کارت‌ها زیاد شد، به ردیف بعدی برود ولی در حالت عادی کنار هم هستند */
+    flex-wrap: wrap;
     justify-content: center;
-    align-items: center;
-    margin-top: 20px;
-    width: 100%;
-    max-width: 400px; /* محدود کردن عرض برای اینکه در موبایل بهتر دیده شود */
+    margin-top: 10px;
+    width: 95%; /* استفاده از بیشتر فضای عرضی */
 }
 
-/* افکت لرزش وقتی کارت اشتباه است (به جای پیام مزاحم) */
+#discard-pile {
+    width: 40px;
+    height: 55px;
+    border: 2px dashed white;
+    margin: 10px auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 4px;
+}
+
 .error-shake {
     animation: shake 0.2s ease-in-out;
 }
 
 @keyframes shake {
     0% { transform: translateX(0); }
-    25% { transform: translateX(5px); }
-    50% { transform: translateX(-5px); }
-    75% { transform: translateX(5px); }
+    25% { transform: translateX(4px); }
+    50% { transform: translateX(-4px); }
+    75% { transform: translateX(4px); }
     100% { transform: translateX(0); }
 }
 
-}
-
-#game-area {
-    margin-bottom: 20px;
-}
-
-#discard-pile {
-    width: 60px;
-    height: 90px;
-    border: 3px dashed white;
-    margin: 20px auto;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 8px;
-}
-
 button {
-    padding: 10px 20px;
-    font-size: 16px;
-    cursor: pointer;
-    border-radius: 5px;
+    padding: 8px 15px;
+    font-size: 14px;
+    border-radius: 4px;
     border: none;
     background-color: #ecf0f1;
-    margin: 10px;
-        }
-    
+    margin: 5px;
+}
