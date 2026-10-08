@@ -61,12 +61,50 @@ body {
 .green { background-color: #27ae60 !important; }
 .yellow { background-color: #f1c40f !important; }
 
+/* کارت‌ها کوچک‌تر شدند */
+.card {
+    width: 45px; /* از 60 به 45 تغییر کرد */
+    height: 65px; /* از 90 به 65 تغییر کرد */
+    border-radius: 6px;
+    border: 2px solid white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px; /* فونت کوچکتر */
+    font-weight: bold;
+    color: black;
+    position: relative;
+    overflow: hidden;
+    margin: 3px; /* فاصله کمتر بین کارت‌ها */
+    box-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+    cursor: pointer;
+    transition: transform 0.1s;
+}
+
+/* نمایش کارت‌ها در یک ردیف و کنار هم */
 #player-hand {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: wrap; /* اگر تعداد کارت‌ها زیاد شد، به ردیف بعدی برود ولی در حالت عادی کنار هم هستند */
     justify-content: center;
+    align-items: center;
     margin-top: 20px;
-    min-height: 100px; /* برای اینکه وقتی خالی است هم فضا داشته باشد */
+    width: 100%;
+    max-width: 400px; /* محدود کردن عرض برای اینکه در موبایل بهتر دیده شود */
+}
+
+/* افکت لرزش وقتی کارت اشتباه است (به جای پیام مزاحم) */
+.error-shake {
+    animation: shake 0.2s ease-in-out;
+}
+
+@keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(5px); }
+    50% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+    100% { transform: translateX(0); }
+}
+
 }
 
 #game-area {
