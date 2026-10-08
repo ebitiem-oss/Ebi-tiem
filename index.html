@@ -1,29 +1,38 @@
 <!DOCTYPE html>
-<html lang="fa">
+<html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nivra Online Table</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Nivra Game</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div id="game-container">
-        <!-- دکمه شروع -->
-        <button id="start-btn" onclick="startGame()" style="margin-top: 50%;">شروع بازی</button>
-<!-- بخش بازیکنان دور میز - این بخش توسط جاوااسکریپت پر می‌شود -->
-<div id="other-players-container" class="other-players"></div>
+    <div id="setup-screen">
+        <h1>بازی Nivra</h1>
+        <div class="setup-box">
+            <label>تعداد بازیکنان:</label>
+            <input type="number" id="player-count" value="4" min="2" max="10">
+            <button id="start-btn" onclick="startGame()">شروع بازی</button>
+        </div>
+    </div>
 
-        <!-- محیط بازی -->
-        <div id="game-area" style="display:none;">
-            <div id="discard-pile"></div>
+    <div id="game-area" style="display: none;">
+        <div id="table">
+            <!-- کارت وسط (کارت دور ریخته شده) -->
+            <div id="discard-pile" class="card"></div>
+
+            <!-- ظرف بازیکنان دیگر (هوش مصنوعی) -->
+            <div id="other-players-container"></div>
+        </div>
+
+        <!-- پنل بازیکن اصلی (تو) -->
+        <div id="player-controls">
+            <div id="player-hand"></div>
             <div class="controls">
                 <button id="draw-btn" onclick="drawCard()">کارت کشیدن</button>
             </div>
         </div>
-
-        <!-- دست بازیکن اصلی -->
-        <div id="player-hand"></div>
     </div>
 
     <script src="script.js"></script>
