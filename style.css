@@ -1,16 +1,70 @@
-body { margin: 0; padding: 0; background: linear-gradient(180deg, #8ec5fc 0%, #e0c3fc 100%); height: 100vh; font-family: sans-serif; display: flex; justify-content: center; align-items: center; }
+/* ۱. پس‌زمینه آسمان رویایی */
+body {
+    background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
+    min-height: 100vh;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: sans-serif;
+    color: #333;
+}
 
-#lobby { text-align: center; }
-#join-btn { padding: 15px 30px; font-size: 20px; border-radius: 20px; border: none; background: white; cursor: pointer; }
+/* ۲. کارت‌های نئونی (آبی روشن) */
+.card {
+    background: white;
+    border-radius: 10px;
+    width: 50px;
+    height: 75px;
+    margin: 5px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    cursor: pointer;
+    border: 2px solid #fff;
+    /* درخشش نئونی آبی */
+    box-shadow: 0 0 10px #00d4ff, 0 0 20px #00d4ff; 
+    transition: transform 0.2s, box-shadow 0.3s;
+}
 
-#table { width: 300px; height: 300px; background: rgba(255,255,255,0.2); border-radius: 50%; position: relative; border: 3px solid rgba(255,255,255,0.4); display: flex; justify-content: center; align-items: center;}
+.card:active {
+    transform: scale(1.1);
+}
 
-.card { width: 50px; height: 75px; border-radius: 8px; border: 2px solid white; display: flex; justify-content: center; align-items: center; position: relative; box-shadow: 0 4px 6px rgba(0,0,0,0.3); color: white; font-weight: bold; cursor: pointer; transition: transform 0.2s; }
-.card:active { transform: scale(0.9); }
+/* ۳. اسلات بازیکنان (تم نئونی) */
+.player-slot {
+    position: absolute;
+    padding: 10px;
+    border-radius: 15px;
+    background: rgba(255, 255, 255, 0.4);
+    border: 2px solid #fff;
+    /* درخشش دور پروفایل */
+    box-shadow: 0 0 10px #00d4ff;
+    color: #333;
+    font-weight: bold;
+    transition: all 0.3s;
+}
 
-.red { background-color: #e74c3c; }
-.blue { background-color: #3498db; }
+/* ۴. حالت نوبت: لودِ سبز نئونی (خیلی مهم) */
+.player-slot.active {
+    border-color: #39ff14; /* سبز فسفری نئونی */
+    box-shadow: 0 0 20px #39ff14, 0 0 40px #39ff14; /* لود سبز */
+    background: rgba(57, 255, 20, 0.2);
+    transform: scale(1.05);
+}
 
-#player-hand { position: fixed; bottom: 20px; display: flex; gap: 5px; overflow-x: auto; padding: 10px; width: 90%; }
-.player-slot { position: absolute; width: 50px; height: 50px; background: white; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 10px; font-weight: bold; border: 3px solid transparent; }
-.active { border-color: #fff; box-shadow: 0 0 15px #fff; }
+/* ۵. میز بازی (محیط) */
+#game-area {
+    width: 100%;
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
+}
+
+/* برای کارت وسط میز */
+#discard-pile {
+    border: 3px solid #fff;
+    box-shadow: 0 0 15px #ff00ff; /* یک رنگ نئونی متفاوت برای کارت وسط */
+}
+
