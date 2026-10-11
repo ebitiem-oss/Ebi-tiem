@@ -1,140 +1,59 @@
 body {
-    margin: 0;
-    padding: 0;
-    background-color: #1a1a1a;
-    font-family: 'Tahoma', sans-serif;
+    margin: 0; padding: 0;
+    background: linear-gradient(180deg, #8ec5fc 0%, #e0c3fc 100%);
+    height: 100vh;
+    font-family: sans-serif;
+    display: flex; justify-content: center; align-items: center;
     overflow: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-}
-
-/* صفحه تنظیمات */
-#setup-screen {
-    text-align: center;
-    color: white;
-    background: #2c3e50;
-    padding: 30px;
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-}
-
-.setup-box input {
-    padding: 10px;
-    border-radius: 10px;
-    border: none;
-    width: 50px;
-    margin: 10px;
-    text-align: center;
-}
-
-#start-btn {
-    padding: 10px 25px;
-    border-radius: 10px;
-    border: none;
-    background: #2ecc71;
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-/* میز بازی */
-#game-area {
-    width: 100vw;
-    height: 100vh;
-    position: relative;
 }
 
 #table {
-    width: 90%;
-    height: 70%;
-    background: radial-gradient(circle, #27ae60 0%, #1e8449 100%);
-    border: 15px solid #3e2723; /* حاشیه چوبی */
+    width: 300px; height: 300px;
+    background: rgba(255, 255, 255, 0.2);
     border-radius: 50%;
-    margin: 5% auto;
     position: relative;
-    box-shadow: inset 0 0 50px rgba(0,0,0,0.5);
+    backdrop-filter: blur(10px);
+    border: 3px solid rgba(255,255,255,0.4);
 }
 
-/* کارت‌ها (بر اساس عکس تو) */
 .card {
-    width: 60px;
-    height: 90px;
-    border-radius: 10px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-weight: bold;
-    font-size: 18px;
-    color: white;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
-    position: relative;
-    border: 3px solid white;
+    width: 50px; height: 75px;
+    border-radius: 8px; border: 3px solid white;
+    display: flex; justify-content: center; align-items: center;
+    position: relative; box-shadow: 0 4px 6px rgba(0,0,0,0.3);
 }
 
-/* رنگ‌های کارت‌ها */
-.red { background: linear-gradient(135deg, #ff4d4d, #b30000); }
-.blue { background: linear-gradient(135deg, #4d79ff, #002b80); }
-.green { background: linear-gradient(135deg, #4dff88, #00802b); }
-.yellow { background: linear-gradient(135deg, #ffff4d, #b3b300); }
-
-/* جایگاه کارت وسط */
-#discard-pile {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-}
-
-/* پروفایل بازیکنان دور میز */
+/* حلقه نوبت */
 .player-slot {
     position: absolute;
-    width: 50px;
-    height: 50px;
-    background: #ecf0f1;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 12px;
-    font-weight: bold;
-    border: 3px solid transparent;
-    transition: all 0.3s ease;
+    width: 50px; height: 50px;
+    background: white; border-radius: 50%;
+    display: flex; justify-content: center; align-items: center;
+    font-size: 10px; font-weight: bold;
+    transition: all 0.5s ease;
+    border: 3px solid transparent; /* وضعیت عادی */
 }
 
-/* پنل بازیکن اصلی (پایین صفحه) */
-#player-controls {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    height: 25%;
-    background: rgba(0,0,0,0.8);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding-top: 10px;
+/* وقتی نوبت بازیکن است (حلقه درخشان) */
+.player-slot.active {
+    border-color: #fff;
+    box-shadow: 0 0 15px #fff, 0 0 20px #ff00ff;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
 }
 
 #player-hand {
-    display: flex;
-    gap: 5px;
-    overflow-x: auto;
-    padding: 10px;
-    width: 95%;
+    position: fixed; bottom: 20px;
+    display: flex; gap: 5px;
+    overflow-x: auto; padding: 10px;
+    max-width: 90%;
 }
-
-.controls {
-    margin-top: 5px;
-}
-
-#draw-btn {
-    padding: 10px 20px;
-    border-radius: 20px;
-    border: none;
-    background: #e67e22;
-    color: white;
-    font-weight: bold;
-        }
-    
+.red { background-color: #e74c3c; }
+.blue { background-color: #3498db; }
+.green { background-color: #2ecc71; }
+.yellow { background-color: #f1c40f; }
