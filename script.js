@@ -10,31 +10,31 @@ function joinGame() {
     updateTurnIndicator();
 }
 
-// تابع بازی کردن کارت
 function playCard(index) {
-    // تست برای اینکه بفهمیم کلیک کار می‌کند یا نه
-    // اگر پیغام آمد یعنی کد کار می‌کند
-    alert('Clicked!'); 
+    // 1. برداشتن کارت از دست
+    const card = myHand.splice(index, 1)[0];
     
-    const card = myHand[index];
+    // 2. نمایش روی میز
     const pile = document.getElementById('discard-pile');
-    
     pile.className = `card ${card.color}`;
     pile.innerText = card.val;
     
-    myHand.splice(index, 1);
+    // 3. بازسازی دوباره دستِ کارت‌ها
     renderHand();
 }
 
 function renderHand() {
     const handDiv = document.getElementById('player-hand');
     handDiv.innerHTML = '';
+    
     myHand.forEach((card, index) => {
         const div = document.createElement('div');
         div.className = `card ${card.color}`;
         div.innerText = card.val;
-        // استفاده از addEventListener که در موبایل مطمئن‌تر است
-        div.addEventListener('click', () => playCard(index));
+        
+        // اینجا به جای alert، مستقیماً تابع playCard رو صدا می‌زنیم
+        div.onclick = () => playCard(index);
+        
         handDiv.appendChild(div);
     });
 }
