@@ -1,31 +1,41 @@
 const players = ["شما", "بازیکن ۲", "بازیکن ۳", "بازیکن ۴"];
 let currentTurn = 0;
-// لیست کارت‌های فرضی
-const myHand = [{color:'red', val:'5'}, {color:'blue', val:'2'}, {color:'red', val:'1'}];
+let myHand = [{color:'red', val:'5'}, {color:'blue', val:'2'}, {color:'red', val:'1'}];
 
-// تابع ورود به بازی
 function joinGame() {
     document.getElementById('lobby').style.display = 'none';
     document.getElementById('game-area').style.display = 'block';
-    
     setupPlayers();
     renderHand();
     updateTurnIndicator();
 }
 
-// نمایش کارت‌ها در دست
+// تابع بازی کردن کارت
+function playCard(index) {
+    const card = myHand[index]; // کارت انتخابی
+    // نمایش در وسط میز
+    const pile = document.getElementById('discard-pile');
+    pile.className = `card ${card.color}`;
+    pile.innerText = card.val;
+    
+    // حذف از دست
+    myHand.splice(index, 1);
+    renderHand(); // دوباره کشیدن کارت‌های باقی‌مانده
+}
+
 function renderHand() {
     const handDiv = document.getElementById('player-hand');
-    handDiv.innerHTML = ''; // پاک کردن قبلی‌ها
-    myHand.forEach(card => {
+    handDiv.innerHTML = '';
+    myHand.forEach((card, index) => {
         const div = document.createElement('div');
         div.className = `card ${card.color}`;
         div.innerText = card.val;
+        // اضافه کردن قابلیت کلیک
+        div.onclick = () => playCard(index);
         handDiv.appendChild(div);
     });
 }
 
-// چیدمان بازیکنان (قبلی)
 function setupPlayers() {
     const container = document.getElementById('other-players-container');
     players.forEach((name, index) => {
