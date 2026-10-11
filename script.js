@@ -1,3 +1,10 @@
+// شروع بازی بعد از لود کامل صفحه
+window.onload = function() {
+    console.log("بازی شروع شد!");
+    renderTable();
+    renderHand();
+};
+
 let topCard = { color: 'red', val: '5' };
 let myHand = [
     {color: 'red', val: '5'}, 
@@ -43,7 +50,3 @@ function renderHand() {
         handDiv.appendChild(div);
     });
 }
-
-// شروع بازی
-renderTable();
-renderHand();
