@@ -7,21 +7,22 @@ body {
 .game-board { display: flex; flex-direction: column; gap: 40px; align-items: center; width: 90%; }
 .deck-area { display: flex; gap: 20px; }
 
+/* استایل عمومی همه کارت‌ها */
 .card {
     width: 60px; height: 90px; border-radius: 10px;
     background: white; display: flex; justify-content: center;
     align-items: center; font-weight: bold; cursor: pointer;
     box-shadow: 0 0 10px rgba(0,0,0,0.3);
     transition: transform 0.2s; user-select: none;
+    border: 2px solid #ccc; /* حاشیه استاندارد */
 }
 
-/* استایل مخصوص بانک */
+/* استایل مخصوص بانک (همان شکل کارت ولی رنگ متفاوت) */
 #deck {
-    background: #2c3e50; border: 2px solid #fff; color: white;
-    box-shadow: 0 0 15px rgba(0,0,0,0.5);
+    background: #2c3e50; color: white; border: 2px solid #fff;
 }
 
-/* کارت‌ها اگر زیاد شوند به سطر بعدی می‌روند (زیر هم) */
+/* کارت‌ها اگر زیاد شوند به سطر بعدی می‌روند */
 .hand-area {
     display: flex; flex-wrap: wrap; gap: 10px; padding: 15px;
     background: rgba(255,255,255,0.1); border-radius: 15px;
