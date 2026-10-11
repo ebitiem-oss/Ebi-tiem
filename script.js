@@ -12,15 +12,18 @@ function joinGame() {
 
 // تابع بازی کردن کارت
 function playCard(index) {
-    const card = myHand[index]; // کارت انتخابی
-    // نمایش در وسط میز
+    // تست برای اینکه بفهمیم کلیک کار می‌کند یا نه
+    // اگر پیغام آمد یعنی کد کار می‌کند
+    alert('Clicked!'); 
+    
+    const card = myHand[index];
     const pile = document.getElementById('discard-pile');
+    
     pile.className = `card ${card.color}`;
     pile.innerText = card.val;
     
-    // حذف از دست
     myHand.splice(index, 1);
-    renderHand(); // دوباره کشیدن کارت‌های باقی‌مانده
+    renderHand();
 }
 
 function renderHand() {
@@ -30,8 +33,8 @@ function renderHand() {
         const div = document.createElement('div');
         div.className = `card ${card.color}`;
         div.innerText = card.val;
-        // اضافه کردن قابلیت کلیک
-        div.onclick = () => playCard(index);
+        // استفاده از addEventListener که در موبایل مطمئن‌تر است
+        div.addEventListener('click', () => playCard(index));
         handDiv.appendChild(div);
     });
 }
