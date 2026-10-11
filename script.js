@@ -1,48 +1,47 @@
-// لیست بازیکنان (در آینده این را از سرور می‌گیریم)
 const players = ["شما", "بازیکن ۲", "بازیکن ۳", "بازیکن ۴"];
-let currentTurn = 0; // نوبت فعلی
+let currentTurn = 0;
+// لیست کارت‌های فرضی
+const myHand = [{color:'red', val:'5'}, {color:'blue', val:'2'}, {color:'red', val:'1'}];
 
-// شروع بازی بلافاصله
-window.onload = () => {
+// تابع ورود به بازی
+function joinGame() {
+    document.getElementById('lobby').style.display = 'none';
+    document.getElementById('game-area').style.display = 'block';
+    
     setupPlayers();
+    renderHand();
     updateTurnIndicator();
-};
+}
 
+// نمایش کارت‌ها در دست
+function renderHand() {
+    const handDiv = document.getElementById('player-hand');
+    handDiv.innerHTML = ''; // پاک کردن قبلی‌ها
+    myHand.forEach(card => {
+        const div = document.createElement('div');
+        div.className = `card ${card.color}`;
+        div.innerText = card.val;
+        handDiv.appendChild(div);
+    });
+}
+
+// چیدمان بازیکنان (قبلی)
 function setupPlayers() {
     const container = document.getElementById('other-players-container');
-    container.innerHTML = '';
-    
     players.forEach((name, index) => {
         const slot = document.createElement('div');
         slot.className = 'player-slot';
         slot.innerText = name;
         slot.id = 'player-' + index;
-        
-        // چیدمان دایره‌ای دور میز
         const angle = (index / players.length) * 2 * Math.PI - Math.PI/2;
         slot.style.left = (50 + 40 * Math.cos(angle)) + '%';
         slot.style.top = (50 + 40 * Math.sin(angle)) + '%';
-        
         container.appendChild(slot);
     });
 }
 
 function updateTurnIndicator() {
-    const slots = document.querySelectorAll('.player-slot');
-    slots.forEach((slot, index) => {
-        if (index === currentTurn) {
-            slot.classList.add('active'); // اضافه کردن حلقه درخشان
-        } else {
-            slot.classList.remove('active');
-        }
+    document.querySelectorAll('.player-slot').forEach((slot, index) => {
+        slot.classList.toggle('active', index === currentTurn);
     });
 }
-
-// تغییر نوبت (این تابع را هر وقت کارت بازی شد صدا بزن)
-function nextTurn() {
-    currentTurn = (currentTurn + 1) % players.length;
-    updateTurnIndicator();
-}
-
-// برای تست: هر ۳ ثانیه نوبت عوض شود (فقط برای اینکه درخشش را ببینی)
-setInterval(nextTurn, 3000);
