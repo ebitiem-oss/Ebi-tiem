@@ -1,6 +1,4 @@
-// شروع بازی بعد از لود کامل صفحه
 window.onload = function() {
-    console.log("بازی شروع شد!");
     renderTable();
     renderHand();
 };
@@ -13,6 +11,9 @@ let myHand = [
 ];
 
 function drawCard() {
+    // محدودیت ۲۰ کارت
+    if (myHand.length >= 20) return; 
+
     const colors = ['red', 'blue', 'green', 'yellow'];
     const newCard = { 
         color: colors[Math.floor(Math.random() * 4)], 
@@ -24,13 +25,12 @@ function drawCard() {
 
 function playCard(index) {
     const card = myHand[index];
-    if (card.color === topCard.color || card.val === topCard.val) {
-        topCard = myHand.splice(index, 1)[0];
-        renderTable();
-        renderHand();
-    } else {
-        alert("این کارت نمی‌خورد!");
-    }
+    // اگر کارت نخورد، هیچ اتفاقی نمی‌افتد (ساکت)
+    if (card.color !== topCard.color && card.val !== topCard.val) return;
+    
+    topCard = myHand.splice(index, 1)[0];
+    renderTable();
+    renderHand();
 }
 
 function renderTable() {
