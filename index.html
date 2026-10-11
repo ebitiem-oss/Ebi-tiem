@@ -4,21 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ebi-tiem Uno</title>
-    <!-- استفاده از v=3 برای آپدیت اجباری -->
-    <link rel="stylesheet" href="style.css?v=3">
+    <link rel="stylesheet" href="style.css?v=4">
 </head>
 <body>
 
     <div class="game-board">
         <div class="deck-area">
-            <div id="deck" onclick="drawCard()">🎴 کارت بکش</div>
+            <!-- کارت وسط میز -->
             <div id="discard-pile" class="card">?</div>
+            <!-- دسته کارت برای کشیدن -->
+            <div id="deck" onclick="drawCard()">🃏</div>
         </div>
-        <div id="player-hand" class="hand-area">
-            <!-- کارت‌ها اینجا نمایش داده می‌شوند -->
-        </div>
+        
+        <!-- دست بازیکن -->
+        <div id="player-hand" class="hand-area"></div>
     </div>
 
-    <script src="script.js?v=3"></script>
+    <!-- اسکریپت حتماً باید اینجا باشد -->
+    <script src="script.js?v=4"></script>
 </body>
 </html>
