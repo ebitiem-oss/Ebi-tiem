@@ -1,28 +1,36 @@
-const players = ["شما", "بازیکن ۲", "بازیکن ۳", "بازیکن ۴"];
-let currentTurn = 0;
-let myHand = [{color:'red', val:'5'}, {color:'blue', val:'2'}, {color:'red', val:'1'}];
+// ۱. وضعیت اولیه بازی
+let topCard = { color: 'red', val: '5' }; // کارتی که الان وسط میز است
+let myHand = [
+    {color: 'red', val: '5'}, 
+    {color: 'blue', val: '2'}, 
+    {color: 'green', val: '8'},
+    {color: 'red', val: '1'}
+];
 
-function joinGame() {
-    document.getElementById('lobby').style.display = 'none';
-    document.getElementById('game-area').style.display = 'block';
-    setupPlayers();
-    renderHand();
-    updateTurnIndicator();
-}
-
+// ۲. تابع اصلی بازی کردن کارت
 function playCard(index) {
-    // 1. برداشتن کارت از دست
-    const card = myHand.splice(index, 1)[0];
-    
-    // 2. نمایش روی میز
-    const pile = document.getElementById('discard-pile');
-    pile.className = `card ${card.color}`;
-    pile.innerText = card.val;
-    
-    // 3. بازسازی دوباره دستِ کارت‌ها
-    renderHand();
+    const card = myHand[index];
+
+    // قانون اونو: چک کردن رنگ یا عدد
+    if (card.color === topCard.color || card.val === topCard.val) {
+        // اگر مجاز بود:
+        topCard = myHand.splice(index, 1)[0]; // کارت از دست حذف و جایگزین topCard می‌شود
+        renderTable(); // به‌روزرسانی میز
+        renderHand();  // به‌روزرسانی کارت‌های دست
+    } else {
+        // اگر مجاز نبود:
+        alert("خطا: رنگ یا عدد کارت همخوانی ندارد!");
+    }
 }
 
+// ۳. نمایش کارت وسط میز
+function renderTable() {
+    const pile = document.getElementById('discard-pile');
+    pile.className = `card ${topCard.color}`; // کلاس رنگ کارت
+    pile.innerText = topCard.val;
+}
+
+// ۴. نمایش کارت‌های دست بازیکن
 function renderHand() {
     const handDiv = document.getElementById('player-hand');
     handDiv.innerHTML = '';
@@ -31,30 +39,11 @@ function renderHand() {
         const div = document.createElement('div');
         div.className = `card ${card.color}`;
         div.innerText = card.val;
-        
-        // اینجا به جای alert، مستقیماً تابع playCard رو صدا می‌زنیم
         div.onclick = () => playCard(index);
-        
         handDiv.appendChild(div);
     });
 }
 
-function setupPlayers() {
-    const container = document.getElementById('other-players-container');
-    players.forEach((name, index) => {
-        const slot = document.createElement('div');
-        slot.className = 'player-slot';
-        slot.innerText = name;
-        slot.id = 'player-' + index;
-        const angle = (index / players.length) * 2 * Math.PI - Math.PI/2;
-        slot.style.left = (50 + 40 * Math.cos(angle)) + '%';
-        slot.style.top = (50 + 40 * Math.sin(angle)) + '%';
-        container.appendChild(slot);
-    });
-}
-
-function updateTurnIndicator() {
-    document.querySelectorAll('.player-slot').forEach((slot, index) => {
-        slot.classList.toggle('active', index === currentTurn);
-    });
-                     }
+// اجرای اولیه
+renderTable();
+renderHand();
