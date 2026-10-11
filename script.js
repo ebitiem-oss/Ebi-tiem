@@ -25,7 +25,7 @@ function drawCard() {
 
 function playCard(index) {
     const card = myHand[index];
-    // اگر کارت نخورد، هیچ اتفاقی نمی‌افتد (ساکت)
+    // شرط بازی: کارت یا رنگش یکی باشد یا عددش
     if (card.color !== topCard.color && card.val !== topCard.val) return;
     
     topCard = myHand.splice(index, 1)[0];
