@@ -8,23 +8,12 @@
 </head>
 <body>
 
-    <div id="setup-screen">
-        <h1>Nivra</h1>
-        <div class="setup-box">
-            <input type="number" id="player-count" value="4" min="2" max="10">
-            <button onclick="startGame()">شروع بازی</button>
-        </div>
-    </div>
-
-    <div id="game-area" style="display: none;">
+    <div id="game-area">
         <div id="table">
             <div id="discard-pile" class="card"></div>
             <div id="other-players-container"></div>
         </div>
         <div id="player-hand"></div>
-        <div class="footer-controls">
-            <button id="draw-btn" onclick="drawCard()">کارت کشیدن</button>
-        </div>
     </div>
 
     <script src="script.js"></script>
