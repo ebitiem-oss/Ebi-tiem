@@ -1,70 +1,38 @@
-/* ۱. پس‌زمینه آسمان رویایی */
 body {
-    background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
+    background: linear-gradient(135deg, #667eea, #764ba2);
     min-height: 100vh;
     margin: 0;
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    font-family: sans-serif;
-    color: #333;
-}
-
-/* ۲. کارت‌های نئونی (آبی روشن) */
-.card {
-    background: white;
-    border-radius: 10px;
-    width: 50px;
-    height: 75px;
-    margin: 5px;
-    display: inline-flex;
     justify-content: center;
     align-items: center;
-    font-weight: bold;
-    cursor: pointer;
-    border: 2px solid #fff;
-    /* درخشش نئونی آبی */
-    box-shadow: 0 0 10px #00d4ff, 0 0 20px #00d4ff; 
-    transition: transform 0.2s, box-shadow 0.3s;
+    font-family: sans-serif;
 }
 
-.card:active {
-    transform: scale(1.1);
+.game-board { display: flex; flex-direction: column; gap: 40px; align-items: center; }
+.deck-area { display: flex; gap: 20px; }
+
+/* استایل عمومی کارت */
+.card {
+    width: 60px; height: 90px; border-radius: 10px;
+    background: white; display: flex; justify-content: center;
+    align-items: center; font-weight: bold; cursor: pointer;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    transition: transform 0.2s;
+    user-select: none;
 }
 
-/* ۳. اسلات بازیکنان (تم نئونی) */
-.player-slot {
-    position: absolute;
-    padding: 10px;
-    border-radius: 15px;
-    background: rgba(255, 255, 255, 0.4);
-    border: 2px solid #fff;
-    /* درخشش دور پروفایل */
-    box-shadow: 0 0 10px #00d4ff;
-    color: #333;
-    font-weight: bold;
-    transition: all 0.3s;
+#deck {
+    border: 2px dashed #fff; color: white; background: rgba(255,255,255,0.1);
 }
 
-/* ۴. حالت نوبت: لودِ سبز نئونی (خیلی مهم) */
-.player-slot.active {
-    border-color: #39ff14; /* سبز فسفری نئونی */
-    box-shadow: 0 0 20px #39ff14, 0 0 40px #39ff14; /* لود سبز */
-    background: rgba(57, 255, 20, 0.2);
-    transform: scale(1.05);
+.hand-area {
+    display: flex; gap: 10px; padding: 15px;
+    background: rgba(255,255,255,0.1); border-radius: 15px;
+    min-height: 100px; /* این خط باعث می‌شود کارت‌ها حتماً دیده شوند */
 }
 
-/* ۵. میز بازی (محیط) */
-#game-area {
-    width: 100%;
-    height: 100vh;
-    position: relative;
-    overflow: hidden;
-}
-
-/* برای کارت وسط میز */
-#discard-pile {
-    border: 3px solid #fff;
-    box-shadow: 0 0 15px #ff00ff; /* یک رنگ نئونی متفاوت برای کارت وسط */
-}
-
+/* رنگ‌های نئونی */
+.red { border: 3px solid #ff4d4d; color: #ff4d4d; box-shadow: 0 0 10px #ff4d4d; }
+.blue { border: 3px solid #4d79ff; color: #4d79ff; box-shadow: 0 0 10px #4d79ff; }
+.green { border: 3px solid #2ecc71; color: #2ecc71; box-shadow: 0 0 10px #2ecc71; }
+.yellow { border: 3px solid #f1c40f; color: #f1c40f; box-shadow: 0 0 10px #f1c40f; }
