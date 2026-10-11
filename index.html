@@ -2,18 +2,21 @@
 <html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ebi-tiem Uno</title>
+    <!-- استفاده از v=3 برای آپدیت اجباری -->
     <link rel="stylesheet" href="style.css?v=3">
 </head>
 <body>
 
     <div class="game-board">
         <div class="deck-area">
-            <div id="deck" onclick="drawCard()">🃏</div>
+            <div id="deck" onclick="drawCard()">🎴 کارت بکش</div>
             <div id="discard-pile" class="card">?</div>
         </div>
-        <div id="player-hand" class="hand-area"></div>
+        <div id="player-hand" class="hand-area">
+            <!-- کارت‌ها اینجا نمایش داده می‌شوند -->
+        </div>
     </div>
 
     <script src="script.js?v=3"></script>
