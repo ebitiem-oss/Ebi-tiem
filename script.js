@@ -1,37 +1,49 @@
-body {
-    background: radial-gradient(circle at center, #2c3e50, #000000);
-    height: 100vh; margin: 0; display: flex; justify-content: center; align-items: center;
-    font-family: 'Segoe UI', Tahoma, sans-serif;
+let topCard = { color: 'red', val: '5' };
+let myHand = [
+    {color: 'red', val: '5'}, 
+    {color: 'blue', val: '2'}, 
+    {color: 'green', val: '8'}
+];
+
+function drawCard() {
+    const colors = ['red', 'blue', 'green', 'yellow'];
+    const newCard = { 
+        color: colors[Math.floor(Math.random() * 4)], 
+        val: Math.floor(Math.random() * 9) + 1 
+    };
+    myHand.push(newCard);
+    renderHand();
 }
 
-.game-board { display: flex; flex-direction: column; gap: 40px; align-items: center; }
-
-.deck-area { display: flex; gap: 30px; }
-
-/* استایل کارت‌ها */
-.card {
-    width: 70px; height: 100px; border-radius: 12px;
-    background: white; display: flex; justify-content: center; align-items: center;
-    font-size: 24px; font-weight: bold; cursor: pointer;
-    box-shadow: 0 0 15px rgba(255,255,255,0.2);
-    transition: 0.3s;
+function playCard(index) {
+    const card = myHand[index];
+    if (card.color === topCard.color || card.val === topCard.val) {
+        topCard = myHand.splice(index, 1)[0];
+        renderTable();
+        renderHand();
+    } else {
+        alert("این کارت نمی‌خورد!");
+    }
 }
 
-#deck {
-    border: 2px dashed #fff; color: #fff; background: rgba(255,255,255,0.1);
-    width: 70px; height: 100px; border-radius: 12px; display: flex;
-    justify-content: center; align-items: center; font-size: 30px;
+function renderTable() {
+    const pile = document.getElementById('discard-pile');
+    pile.className = `card ${topCard.color}`;
+    pile.innerText = topCard.val;
 }
 
-.hand-area {
-    display: flex; gap: 10px; padding: 20px;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 20px; backdrop-filter: blur(15px);
-    border: 1px solid rgba(255,255,255,0.1);
+function renderHand() {
+    const handDiv = document.getElementById('player-hand');
+    handDiv.innerHTML = '';
+    myHand.forEach((card, index) => {
+        const div = document.createElement('div');
+        div.className = `card ${card.color}`;
+        div.innerText = card.val;
+        div.onclick = () => playCard(index);
+        handDiv.appendChild(div);
+    });
 }
 
-/* رنگ‌بندی نئونی */
-.red { border: 2px solid #ff4d4d; box-shadow: 0 0 20px #ff4d4d; color: #ff4d4d; }
-.blue { border: 2px solid #4d79ff; box-shadow: 0 0 20px #4d79ff; color: #4d79ff; }
-.green { border: 2px solid #2ecc71; box-shadow: 0 0 20px #2ecc71; color: #2ecc71; }
-.yellow { border: 2px solid #f1c40f; box-shadow: 0 0 20px #f1c40f; color: #f1c40f; }
+// شروع بازی
+renderTable();
+renderHand();
