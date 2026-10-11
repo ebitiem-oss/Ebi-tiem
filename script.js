@@ -11,7 +11,6 @@ let myHand = [
 ];
 
 function drawCard() {
-    // محدودیت ۲۰ کارت
     if (myHand.length >= 20) return; 
 
     const colors = ['red', 'blue', 'green', 'yellow'];
@@ -25,8 +24,13 @@ function drawCard() {
 
 function playCard(index) {
     const card = myHand[index];
-    // شرط بازی: کارت یا رنگش یکی باشد یا عددش
-    if (card.color !== topCard.color && card.val !== topCard.val) return;
+    
+    // تبدیل هر دو به متن برای اطمینان از مقایسه درست
+    const colorMatch = (card.color === topCard.color);
+    const valueMatch = (String(card.val) === String(topCard.val));
+
+    // اگر نه رنگ یکی بود و نه عدد، کارت بازی نمی‌شود
+    if (!colorMatch && !valueMatch) return;
     
     topCard = myHand.splice(index, 1)[0];
     renderTable();
