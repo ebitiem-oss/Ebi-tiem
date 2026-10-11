@@ -57,4 +57,4 @@ function updateTurnIndicator() {
     document.querySelectorAll('.player-slot').forEach((slot, index) => {
         slot.classList.toggle('active', index === currentTurn);
     });
-}
+                     }
