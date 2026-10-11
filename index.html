@@ -7,22 +7,18 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-    <!-- صفحه ورود به لابی -->
     <div id="lobby">
         <h1>بازی اونو</h1>
         <button onclick="joinGame()" id="join-btn">ورود به اتاق</button>
     </div>
-
-    <!-- محیط اصلی بازی (مخفی تا قبل از ورود) -->
     <div id="game-area" style="display: none;">
         <div id="table">
+            <!-- اینجا کارتی که بازی می‌شود قرار می‌گیرد -->
             <div id="discard-pile" class="card">?</div>
             <div id="other-players-container"></div>
         </div>
         <div id="player-hand"></div>
     </div>
-
     <script src="script.js"></script>
 </body>
 </html>
