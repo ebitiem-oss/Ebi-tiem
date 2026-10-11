@@ -4,19 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ebi-tiem Uno</title>
-    <link rel="stylesheet" href="style.css?v=5">
+    <link rel="stylesheet" href="style.css?v=6">
 </head>
 <body>
 
     <div class="game-board">
         <div class="deck-area">
             <div id="discard-pile" class="card">?</div>
-            <div id="deck" onclick="drawCard()">بانک</div>
+            <!-- اضافه شدن کلاس card به بانک برای هم‌شکل شدن -->
+            <div id="deck" class="card" onclick="drawCard()">بانک</div>
         </div>
         
         <div id="player-hand" class="hand-area"></div>
     </div>
 
-    <script src="script.js?v=5"></script>
+    <script src="script.js?v=6"></script>
 </body>
 </html>
