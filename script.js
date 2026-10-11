@@ -1,40 +1,36 @@
-// ۱. وضعیت اولیه بازی
-let topCard = { color: 'red', val: '5' }; // کارتی که الان وسط میز است
-let myHand = [
-    {color: 'red', val: '5'}, 
-    {color: 'blue', val: '2'}, 
-    {color: 'green', val: '8'},
-    {color: 'red', val: '1'}
-];
+let topCard = { color: 'red', val: '5' };
+let myHand = [{color: 'blue', val: '2'}, {color: 'green', val: '8'}];
 
-// ۲. تابع اصلی بازی کردن کارت
+// تابع کشیدن کارت
+function drawCard() {
+    const newCard = { 
+        color: ['red', 'blue', 'green', 'yellow'][Math.floor(Math.random() * 4)], 
+        val: Math.floor(Math.random() * 9) + 1 
+    };
+    myHand.push(newCard);
+    renderHand();
+}
+
 function playCard(index) {
     const card = myHand[index];
-
-    // قانون اونو: چک کردن رنگ یا عدد
     if (card.color === topCard.color || card.val === topCard.val) {
-        // اگر مجاز بود:
-        topCard = myHand.splice(index, 1)[0]; // کارت از دست حذف و جایگزین topCard می‌شود
-        renderTable(); // به‌روزرسانی میز
-        renderHand();  // به‌روزرسانی کارت‌های دست
+        topCard = myHand.splice(index, 1)[0];
+        renderTable();
+        renderHand();
     } else {
-        // اگر مجاز نبود:
-        alert("خطا: رنگ یا عدد کارت همخوانی ندارد!");
+        alert("این کارت نمی‌خورد! یکی دیگر انتخاب کن یا از دسته کارت بکش.");
     }
 }
 
-// ۳. نمایش کارت وسط میز
 function renderTable() {
     const pile = document.getElementById('discard-pile');
-    pile.className = `card ${topCard.color}`; // کلاس رنگ کارت
+    pile.className = `card ${topCard.color}`;
     pile.innerText = topCard.val;
 }
 
-// ۴. نمایش کارت‌های دست بازیکن
 function renderHand() {
     const handDiv = document.getElementById('player-hand');
     handDiv.innerHTML = '';
-    
     myHand.forEach((card, index) => {
         const div = document.createElement('div');
         div.className = `card ${card.color}`;
@@ -44,6 +40,5 @@ function renderHand() {
     });
 }
 
-// اجرای اولیه
 renderTable();
 renderHand();
