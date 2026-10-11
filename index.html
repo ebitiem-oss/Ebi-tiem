@@ -3,22 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Nivra Game</title>
-    <link rel="stylesheet" href="style.css">
+    <title>بازی اونو - Ebi-tiem</title>
+    <!-- استفاده از v=2 برای جلوگیری از کش شدن نسخه قدیمی -->
+    <link rel="stylesheet" href="style.css?v=2">
 </head>
 <body>
-    <div id="lobby">
-        <h1>بازی اونو</h1>
-        <button onclick="joinGame()" id="join-btn">ورود به اتاق</button>
-    </div>
-    <div id="game-area" style="display: none;">
-        <div id="table">
-            <!-- اینجا کارتی که بازی می‌شود قرار می‌گیرد -->
-            <div id="discard-pile" class="card">?</div>
-            <div id="other-players-container"></div>
+
+    <!-- محیط اصلی بازی -->
+    <div id="game-area">
+        
+        <!-- کارت وسط میز -->
+        <div id="discard-pile" class="card">?</div>
+
+        <!-- دست بازیکن -->
+        <div id="player-hand">
+            <!-- کارت‌ها توسط جاوا اسکریپت اینجا ساخته می‌شوند -->
         </div>
-        <div id="player-hand"></div>
+
     </div>
-    <script src="script.js"></script>
+
+    <!-- فایل اسکریپت -->
+    <script src="script.js?v=2"></script>
 </body>
 </html>
