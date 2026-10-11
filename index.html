@@ -3,26 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>بازی اونو - Ebi-tiem</title>
-    <!-- استفاده از v=2 برای جلوگیری از کش شدن نسخه قدیمی -->
-    <link rel="stylesheet" href="style.css?v=2">
+    <title>Ebi-tiem Uno</title>
+    <link rel="stylesheet" href="style.css?v=3">
 </head>
 <body>
 
-    <!-- محیط اصلی بازی -->
-    <div id="game-area">
-        
-        <!-- کارت وسط میز -->
-        <div id="discard-pile" class="card">?</div>
-
-        <!-- دست بازیکن -->
-        <div id="player-hand">
-            <!-- کارت‌ها توسط جاوا اسکریپت اینجا ساخته می‌شوند -->
+    <div class="game-board">
+        <div class="deck-area">
+            <div id="deck" onclick="drawCard()">🃏</div>
+            <div id="discard-pile" class="card">?</div>
         </div>
-
+        <div id="player-hand" class="hand-area"></div>
     </div>
 
-    <!-- فایل اسکریپت -->
-    <script src="script.js?v=2"></script>
+    <script src="script.js?v=3"></script>
 </body>
 </html>
