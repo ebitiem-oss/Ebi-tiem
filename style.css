@@ -1,7 +1,7 @@
 body {
     margin: 0;
     padding: 0;
-    background: #050505; /* پس‌زمینه خیلی تیره برای تمرکز روی میز */
+    background: #050505;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -9,63 +9,62 @@ body {
     overflow: hidden;
 }
 
-/* میز اصلی با طراحی بسیار عمیق و گود */
+/* میز بیضی و کشیده (شبیه میز بازی واقعی) */
 .game-environment {
     position: relative;
-    width: 92vw;
-    height: 92vw;
-    max-width: 550px;
-    max-height: 550px;
+    width: 90vw;
+    height: 60vh; /* ارتفاع کمتر برای کشیده شدن میز */
+    max-width: 800px;
     
-    /* ایجاد حس گود بودن با استفاده از گرادیان‌های چند مرحله‌ای */
-    background: 
-        radial-gradient(circle at center, #2e7d32 0%, #1b5e20 60%, #0a2e10 100%);
+    /* ایجاد شکل بیضی */
+    border-radius: 50% / 50%; 
     
-    /* لبه چوبی ضخیم و واقعی */
-    border: 15px solid #2c1a12; 
-    border-radius: 50%;
+    /* طراحی سطح میز (سبز عمیق) */
+    background: radial-gradient(ellipse at center, #2e7d32 0%, #1b5e20 70%, #0a2e10 100%);
     
-    /* سایه‌های لایه‌بندی شده برای ایجاد عمق (Depth) */
+    /* لبه چوبی و ضخیم دور میز بیضی */
+    border: 15px solid #3e2723;
+    
+    /* ایجاد عمق بسیار زیاد و گود بودن */
     box-shadow: 
-        inset 0 0 80px rgba(0,0,0,0.8), /* سایه بسیار عمیق در لبه‌ها */
-        inset 0 0 30px rgba(255,255,255,0.1), /* درخشش بسیار ملایم لبه داخلی */
-        0 30px 60px rgba(0,0,0,1); /* سایه زیر میز روی زمین */
+        inset 0 0 100px rgba(0,0,0,0.9), 
+        inset 0 0 40px rgba(0,0,0,0.5),
+        0 30px 60px rgba(0,0,0,1);
     
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-/* بخش وسط میز */
+/* بخش کارت‌های وسط میز */
 .center-area {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 25px;
+    gap: 20px;
     z-index: 10;
 }
 
-/* استایل کارت‌ها با سایه برای حالت شناور */
+.deck-area {
+    display: flex;
+    gap: 30px;
+}
+
+/* استایل کارت‌ها */
 .card {
-    width: 58px;
-    height: 85px;
-    border-radius: 8px;
+    width: 55px;
+    height: 80px;
+    border-radius: 6px;
     display: flex;
     justify-content: center;
     align-items: center;
     font-weight: bold;
-    font-size: 1.3rem;
-    box-shadow: 0 8px 15px rgba(0,0,0,0.6); /* سایه زیر کارت برای حالت شناور */
+    font-size: 1.2rem;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.5);
     cursor: pointer;
     user-select: none;
-    transition: transform 0.2s ease;
 }
 
-.card:active {
-    transform: scale(0.9); /* افکت فشار دادن کارت */
-}
-
-/* رنگ‌های کارت با کنتراست بالاتر */
 .red { background: linear-gradient(135deg, #ff5f6d, #ffc371); color: white; border: 2px solid #800000; }
 .blue { background: linear-gradient(135deg, #2193b0, #6dd5ed); color: white; border: 2px solid #000080; }
 .green { background: linear-gradient(135deg, #11998e, #38ef7d); color: white; border: 2px solid #145a32; }
@@ -77,23 +76,23 @@ body {
     border: 2px solid #bdc3c7;
 }
 
-/* بخش کارت‌های بازیکن */
+/* بخش کارت‌های بازیکن - حالا دو ردیفه */
 .hand-area {
     position: absolute;
-    bottom: -110px;
-    display: flex;
+    bottom: -120px;
+    display: grid; /* استفاده از Grid برای دو ردیفه کردن */
+    grid-template-columns: repeat(auto-fill, minmax(55px, 1fr));
+    grid-template-rows: repeat(2, auto); /* دو ردیف */
     gap: 10px;
-    padding: 12px;
+    padding: 15px;
     background: rgba(0,0,0,0.7);
     border-radius: 20px;
+    width: 280px; /* عرض ثابت برای کنترل بهتر دو ردیف */
     border: 1px solid rgba(255,255,255,0.1);
-    width: max-content;
-    max-width: 90vw;
-    overflow-x: auto;
-    backdrop-filter: blur(5px); /* مات کردن پشت کارت‌ها */
+    backdrop-filter: blur(5px);
 }
 
-/* ظرف بازیکنان دور میز */
+/* چیدمان بازیکنان دور میز بیضی */
 .players-grid {
     position: absolute;
     width: 100%;
@@ -114,11 +113,9 @@ body {
     color: white;
     font-size: 11px;
     pointer-events: auto;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
 }
 
-/* نشانگر بازیکن فعال با درخشش سبز */
 .active-player {
     border-color: #2ecc71;
-    box-shadow: 0 0 20px #2ecc71, inset 0 0 10px #2ecc71;
-    }
+    box-shadow: 0 0 20px #2ecc71;
+}
