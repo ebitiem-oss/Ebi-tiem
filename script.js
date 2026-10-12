@@ -15,14 +15,20 @@ function createPlayers() {
         slot.id = `player-${i}`;
         slot.innerText = `P${i+1}`;
         
+        // محاسبه موقعیت دور میز بیضی (استفاده از معادله بیضی)
         const angle = (i / totalPlayers) * (2 * Math.PI);
-        const radius = window.innerWidth < 600 ? 130 : 220; 
         
-        const x = Math.cos(angle) * radius;
-        const y = Math.sin(angle) * radius;
+        // این اعداد باعث می‌شوند بازیکن‌ها دور میز بیضی پخش شوند
+        const x = Math.cos(angle) * 40; // ضریب افقی
+        const y = Math.sin(angle) * 35; // ضریب عمودی
         
-        slot.style.left = `calc(50% + ${x}px - 20px)`;
-        slot.style.top = `calc(50% + ${y}px - 20px)`;
+        // تبدیل به درصد برای قرارگیری دقیق در لبه میز
+        const percentX = 50 + (x * 4); 
+        const percentY = 50 + (y * 4);
+
+        slot.style.left = `${percentX}%`;
+        slot.style.top = `${percentY}%`;
+        slot.style.transform = 'translate(-50%, -50%)';
         
         if (i === 0) slot.classList.add('active-player');
         container.appendChild(slot);
@@ -31,10 +37,10 @@ function createPlayers() {
 
 let topCard = { color: 'red', val: '5' };
 let myHand = [
-    {color: 'red', val: '5'}, 
-    {color: 'blue', val: '2'}, 
-    {color: 'green', val: '8'},
-    {color: 'yellow', val: '1'}
+    {color: 'red', val: '5'}, {color: 'blue', val: '2'}, 
+    {color: 'green', val: '8'}, {color: 'yellow', val: '1'},
+    {color: 'red', val: '3'}, {color: 'blue', val: '9'},
+    {color: 'green', val: '4'}, {color: 'yellow', val: '7'}
 ];
 
 function drawCard() {
@@ -50,10 +56,7 @@ function drawCard() {
 
 function playCard(index) {
     const card = myHand[index];
-    const colorMatch = (card.color === topCard.color);
-    const valueMatch = (String(card.val) === String(topCard.val));
-
-    if (colorMatch || valueMatch) {
+    if (card.color === topCard.color || String(card.val) === String(topCard.val)) {
         topCard = myHand.splice(index, 1)[0];
         renderTable();
         renderHand();
