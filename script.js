@@ -4,7 +4,6 @@ window.onload = function() {
     renderHand();
 };
 
-// ساخت بازیکن‌ها دور میز بیضی
 function createPlayers() {
     const container = document.getElementById('players-container');
     container.innerHTML = ''; 
@@ -16,17 +15,13 @@ function createPlayers() {
         slot.id = `player-${i}`;
         slot.innerText = `P${i+1}`;
         
-        // محاسبه موقعیت دور میز بیضی با استفاده از ریاضیات مثلثات
         const angle = (i / totalPlayers) * (2 * Math.PI);
-        
-        // تنظیم ضرایب برای کشیده شدن (میز بیضی است، پس X باید بزرگتر از Y باشد)
-        const xFactor = 42; // میزان پخش شدن افقی
-        const yFactor = 35; // میزان پخش شدن عمودی
+        const xFactor = 40; 
+        const yFactor = 30; 
         
         const x = Math.cos(angle) * xFactor;
         const y = Math.sin(angle) * yFactor;
         
-        // تبدیل به درصد برای قرارگیری در لبه‌های میز
         const percentX = 50 + (x); 
         const percentY = 50 + (y);
 
@@ -34,13 +29,14 @@ function createPlayers() {
         slot.style.top = `${percentY}%`;
         slot.style.transform = 'translate(-50%, -50%)';
         
-        // بازیکن اول فعال است
         if (i === 0) slot.classList.add('active-player');
         container.appendChild(slot);
     }
 }
 
+// مقدار اولیه کارت روی زمین
 let topCard = { color: 'red', val: '5' };
+// کارت‌های دست بازیکن
 let myHand = [
     {color: 'red', val: '5'}, {color: 'blue', val: '2'}, 
     {color: 'green', val: '8'}, {color: 'yellow', val: '1'},
@@ -61,13 +57,17 @@ function drawCard() {
 
 function playCard(index) {
     const card = myHand[index];
-    // چک کردن صحت حرکت (استفاده از String برای جلوگیری از خطا)
-    if (card.color === topCard.color || String(card.val) === String(topCard.val)) {
+    
+    // اصلاح اصلی: تبدیل هر دو طرف به String برای اطمینان از درست بودن مقایسه
+    const isColorMatch = card.color === topCard.color;
+    const isValueMatch = String(card.val) === String(topCard.val);
+
+    if (isColorMatch || isValueMatch) {
         topCard = myHand.splice(index, 1)[0];
         renderTable();
         renderHand();
     } else {
-        alert("Move invalid!");
+        alert("Move invalid! Match color or number.");
     }
 }
 
@@ -87,4 +87,4 @@ function renderHand() {
         div.onclick = () => playCard(index);
         handDiv.appendChild(div);
     });
-            }
+}
