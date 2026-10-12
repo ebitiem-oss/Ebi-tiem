@@ -1,34 +1,53 @@
+/* (کدهای قبلی را حفظ کن و این‌ها را به انتهای فایل اضافه کن یا جایگزین کن) */
+
 body {
     background: linear-gradient(135deg, #667eea, #764ba2);
     min-height: 100vh; margin: 0; display: flex;
-    justify-content: center; align-items: center; font-family: sans-serif;
+    justify-content: center; align-items: center; overflow: hidden;
 }
 
-.game-board { display: flex; flex-direction: column; gap: 40px; align-items: center; width: 90%; }
+.game-environment {
+    position: relative;
+    width: 100vw; height: 100vh;
+    display: flex; justify-content: center; align-items: center;
+}
+
+.center-area {
+    display: flex; flex-direction: column; gap: 20px; align-items: center;
+    z-index: 2;
+}
+
+/* چیدمان بازیکن‌ها در اطراف میز */
+.players-grid {
+    position: absolute;
+    width: 90%; height: 90%;
+    display: flex; justify-content: center; align-items: center;
+    pointer-events: none; /* برای اینکه مانع کلیک روی کارت‌ها نشود */
+}
+
+.player-slot {
+    position: absolute;
+    width: 50px; height: 50px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    border: 2px solid white;
+    display: flex; justify-content: center; align-items: center;
+    font-size: 10px; color: white;
+    pointer-events: auto; /* اجازه کلیک به پروفایل‌ها */
+}
+
+/* هاله نئونی برای بازیکن فعلی */
+.active-player {
+    box-shadow: 0 0 15px 5px #2ecc71; /* سبز نئونی */
+    border-color: #2ecc71;
+    transform: scale(1.2);
+}
+
+/* کارت‌ها و بخش‌های قبلی (بدون تغییر، فقط مطمئن شو در فایل هست) */
 .deck-area { display: flex; gap: 20px; }
-
-/* استایل عمومی همه کارت‌ها */
-.card {
-    width: 60px; height: 90px; border-radius: 10px;
-    background: white; display: flex; justify-content: center;
-    align-items: center; font-weight: bold; cursor: pointer;
-    box-shadow: 0 0 10px rgba(0,0,0,0.3);
-    transition: transform 0.2s; user-select: none;
-    border: 2px solid #ccc; /* حاشیه استاندارد */
-}
-
-/* استایل مخصوص بانک (همان شکل کارت ولی رنگ متفاوت) */
-#deck {
-    background: #2c3e50; color: white; border: 2px solid #fff;
-}
-
-/* کارت‌ها اگر زیاد شوند به سطر بعدی می‌روند */
-.hand-area {
-    display: flex; flex-wrap: wrap; gap: 10px; padding: 15px;
-    background: rgba(255,255,255,0.1); border-radius: 15px;
-    justify-content: center; min-height: 100px;
-}
-
+.card { width: 60px; height: 90px; border-radius: 10px; background: white; display: flex; justify-content: center; align-items: center; font-weight: bold; box-shadow: 0 0 10px rgba(0,0,0,0.3); cursor: pointer; }
+#deck { background: #2c3e50; color: white; border: 2px solid #fff; }
+.hand-area { display: flex; flex-wrap: wrap; gap: 10px; padding: 15px; background: rgba(255,255,255,0.1); border-radius: 15px; justify-content: center; min-height: 100px; }
 .red { border: 3px solid #ff4d4d; color: #ff4d4d; }
 .blue { border: 3px solid #4d79ff; color: #4d79ff; }
 .green { border: 3px solid #2ecc71; color: #2ecc71; }
