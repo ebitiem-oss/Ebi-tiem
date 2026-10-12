@@ -1,29 +1,33 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="fa">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Ebi-tiem Uno</title>
-    <!-- اضافه کردن v=9 برای جلوگیری از کش شدن در گوشی -->
-    <link rel="stylesheet" href="style.css?v=9">
+    <!-- اضافه کردن ورژن v=99 برای جلوگیری از کش شدن در موبایل -->
+    <link rel="stylesheet" href="style.css?v=99">
 </head>
 <body>
 
     <div class="game-environment">
-        <!-- بخش بازیکنان دور میز -->
+        <!-- محل قرارگیری بازیکنان دور میز -->
         <div id="players-container" class="players-grid"></div>
 
-        <!-- بخش مرکز میز -->
+        <!-- مرکز میز: کارت روی زمین و دسته کارت‌ها -->
         <div class="center-area">
             <div class="deck-area">
-                <div id="discard-pile" class="card">?</div>
-                <div id="deck" class="card" onclick="drawCard()">بانک</div>
+                <div id="deck" class="card" onclick="drawCard()">Deck</div>
+                <div id="discard-pile" class="card"></div>
             </div>
-            
-            <div id="player-hand" class="hand-area"></div>
+        </div>
+
+        <!-- بخش کارت‌های بازیکن (دو ردیفه) -->
+        <div class="hand-area" id="player-hand">
+            <!-- کارت‌ها توسط جاوااسکریپت اینجا ساخته می‌شوند -->
         </div>
     </div>
 
-    <script src="script.js?v=9"></script>
+    <!-- لود کردن اسکریپت با ورژن جدید -->
+    <script src="script.js?v=99"></script>
 </body>
 </html>
