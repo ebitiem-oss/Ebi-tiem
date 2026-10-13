@@ -3,24 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ebi-tiem Uno</title>
-    <link rel="stylesheet" href="style.css?v=100">
+    <title>Ebi-tiem Card Game</title>
+    <link rel="stylesheet" href="style.css?v=101">
 </head>
 <body>
-
-    <div class="game-environment">
-        <div id="players-container" class="players-grid"></div>
-
-        <div class="center-area">
-            <div class="deck-area">
-                <div id="deck" class="card" onclick="drawCard()">Deck</div>
-                <div id="discard-pile" class="card"></div>
+    <div id="game-container">
+        <!-- بخش بالایی: میز بازی و بازیکنان -->
+        <div id="top-section">
+            <div id="players-area"></div>
+            <div id="game-table">
+                <div id="table-center"></div>
             </div>
         </div>
 
-        <div class="hand-area" id="player-hand"></div>
+        <!-- بخش پایینی: دست کارت‌های بازیکن -->
+        <div id="bottom-section">
+            <div id="player-hand"></div>
+        </div>
     </div>
 
-    <script src="script.js?v=100"></script>
+    <script src="script.js?v=101"></script>
 </body>
 </html>
