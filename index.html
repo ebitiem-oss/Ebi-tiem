@@ -1,44 +1,22 @@
 <!DOCTYPE html>
-<html lang="fa">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ebi-tiem Uno</title>
-    <link rel="stylesheet" href="style.css?v=105">
+    <title>Ebi-tiem UNO</title>
+    <link rel="stylesheet" href="style.css?v=107">
 </head>
 <body>
 
-    <div id="loading-screen">
-        <div class="loader"></div>
-        <p>در حال بارگذاری...</p>
+    <div id="players-area"></div>
+
+    <div id="game-table">
+        <div id="deck-container"></div>
+        <div id="discard-pile-container"></div>
     </div>
 
-    <div id="game-container">
-        <!-- بخش بالایی: بازیکنان و میز -->
-        <div id="top-section">
-            <div id="players-area"></div>
+    <div id="player-hand"></div>
 
-            <div id="game-table-container">
-                <div id="game-table">
-                    <!-- کارت دور ریخته شده -->
-                    <div id="discard-pile-container"></div>
-                    
-                    <!-- بانک کارت‌ها (وسط میز) -->
-                    <div id="deck-container">
-                        <div id="card-deck" class="card-deck-visual">
-                            <span>بانک</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- بخش پایینی: دست بازیکن -->
-        <div id="bottom-section">
-            <div id="player-hand"></div>
-        </div>
-    </div>
-
-    <script src="script.js?v=105"></script>
+    <script src="script.js?v=107"></script>
 </body>
 </html>
