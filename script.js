@@ -1,4 +1,4 @@
-const VERSION = "107";
+const VERSION = "108";
 
 const COLORS = ['red', 'yellow', 'green', 'blue'];
 const VALUES = ['+2', 'Skip', 'Reverse', 'Wild', 'Wild +4', '1', '2', '3', '4', '5', '6', '7', '8'];
@@ -79,28 +79,15 @@ function renderGame() {
         });
     }
 
-    const discardContainer = document.getElementById('discard-pile-container');
-    if (discardContainer) {
-        discardContainer.innerHTML = '';
+    const discardCardContainer = document.getElementById('discard-pile-card');
+    if (discardCardContainer) {
+        discardCardContainer.innerHTML = '';
         const topCard = gameState.discardPile[gameState.discardPile.length - 1];
         if (topCard) {
-            const cardDiv = document.createElement('div');
-            cardDiv.className = 'card';
-            cardDiv.style.backgroundColor = getCardColor(topCard.color);
-            cardDiv.innerText = topCard.value;
-            discardContainer.appendChild(cardDiv);
+            discardCardContainer.className = 'card';
+            discardCardContainer.style.backgroundColor = getCardColor(topCard.color);
+            discardCardContainer.innerText = topCard.value;
         }
-    }
-
-    const deckElement = document.getElementById('deck-container');
-    if (deckElement) {
-        deckElement.innerHTML = '';
-        const deckDiv = document.createElement('div');
-        deckDiv.className = 'card';
-        deckDiv.style.backgroundColor = '#333';
-        deckDiv.innerText = '🎴';
-        deckDiv.onclick = drawCard;
-        deckElement.appendChild(deckDiv);
     }
 
     renderPlayerHand(0);
@@ -123,9 +110,11 @@ function renderPlayerHand(playerIndex) {
 }
 
 function drawCard() {
-    if (gameState.deck.length > 0) {
+    if (gameState.deck.length > 0 && !gameState.isGameOver) {
         gameState.playerHands[0].push(gameState.deck.pop());
         nextTurn();
+    } else if (gameState.deck.length === 0) {
+        alert("Deck is empty!");
     }
 }
 
@@ -147,7 +136,7 @@ function checkWinner() {
     for (let i = 0; i < gameState.playerHands.length; i++) {
         if (gameState.playerHands[i].length === 0) {
             gameState.isGameOver = true;
-            alert(`🎉 WINNER: Player ${i + 1}!`);
+            setTimeout(() => alert(`🎉 WINNER: Player ${i + 1}!`), 100);
             return true;
         }
     }
@@ -163,4 +152,4 @@ function getCardColor(color) {
         case 'wild': return '#222222';
         default: return '#ffffff';
     }
-    }
+}
