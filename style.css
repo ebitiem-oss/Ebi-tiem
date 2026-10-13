@@ -17,11 +17,11 @@ body {
 }
 
 #players-area {
-    height: 15%;
+    height: 12%;
     display: flex;
     justify-content: space-around;
     align-items: center;
-    padding: 10px;
+    padding: 5px;
 }
 
 .player-wrapper {
@@ -31,8 +31,8 @@ body {
 }
 
 .player-profile {
-    width: 40px;
-    height: 40px;
+    width: 35px;
+    height: 35px;
     border-radius: 50%;
     border: 2px solid #444;
     background: #222;
@@ -40,11 +40,11 @@ body {
 
 .player-profile.active {
     border-color: var(--neon-green);
-    box-shadow: 0 0 15px var(--neon-green);
+    box-shadow: 0 0 10px var(--neon-green);
 }
 
 .card-count {
-    font-size: 12px;
+    font-size: 10px;
     color: var(--neon-blue);
 }
 
@@ -53,13 +53,30 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 30px;
+    gap: 20px;
 }
 
-#deck-container, #discard-pile-container {
-    width: 80px;
-    height: 110px;
-    position: relative;
+#deck-container {
+    text-align: center;
+}
+
+/* استایل دکمه بانک */
+.draw-btn {
+    background: #333;
+    color: white;
+    border: 2px solid var(--neon-blue);
+    border-radius: 8px;
+    padding: 10px 5px;
+    font-size: 12px;
+    cursor: pointer;
+    margin-top: 5px;
+    box-shadow: 0 0 5px var(--neon-blue);
+}
+
+#discard-pile-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 #player-hand {
@@ -67,24 +84,30 @@ body {
     display: flex;
     justify-content: center;
     align-items: flex-end;
-    gap: 10px;
-    padding: 15px;
-    overflow-x: auto;
-    background: rgba(255,255,255,0.05);
+    gap: 8px;
+    padding: 10px;
+    overflow-y: auto; /* اجازه اسکرول عمودی برای دو طبقه شدن */
+    background: rgba(255, 255, 255, 0.05);
+    flex-wrap: wrap; /* این باعث دو طبقه شدن می‌شود */
 }
 
 .card {
-    min-width: 75px; /* بزرگ‌تر شده */
-    height: 110px;  /* بزرگ‌تر شده */
-    border-radius: 10px;
+    width: 60px; /* کوچکتر شد */
+    height: 85px; /* کوچکتر شد */
+    border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.5rem;
+    font-size: 1.1rem;
     font-weight: bold;
     color: white;
-    text-shadow: 1px 1px 3px black;
-    box-shadow: 0 0 10px rgba(0,0,0,0.5);
-    border: 2px solid rgba(255,255,255,0.3);
+    text-shadow: 1px 1px 2px black;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+    border: 1px solid rgba(255,255,255,0.3);
     cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: scale(1.1);
 }
