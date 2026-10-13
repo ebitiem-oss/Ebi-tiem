@@ -1,7 +1,6 @@
-const VERSION = "102";
+const VERSION = "103";
 
 document.addEventListener('DOMContentLoaded', () => {
-    // نمایش لودینگ برای ۲ ثانیه و سپس شروع بازی
     setTimeout(() => {
         document.getElementById('loading-screen').style.opacity = '0';
         setTimeout(() => {
@@ -14,24 +13,35 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function initGame() {
     console.log("Game Started - Version " + VERSION);
-    createPlayers(10); // تست با ۱۰ بازیکن برای دیدن میز و پروفایل‌ها
-    createMockHand();
+    // تست با ۵ بازیکن، هر کدام با ۷ کارت (مجموعاً ۳۵ کارت در بازی)
+    createPlayers(5, 7); 
+    createMockHand(15); // دست خود بازیکن: ۱۵ کارت
 }
 
-function createPlayers(count) {
+function createPlayers(count, cardsPerPlayer) {
     const area = document.getElementById('players-area');
     area.innerHTML = '';
     for (let i = 0; i < count; i++) {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'player-wrapper';
+
         const profile = document.createElement('div');
         profile.className = 'player-profile';
-        area.appendChild(profile);
+
+        const countLabel = document.createElement('div');
+        countLabel.className = 'card-count';
+        countLabel.innerText = cardsPerPlayer; // نمایش تعداد کارت‌ها
+
+        wrapper.appendChild(profile);
+        wrapper.appendChild(countLabel);
+        area.appendChild(wrapper);
     }
 }
 
-function createMockHand() {
+function createMockHand(count) {
     const handContainer = document.getElementById('player-hand');
     handContainer.innerHTML = '';
-    for (let i = 1; i <= 10; i++) {
+    for (let i = 1; i <= count; i++) {
         const card = document.createElement('div');
         card.className = 'card';
         card.innerText = i;
