@@ -133,16 +133,15 @@ body {
     justify-content: center;
     border-top: 2px solid #00ff88;
     padding: 10px;
+    overflow-x: auto;
 }
 
 #player-hand {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 10px;
-    width: 100%;
-    height: 100%;
-    justify-items: center;
+    display: flex;
+    gap: 8px;
     align-items: center;
+    height: 100%;
+    padding: 0 10px;
 }
 
 /* Card Design */
@@ -153,11 +152,12 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.4rem;
+    font-size: 1.2rem;
     font-weight: bold;
     box-shadow: 0 4px 10px rgba(0,0,0,0.5);
     aspect-ratio: 1 / 1;
-    width: 100%;
-    max-width: 60px;
+    height: 80%;
+    min-width: 55px;
     user-select: none;
+    border: 2px solid rgba(255,255,255,0.3);
 }
