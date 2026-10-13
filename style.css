@@ -2,6 +2,7 @@
     --neon-green: #39ff14;
     --neon-blue: #00f3ff;
     --bg-dark: #0a0a0a;
+    --chat-bg: rgba(20, 20, 20, 0.9);
 }
 
 body {
@@ -16,38 +17,39 @@ body {
     overflow: hidden;
 }
 
+/* بخش بالای صفحه */
+#top-bar {
+    height: 15%;
+    display: flex;
+    flex-direction: column;
+    border-bottom: 1px solid #333;
+}
+
 #players-area {
-    height: 12%;
+    flex-grow: 1;
     display: flex;
     justify-content: space-around;
     align-items: center;
-    padding: 5px;
 }
 
-.player-wrapper {
+#controls {
+    height: 30px;
     display: flex;
-    flex-direction: column;
+    justify-content: center;
     align-items: center;
 }
 
-.player-profile {
-    width: 35px;
-    height: 35px;
-    border-radius: 50%;
-    border: 2px solid #444;
+.action-btn {
     background: #222;
-}
-
-.player-profile.active {
-    border-color: var(--neon-green);
-    box-shadow: 0 0 10px var(--neon-green);
-}
-
-.card-count {
-    font-size: 10px;
     color: var(--neon-blue);
+    border: 1px solid var(--neon-blue);
+    border-radius: 4px;
+    padding: 2px 15px;
+    font-size: 10px;
+    font-weight: bold;
 }
 
+/* میز بازی */
 #game-table {
     flex-grow: 1;
     display: flex;
@@ -56,58 +58,87 @@ body {
     gap: 20px;
 }
 
-#deck-container {
-    text-align: center;
+#discard-pile-container .card {
+    width: 70px;
+    height: 100px;
 }
 
-/* استایل دکمه بانک */
-.draw-btn {
-    background: #333;
-    color: white;
-    border: 2px solid var(--neon-blue);
-    border-radius: 8px;
-    padding: 10px 5px;
-    font-size: 12px;
-    cursor: pointer;
-    margin-top: 5px;
-    box-shadow: 0 0 5px var(--neon-blue);
-}
-
-#discard-pile-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+/* دست بازیکن - دو طبقه و کوچک */
+#player-hand-container {
+    height: 25%;
+    background: #111;
+    border-top: 2px solid #333;
 }
 
 #player-hand {
-    height: 30%;
     display: flex;
+    flex-wrap: wrap; /* برای دو طبقه شدن */
     justify-content: center;
-    align-items: flex-end;
-    gap: 8px;
+    align-content: flex-start;
+    gap: 5px;
     padding: 10px;
-    overflow-y: auto; /* اجازه اسکرول عمودی برای دو طبقه شدن */
-    background: rgba(255, 255, 255, 0.05);
-    flex-wrap: wrap; /* این باعث دو طبقه شدن می‌شود */
+    height: 100%;
+    overflow-y: auto;
 }
 
 .card {
-    width: 60px; /* کوچکتر شد */
-    height: 85px; /* کوچکتر شد */
-    border-radius: 8px;
+    width: 50px; /* کارت‌ها کوچک‌تر شد */
+    height: 70px; /* کارت‌ها کوچک‌تر شد */
+    border-radius: 5px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.1rem;
+    font-size: 0.9rem;
     font-weight: bold;
     color: white;
     text-shadow: 1px 1px 2px black;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.5);
     border: 1px solid rgba(255,255,255,0.3);
-    cursor: pointer;
-    transition: transform 0.2s;
 }
 
-.card:hover {
-    transform: scale(1.1);
+/* بخش چت (رزرو شده) */
+#chat-overlay {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 15%; /* فضای چت */
+    background: var(--chat-bg);
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid var(--neon-blue);
+    opacity: 0.8; /* کمی شفاف برای دیدن بازی */
 }
+
+#chat-messages {
+    flex-grow: 1;
+    padding: 5px;
+    font-size: 12px;
+    overflow-y: auto;
+}
+
+#chat-input-area {
+    display: flex;
+    padding: 5px;
+    gap: 5px;
+}
+
+#chat-input {
+    flex-grow: 1;
+    background: #000;
+    border: 1px solid #444;
+    color: white;
+    border-radius: 15px;
+    padding: 5px 10px;
+}
+
+#voice-btn {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+
+/* استایل بازیکنان */
+.player-profile { width: 30px; height: 30px; border-radius: 50%; border: 2px solid #444; }
+.player-profile.active { border-color: var(--neon-green); box-shadow: 0 0 8px var(--neon-green); }
+.card-count { font-size: 9px; color: var(--neon-blue); }
