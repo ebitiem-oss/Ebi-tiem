@@ -140,3 +140,44 @@ body {
     width: 100%; /* عرض بر اساس ستون‌های گرید */
     max-width: 65px; /* جلوگیری از بزرگ شدن بیش از حد در تبلت */
 }
+/* تنظیمات ظرف اصلی میز برای قرارگیری عناصر کنار هم */
+#game-table {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 30px; /* فاصله بین بانک و کارت‌های دور ریخته شده */
+}
+
+/* استایل بانک کارت‌ها (بسته کارت‌ها) */
+.card-deck-visual {
+    width: 70px;
+    height: 70px;
+    background: linear-gradient(135deg, #333 0%, #000 100%);
+    border: 2px solid #00ff88;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #00ff88;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 0 15px rgba(0, 255, 136, 0.4);
+    transition: transform 0.2s;
+    user-select: none;
+}
+
+.card-deck-visual:active {
+    transform: scale(0.9); /* افکت فشردن دکمه در موبایل */
+}
+
+/* استایل کارت دور ریخته شده */
+#discard-pile-container {
+    width: 70px;
+    height: 70px;
+}
+
+.card {
+    /* استایل قبلی که برای کارت‌ها داشتی اینجا باشد */
+    /* فقط مطمئن شو که width و height برای کارت وسط هم درست کار کند */
+}
