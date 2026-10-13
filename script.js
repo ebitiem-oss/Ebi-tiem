@@ -1,4 +1,4 @@
-const VERSION = "105";
+const VERSION = "106";
 
 const COLORS = ['red', 'yellow', 'green', 'blue'];
 const VALUES = ['+2', 'Skip', 'Reverse', 'Wild', 'Wild +4', '1', '2', '3', '4', '5', '6', '7', '8'];
@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
 function startNewGame() {
     createDeck();
     setupPlayers(5);
-    dealCards(5, 7); 
+    dealCards(5, 15); // حالا دقیقا ۱۵ کارت به هر نفر داده می‌شود
     renderGame();
 }
 
@@ -99,6 +99,8 @@ function renderGame() {
         deckElement.onclick = () => {
             if (deck.length > 0) {
                 const drawn = deck.pop();
+                // اگر دست بازیکن بیشتر از ۱۵ تا شد، کارت جدید اضافه نشود (یا طبق قانون بازی)
+                // اینجا اجازه می‌دهیم اضافه شود اما فقط ۱۵ تا نمایش داده شود
                 gameState.playerHands[0].push(drawn);
                 renderGame();
             }
@@ -115,10 +117,11 @@ function renderPlayerHand(playerIndex) {
     handContainer.innerHTML = '';
     
     const hand = gameState.playerHands[playerIndex] || [];
-    // محدود کردن نمایش به ۱۵ کارت (طبق درخواست شما)
-    const visibleHand = hand.slice(0, 15);
+    
+    // محدود کردن نمایش به حداکثر ۱۵ کارت برای جلوگیری از شلوغی
+    const displayHand = hand.slice(0, 15);
 
-    visibleHand.forEach(card => {
+    displayHand.forEach(card => {
         const cardDiv = document.createElement('div');
         cardDiv.className = 'card';
         cardDiv.style.backgroundColor = getCardColor(card.color);
@@ -136,4 +139,4 @@ function getCardColor(color) {
         case 'wild': return '#222';
         default: return '#ffffff';
     }
-                                                   }
+                                         }
