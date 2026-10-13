@@ -128,4 +128,50 @@ function renderPlayerHand(playerIndex) {
     hand.forEach((card, index) => {
         const cardDiv = document.createElement('div');
         cardDiv.className = 'card';
-        cardDiv.style.backgroundColor = getCardColor(card.color
+        cardDiv.style.backgroundColor = getCardColor(card.color);
+        cardDiv.innerText = card.value;
+        cardDiv.onclick = () => playCard(playerIndex, index);
+        handContainer.appendChild(cardDiv);
+    });
+}
+
+function playCard(playerIndex, cardIndex) {
+    if (gameState.isGameOver) return;
+
+    const card = gameState.playerHands[playerIndex][cardIndex];
+    // در اینجا منطق ساده گذاشته شده تا بازی کند پیش برود
+    gameState.discardPile.push(gameState.playerHands[playerIndex].splice(cardIndex, 1)[0]);
+    
+    nextTurn();
+}
+
+function nextTurn() {
+    // چک کردن برنده شدن
+    if (checkWinner()) return;
+
+    gameState.currentPlayer = (gameState.currentPlayer + 1) % gameState.players.length;
+    renderGame();
+}
+
+function checkWinner() {
+    for (let i = 0; i < gameState.playerHands.length; i++) {
+        if (gameState.playerHands[i].length === 0) {
+            gameState.isGameOver = true;
+            alert(`🎉 WINNER: Player ${i + 1}!`);
+            return true;
+        }
+    }
+    return false;
+}
+
+function getCardColor(color) {
+    switch(color) {
+        case 'red': return '#ff4b2b';
+        case 'blue': return '#2193b0';
+        case 'green': return '#11998e';
+        case 'yellow': return '#ffe259';
+        case 'wild': return '#222222';
+        default: return '#ffffff';
+    }
+}
+    
