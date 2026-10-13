@@ -1,4 +1,4 @@
-const VERSION = "108";
+const VERSION = "109";
 
 const COLORS = ['red', 'yellow', 'green', 'blue'];
 const VALUES = ['+2', 'Skip', 'Reverse', 'Wild', 'Wild +4', '1', '2', '3', '4', '5', '6', '7', '8'];
@@ -113,8 +113,6 @@ function drawCard() {
     if (gameState.deck.length > 0 && !gameState.isGameOver) {
         gameState.playerHands[0].push(gameState.deck.pop());
         nextTurn();
-    } else if (gameState.deck.length === 0) {
-        alert("Deck is empty!");
     }
 }
 
