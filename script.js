@@ -1,6 +1,5 @@
-const VERSION = "104";
+const VERSION = "105";
 
-// ۱. تعریف کارت‌ها
 const COLORS = ['red', 'yellow', 'green', 'blue'];
 const VALUES = ['+2', 'Skip', 'Reverse', 'Wild', 'Wild +4', '1', '2', '3', '4', '5', '6', '7', '8'];
 
@@ -12,16 +11,15 @@ let gameState = {
     playerHands: []
 };
 
-// ۲. مدیریت لودینگ
 document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
-        document.getElementById('loading-screen').style.opacity = '0';
-        setTimeout(() => {
-            document.getElementById('loading-screen').style.display = 'none';
-        }, 500);
-        
+        const loader = document.getElementById('loading-screen');
+        if (loader) {
+            loader.style.opacity = '0';
+            setTimeout(() => loader.style.display = 'none', 500);
+        }
         startNewGame();
-    }, 2000);
+    }, 1000);
 });
 
 function startNewGame() {
@@ -57,54 +55,62 @@ function dealCards(playerCount, cardsPerPlayer) {
     for (let i = 0; i < playerCount; i++) {
         let hand = [];
         for (let j = 0; j < cardsPerPlayer; j++) {
-            hand.push(deck.pop());
+            if (deck.length > 0) hand.push(deck.pop());
         }
         gameState.playerHands.push(hand);
     }
-    gameState.discardPile.push(deck.pop());
+    if (deck.length > 0) gameState.discardPile.push(deck.pop());
 }
 
-// ۳. رندر کردن صفحه
 function renderGame() {
     // رندر پروفایل بازیکنان
     const playersArea = document.getElementById('players-area');
-    playersArea.innerHTML = '';
-    gameState.players.forEach((player, index) => {
-        const wrapper = document.createElement('div');
-        wrapper.className = 'player-wrapper';
-        const profile = document.createElement('div');
-        profile.className = 'player-profile';
-        if(index === gameState.currentPlayer) profile.style.boxShadow = "0 0 15px #fff";
+    if (playersArea) {
+        playersArea.innerHTML = '';
+        gameState.players.forEach((player, index) => {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'player-wrapper';
+            
+            const profile = document.createElement('div');
+            profile.className = 'player-profile';
+            if(index === gameState.currentPlayer) profile.style.boxShadow = "0 0 15px #fff";
 
-        const countLabel = document.createElement('div');
-        countLabel.className = 'card-count';
-        countLabel.innerText = gameState.playerHands[index].length;
+            const countLabel = document.createElement('div');
+            countLabel.className = 'card-count';
+            countLabel.innerText = gameState.playerHands[index] ? gameState.playerHands[index].length : 0;
 
-        wrapper.appendChild(profile);
-        wrapper.appendChild(countLabel);
-        playersArea.appendChild(wrapper);
-    });
-
-    // رندر کارت دور ریخته شده (Discard Pile)
-    const discardContainer = document.getElementById('discard-pile-container');
-    discardContainer.innerHTML = '';
-    const topCard = gameState.discardPile[gameState.discardPile.length - 1];
-    if (topCard) {
-        const cardDiv = document.createElement('div');
-        cardDiv.className = 'card';
-        cardDiv.style.backgroundColor = getCardColor(topCard.color);
-        cardDiv.innerText = topCard.value;
-        discardContainer.appendChild(cardDiv);
+            wrapper.appendChild(profile);
+            wrapper.appendChild(countLabel);
+            playersArea.appendChild(wrapper);
+        });
     }
 
-    // رندر دست بازیکن (در پایین صفحه)
+    // رندر کارت وسط میز (Discard Pile)
+    const discardContainer = document.getElementById('discard-pile-container');
+    if (discardContainer) {
+        discardContainer.innerHTML = '';
+        const topCard = gameState.discardPile[gameState.discardPile.length - 1];
+        if (topCard) {
+            const cardDiv = document.createElement('div');
+            cardDiv.className = 'card';
+            cardDiv.style.backgroundColor = getCardColor(topCard.color);
+            cardDiv.innerText = topCard.value;
+            discardContainer.appendChild(cardDiv);
+        }
+    }
+
+    // رندر دست بازیکن در پایین صفحه
     renderPlayerHand(0); 
 }
 
 function renderPlayerHand(playerIndex) {
     const handContainer = document.getElementById('player-hand');
+    if (!handContainer) return;
+    
     handContainer.innerHTML = '';
-    gameState.playerHands[playerIndex].forEach(card => {
+    const hand = gameState.playerHands[playerIndex] || [];
+    
+    hand.forEach(card => {
         const cardDiv = document.createElement('div');
         cardDiv.className = 'card';
         cardDiv.style.backgroundColor = getCardColor(card.color);
@@ -113,25 +119,27 @@ function renderPlayerHand(playerIndex) {
     });
 }
 
-// ۴. منطق کلیک روی بانک
-document.getElementById('card-deck').addEventListener('click', () => {
-    if (deck.length > 0) {
-        const drawnCard = deck.pop();
-        gameState.playerHands[0].push(drawnCard); // فعلاً به بازیکن اول می‌دهیم
-        renderGame();
-    } else {
-        alert("بانک تمام شد!");
-    }
-});
+// کلیک روی بانک کارت‌ها برای کشیدن کارت جدید
+const deckElement = document.getElementById('card-deck');
+if (deckElement) {
+    deckElement.addEventListener('click', () => {
+        if (deck.length > 0) {
+            const drawnCard = deck.pop();
+            gameState.playerHands[0].push(drawnCard);
+            renderGame();
+        } else {
+            alert("بانک تمام شد!");
+        }
+    });
+}
 
 function getCardColor(color) {
     switch(color) {
         case 'red': return '#ff5555';
         case 'blue': return '#5555ff';
-        case 'green': return '#5555ff'; // اصلاح شد
-        case 'yellow': return '#ffff55';
-        case 'wild': return '#ffffff';
-        default: return '#fff';
+        case 'green': return '#55aa55'; /* اصلاح شد */
+        case 'yellow': return '#ffaa00';
+        case 'wild': return '#222222';
+        default: return '#ffffff';
     }
-            }
-    
+                }
