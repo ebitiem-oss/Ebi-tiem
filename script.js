@@ -1,4 +1,4 @@
-const VERSION = "108";
+const VERSION = "107";
 
 const COLORS = ['red', 'yellow', 'green', 'blue'];
 const VALUES = ['+2', 'Skip', 'Reverse', 'Wild', 'Wild +4', '1', '2', '3', '4', '5', '6', '7', '8'];
@@ -7,8 +7,7 @@ let gameState = {
     players: [],
     currentPlayer: 0,
     discardPile: [],
-    playerHands: [],
-    deck: []
+    playerHands: []
 };
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -20,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
 function startNewGame() {
     createDeck();
     setupPlayers(5);
-    dealCards(5, 7); // شروع با ۷ کارت برای هر بازیکن
+    dealCards(5, 15);
     renderGame();
 }
 
@@ -67,16 +66,74 @@ function renderGame() {
         gameState.players.forEach((player, index) => {
             const wrapper = document.createElement('div');
             wrapper.className = 'player-wrapper';
+            
             const profile = document.createElement('div');
             profile.className = `player-profile ${index === gameState.currentPlayer ? 'active' : ''}`;
+
             const countLabel = document.createElement('div');
             countLabel.className = 'card-count';
             countLabel.innerText = gameState.playerHands[index].length;
+
             wrapper.appendChild(profile);
             wrapper.appendChild(countLabel);
             playersArea.appendChild(wrapper);
         });
     }
 
-    // ۲. رندر مرکز میز (کارت وسط)
-    const discardContainer =...
+    // ۲. رندر مرکز میز
+    const discardContainer = document.getElementById('discard-pile-container');
+    if (discardContainer) {
+        discardContainer.innerHTML = '';
+        const topCard = gameState.discardPile[gameState.discardPile.length - 1];
+        if (topCard) {
+            const cardDiv = document.createElement('div');
+            cardDiv.className = 'card';
+            cardDiv.style.backgroundColor = getCardColor(topCard.color);
+            cardDiv.innerText = topCard.value;
+            discardContainer.appendChild(cardDiv);
+        }
+    }
+
+    // ۳. رندر بانک (Deck)
+    const deckElement = document.getElementById('deck-container');
+    if (deckElement) {
+        deckElement.onclick = () => {
+            if (gameState.deck.length > 0) {
+                const drawn = gameState.deck.pop();
+                gameState.playerHands[0].push(drawn);
+                renderGame();
+            }
+        };
+    }
+
+    // ۴. رندر دست بازیکن
+    renderPlayerHand(0);
+}
+
+function renderPlayerHand(playerIndex) {
+    const handContainer = document.getElementById('player-hand');
+    if (!handContainer) return;
+    handContainer.innerHTML = '';
+    
+    const hand = gameState.playerHands[playerIndex] || [];
+    const displayHand = hand.slice(0, 15);
+
+    displayHand.forEach(card => {
+        const cardDiv = document.createElement('div');
+        cardDiv.className = 'card';
+        cardDiv.style.backgroundColor = getCardColor(card.color);
+        cardDiv.innerText = card.value;
+        handContainer.appendChild(cardDiv);
+    });
+}
+
+function getCardColor(color) {
+    switch(color) {
+        case 'red': return '#ff4b2b';
+        case 'blue': return '#2193b0';
+        case 'green': return '#11998e';
+        case 'yellow': return '#ffe259';
+        case 'wild': return '#222222';
+        default: return '#ffffff';
+    }
+}
