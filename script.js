@@ -136,4 +136,5 @@ function getCardColor(color) {
         case 'wild': return '#222222';
         default: return '#ffffff';
     }
-}
+                                  }
+                
