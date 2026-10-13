@@ -1,141 +1,159 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    -webkit-tap-highlight-color: transparent;
+:root {
+    --neon-green: #00ff88;
+    --card-shadow: 0 4px 15px rgba(0,0,0,0.6);
 }
 
 body {
-    background-color: #050505;
-    font-family: sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #1a1a1a;
+    color: white;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     overflow: hidden;
-    height: 100vh;
-    width: 100vw;
-}
-
-#game-container {
     display: flex;
     flex-direction: column;
     height: 100vh;
-    width: 100vw;
 }
 
-/* بخش بالا: بازیکنان و میز */
-#top-section {
+/* بخش بالا: میز بازی و بازیکنان */
+#game-area {
     flex: 1;
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: space-around;
     padding: 10px;
 }
 
 #players-area {
+    width: 100%;
     display: flex;
     justify-content: center;
     gap: 15px;
-    width: 100%;
-    margin-bottom: 10px;
+    flex-wrap: wrap;
 }
 
 .player-wrapper {
     display: flex;
     flex-direction: column;
     align-items: center;
+    position: relative;
 }
 
 .player-profile {
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    border: 2px solid #00ff88;
-    box-shadow: 0 0 10px #00ff88;
+    border: 3px solid #555;
+    background: #333;
+    transition: all 0.3s ease;
+}
+
+.player-profile.active {
+    border-color: var(--neon-green);
+    box-shadow: 0 0 15px var(--neon-green);
 }
 
 .card-count {
-    font-size: 11px;
-    color: #00ff88;
-    margin-top: 2px;
+    background: #000;
+    color: var(--neon-green);
+    font-size: 12px;
+    padding: 2px 6px;
+    border-radius: 10px;
+    margin-top: 4px;
+    border: 1px solid var(--neon-green);
 }
 
-/* میز بازی */
-#game-table-container {
-    width: 100%;
-    flex: 1;
+/* مرکز میز: کارت‌های اصلی */
+#table-center {
     display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-#game-table {
-    width: 90%;
-    height: 90%;
-    background: radial-gradient(circle, #0a2e1a 0%, #000 100%);
-    border: 3px solid #00ff88;
-    border-radius: 50px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     gap: 30px;
-}
-
-/* استایل کارت‌ها (برای همه جا یکی باشد) */
-.card {
-    aspect-ratio: 1 / 1;
-    border-radius: 10px;
-    display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: bold;
-    font-size: 1.2rem;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-    border: 2px solid rgba(255,255,255,0.2);
-    user-select: none;
 }
 
-/* کارت‌های وسط میز */
 #discard-pile-container, #deck-container {
-    width: 70px; /* اندازه بزرگ برای وسط میز */
-    height: 70px;
-}
-
-.card-deck-visual {
-    width: 100%;
-    height: 100%;
-    background: #222;
-    border: 2px solid #00ff88;
+    width: 65px;
+    height: 65px;
     border-radius: 10px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 14px;
-    color: #00ff88;
     cursor: pointer;
+    position: relative;
 }
 
-/* بخش پایین: دست بازیکن (۱۵ کارت در ۲ ردیف) */
+#deck-container {
+    background: linear-gradient(135deg, #333, #000);
+    border: 2px dashed #555;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#deck-container::after {
+    content: 'UNO';
+    color: #555;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+/* بخش پایین: دست بازیکن */
 #bottom-section {
     height: 35%;
-    background: #111;
-    border-top: 2px solid #00ff88;
+    background: linear-gradient(to top, #000, #222);
+    border-top: 3px solid var(--neon-green);
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
+    justify-content: center;
     padding: 10px;
 }
 
 #player-hand {
     display: grid;
-    grid-template-columns: repeat(8, 1fr); /* ردیف اول تا ۸ کارت */
-    grid-template-rows: repeat(2, 1fr);    /* ۲ ردیف */
+    grid-template-columns: repeat(8, 1fr);
+    grid-template-rows: repeat(2, 1fr);
     gap: 8px;
     width: 100%;
-    max-width: 500px; /* برای اینکه در گوشی خیلی پخش نشود */
+    max-width: 500px;
     height: 100%;
 }
 
-/* اگر کارت‌ها زیاد شد، در ردیف دوم قرار بگیرند */
-@media (max-width: 400px) {
-    #player-hand {
-        grid-template-columns: repeat(5, 1fr);
-    }
+/* استایل کارت‌های گرافیکی (مشابه عکس‌های گوگل) */
+.card {
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    font-weight: 900;
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+    box-shadow: var(--card-shadow);
+    border: 2px solid rgba(255,255,255,0.3);
+    transition: transform 0.2s;
+    cursor: pointer;
 }
+
+.card:active {
+    transform: scale(0.9);
+}
+
+/* رنگ‌های زنده و گرادینت شبیه بازی اصلی */
+.card[style*="background-color: red"] {
+    background: linear-gradient(135deg, #ff4b2b, #ff416c) !important;
+}
+.card[style*="background-color: blue"] {
+    background: linear-gradient(135deg, #2193b0, #6dd5ed) !important;
+}
+.card[style*="background-color: green"] {
+    background: linear-gradient(135deg, #11998e, #38ef7d) !important;
+}
+.card[style*="background-color: yellow"] {
+    background: linear-gradient(135deg, #ffe259, #ffa751) !important;
+}
+.card[style*="background-color: #222"] { /* Wild Cards */
+    background: linear-gradient(135deg, #434343, #000000) !important;
+    border: 2px solid gold;
+    }
