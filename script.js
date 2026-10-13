@@ -7,16 +7,17 @@ let gameState = {
     players: [],
     currentPlayer: 0,
     discardPile: [],
-    playerHands: []
+    playerHands: [],
+    deck: [],
+    isGameOver: false
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-    setTimeout(() => {
-        startNewGame();
-    }, 1000);
+    startNewGame();
 });
 
 function startNewGame() {
+    gameState.isGameOver = false;
     createDeck();
     setupPlayers(5);
     dealCards(5, 15);
@@ -59,28 +60,25 @@ function dealCards(playerCount, cardsPerPlayer) {
 }
 
 function renderGame() {
-    // ۱. رندر بازیکنان
+    if (gameState.isGameOver) return;
+
     const playersArea = document.getElementById('players-area');
     if (playersArea) {
         playersArea.innerHTML = '';
         gameState.players.forEach((player, index) => {
             const wrapper = document.createElement('div');
             wrapper.className = 'player-wrapper';
-            
             const profile = document.createElement('div');
             profile.className = `player-profile ${index === gameState.currentPlayer ? 'active' : ''}`;
-
             const countLabel = document.createElement('div');
             countLabel.className = 'card-count';
             countLabel.innerText = gameState.playerHands[index].length;
-
             wrapper.appendChild(profile);
             wrapper.appendChild(countLabel);
             playersArea.appendChild(wrapper);
         });
     }
 
-    // ۲. رندر مرکز میز
     const discardContainer = document.getElementById('discard-pile-container');
     if (discardContainer) {
         discardContainer.innerHTML = '';
@@ -94,19 +92,17 @@ function renderGame() {
         }
     }
 
-    // ۳. رندر بانک (Deck)
     const deckElement = document.getElementById('deck-container');
     if (deckElement) {
-        deckElement.onclick = () => {
-            if (gameState.deck.length > 0) {
-                const drawn = gameState.deck.pop();
-                gameState.playerHands[0].push(drawn);
-                renderGame();
-            }
-        };
+        deckElement.innerHTML = '';
+        const deckDiv = document.createElement('div');
+        deckDiv.className = 'card';
+        deckDiv.style.backgroundColor = '#333';
+        deckDiv.innerText = '🎴';
+        deckDiv.onclick = drawCard;
+        deckElement.appendChild(deckDiv);
     }
 
-    // ۴. رندر دست بازیکن
     renderPlayerHand(0);
 }
 
@@ -115,16 +111,47 @@ function renderPlayerHand(playerIndex) {
     if (!handContainer) return;
     handContainer.innerHTML = '';
     
-    const hand = gameState.playerHands[playerIndex] || [];
-    const displayHand = hand.slice(0, 15);
-
-    displayHand.forEach(card => {
+    const hand = gameState.playerHands[playerIndex];
+    hand.forEach((card, index) => {
         const cardDiv = document.createElement('div');
         cardDiv.className = 'card';
         cardDiv.style.backgroundColor = getCardColor(card.color);
         cardDiv.innerText = card.value;
+        cardDiv.onclick = () => playCard(playerIndex, index);
         handContainer.appendChild(cardDiv);
     });
+}
+
+function drawCard() {
+    if (gameState.deck.length > 0) {
+        gameState.playerHands[0].push(gameState.deck.pop());
+        nextTurn();
+    }
+}
+
+function playCard(playerIndex, cardIndex) {
+    if (gameState.isGameOver) return;
+    const card = gameState.playerHands[playerIndex].splice(cardIndex, 1)[0];
+    gameState.discardPile.push(card);
+    
+    if (checkWinner()) return;
+    nextTurn();
+}
+
+function nextTurn() {
+    gameState.currentPlayer = (gameState.currentPlayer + 1) % gameState.players.length;
+    renderGame();
+}
+
+function checkWinner() {
+    for (let i = 0; i < gameState.playerHands.length; i++) {
+        if (gameState.playerHands[i].length === 0) {
+            gameState.isGameOver = true;
+            alert(`🎉 WINNER: Player ${i + 1}!`);
+            return true;
+        }
+    }
+    return false;
 }
 
 function getCardColor(color) {
@@ -136,5 +163,4 @@ function getCardColor(color) {
         case 'wild': return '#222222';
         default: return '#ffffff';
     }
-                                  }
-                
+    }
