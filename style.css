@@ -14,7 +14,7 @@ body {
     color: white;
 }
 
-/* Loading */
+/* Loading Screen */
 #loading-screen {
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
@@ -35,7 +35,7 @@ body {
 }
 @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-/* Layout */
+/* Layout Structure */
 #game-container {
     display: flex;
     flex-direction: column;
@@ -83,7 +83,7 @@ body {
     margin-top: 2px;
 }
 
-/* Table */
+/* Game Table and Deck */
 #game-table-container {
     width: 100%;
     flex-grow: 1;
@@ -97,62 +97,18 @@ body {
     height: 85%;
     background: radial-gradient(circle, #0a2e1a 0%, #000 100%);
     border: 3px solid #00ff88;
-    border-radius: 50px;
+    border-radius: 40px;
     box-shadow: 0 0 25px rgba(0, 255, 136, 0.2), inset 0 0 40px rgba(0,0,0,0.9);
-}
-
-/* Bottom Section & SQUARE CARDS */
-#bottom-section {
-    height: 35%;
-    background: #111;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-top: 2px solid #00ff88;
-    padding: 5px;
-}
-
-#player-hand {
-    display: grid;
-    /* تغییر به ۵ ستون برای اینکه کارت‌ها بزرگتر و مربعی باشند */
-    grid-template-columns: repeat(5, 1fr); 
-    grid-auto-rows: min-content;
-    gap: 12px;
-    width: 100%;
-    height: 100%;
-    justify-items: center;
-    align-items: center;
-}
-
-.card {
-    background: linear-gradient(135deg, #ffffff 0%, #e0e0e0 100%);
-    border-radius: 8px; /* لبه‌های کمی نرم‌تر برای ظاهر مدرن */
-    color: #000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.8rem; 
-    font-weight: bold;
-    box-shadow: 0 6px 15px rgba(0,0,0,0.6);
-    
-    /* جادوی مربع شدن */
-    aspect-ratio: 1 / 1; 
-    width: 100%; /* عرض بر اساس ستون‌های گرید */
-    max-width: 65px; /* جلوگیری از بزرگ شدن بیش از حد در تبلت */
-}
-/* تنظیمات ظرف اصلی میز برای قرارگیری عناصر کنار هم */
-#game-table {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 30px; /* فاصله بین بانک و کارت‌های دور ریخته شده */
+    gap: 20px;
 }
 
-/* استایل بانک کارت‌ها (بسته کارت‌ها) */
 .card-deck-visual {
-    width: 70px;
-    height: 70px;
-    background: linear-gradient(135deg, #333 0%, #000 100%);
+    width: 65px;
+    height: 65px;
+    background: linear-gradient(135deg, #222 0%, #000 100%);
     border: 2px solid #00ff88;
     border-radius: 8px;
     display: flex;
@@ -163,21 +119,45 @@ body {
     font-weight: bold;
     cursor: pointer;
     box-shadow: 0 0 15px rgba(0, 255, 136, 0.4);
-    transition: transform 0.2s;
     user-select: none;
 }
 
-.card-deck-visual:active {
-    transform: scale(0.9); /* افکت فشردن دکمه در موبایل */
+.card-deck-visual:active { transform: scale(0.9); }
+
+/* Bottom Section - Player Hand */
+#bottom-section {
+    height: 35%;
+    background: #111;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-top: 2px solid #00ff88;
+    padding: 10px;
 }
 
-/* استایل کارت دور ریخته شده */
-#discard-pile-container {
-    width: 70px;
-    height: 70px;
+#player-hand {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+    width: 100%;
+    height: 100%;
+    justify-items: center;
+    align-items: center;
 }
 
+/* Card Design */
 .card {
-    /* استایل قبلی که برای کارت‌ها داشتی اینجا باشد */
-    /* فقط مطمئن شو که width و height برای کارت وسط هم درست کار کند */
+    background: white;
+    border-radius: 8px;
+    color: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    font-weight: bold;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    aspect-ratio: 1 / 1;
+    width: 100%;
+    max-width: 60px;
+    user-select: none;
 }
