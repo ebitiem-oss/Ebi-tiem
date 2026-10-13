@@ -101,8 +101,47 @@ function renderGame() {
     cardDiv.style.backgroundColor = getCardColor(topCard.color);
     cardDiv.innerText = topCard.value;
     tableCenter.appendChild(cardDiv);
+// نمایش دست بازیکن (فرض می‌کنیم بازیکن شماره ۰ هستیم)
+    function renderGame() {
+    // ... کدهای قبلی مربوط به بازیکنان ...
 
-    // نمایش دست بازیکن (فرض می‌کنیم بازیکن شماره ۰ هستیم)
+    // ۱. رندر کردن کارت دور ریخته شده (Discard Pile)
+    const discardContainer = document.getElementById('discard-pile-container');
+    discardContainer.innerHTML = '';
+    const topCard = gameState.discardPile[gameState.discardPile.length - 1];
+    
+    if (topCard) {
+        const cardDiv = document.createElement('div');
+        cardDiv.className = 'card';
+        cardDiv.style.backgroundColor = getCardColor(topCard.color);
+        cardDiv.innerText = topCard.value;
+        discardContainer.appendChild(cardDiv);
+    }
+
+    // ۲. اضافه کردن رویداد کلیک به بانک کارت‌ها
+    const deckElement = document.getElementById('card-deck');
+    deckElement.onclick = function() {
+        drawCard();
+    };
+
+    // ... بقیه کدهای رندر دست بازیکن ...
+}
+
+// تابع جدید برای برداشتن کارت از بانک
+function drawCard() {
+    if (deck.length > 0) {
+        const drawnCard = deck.pop();
+        // در این مرحله فعلاً فقط کارت را در کنسول نشان می‌دهیم یا به بازیکن اول می‌دهیم
+        // برای تست، کارت را به دست بازیکن اول اضافه می‌کنیم
+        gameState.playerHands[0].push(drawnCard);
+        
+        console.log("Card drawn: ", drawnCard);
+        renderGame(); // دوباره صفحه را رندر کن تا تغییرات دیده شود
+    } else {
+        alert("بانک کارت‌ها تمام شد!");
+    }
+}
+    
     renderPlayerHand(0);
 }
 
