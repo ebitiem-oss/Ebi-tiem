@@ -1,4 +1,4 @@
-const VERSION = "107";
+const VERSION = "108";
 
 const COLORS = ['red', 'yellow', 'green', 'blue'];
 const VALUES = ['+2', 'Skip', 'Reverse', 'Wild', 'Wild +4', '1', '2', '3', '4', '5', '6', '7', '8'];
@@ -7,7 +7,9 @@ let gameState = {
     players: [],
     currentPlayer: 0,
     discardPile: [],
-    playerHands: []
+    playerHands: [],
+    deck: [],
+    isGameOver: false
 };
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -17,9 +19,11 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function startNewGame() {
+    gameState.isGameOver = false;
     createDeck();
     setupPlayers(5);
-    dealCards(5, 15);
+    // طبق درخواست شما: از 7 تا 20 کارت (در اینجا 15 قرار دادم، می‌توانید عدد را تغییر دهید)
+    dealCards(5, 15); 
     renderGame();
 }
 
@@ -58,7 +62,21 @@ function dealCards(playerCount, cardsPerPlayer) {
     }
 }
 
+// تابع اصلی برای بررسی برنده شدن
+function checkWinner() {
+    for (let i = 0; i < gameState.playerHands.length; i++) {
+        if (gameState.playerHands[i].length === 0) {
+            gameState.isGameOver = true;
+            alert(`🎉 CONGRATULATIONS! \nPlayer ${i + 1} is the Winner!`);
+            return true;
+        }
+    }
+    return false;
+}
+
 function renderGame() {
+    if (gameState.isGameOver) return;
+
     // ۱. رندر بازیکنان
     const playersArea = document.getElementById('players-area');
     if (playersArea) {
@@ -66,14 +84,11 @@ function renderGame() {
         gameState.players.forEach((player, index) => {
             const wrapper = document.createElement('div');
             wrapper.className = 'player-wrapper';
-            
             const profile = document.createElement('div');
             profile.className = `player-profile ${index === gameState.currentPlayer ? 'active' : ''}`;
-
             const countLabel = document.createElement('div');
             countLabel.className = 'card-count';
             countLabel.innerText = gameState.playerHands[index].length;
-
             wrapper.appendChild(profile);
             wrapper.appendChild(countLabel);
             playersArea.appendChild(wrapper);
@@ -94,19 +109,19 @@ function renderGame() {
         }
     }
 
-    // ۳. رندر بانک (Deck)
+    // ۳. رندر بانک
     const deckElement = document.getElementById('deck-container');
     if (deckElement) {
         deckElement.onclick = () => {
             if (gameState.deck.length > 0) {
                 const drawn = gameState.deck.pop();
-                gameState.playerHands[0].push(drawn);
+                gameState.playerHands[0].push(drawn); // فعلاً کارت برای بازیکن اول اضافه می‌شود
                 renderGame();
             }
         };
     }
 
-    // ۴. رندر دست بازیکن
+    // ۴. رندر دست بازیکن (پایین صفحه)
     renderPlayerHand(0);
 }
 
@@ -116,15 +131,38 @@ function renderPlayerHand(playerIndex) {
     handContainer.innerHTML = '';
     
     const hand = gameState.playerHands[playerIndex] || [];
-    const displayHand = hand.slice(0, 15);
-
-    displayHand.forEach(card => {
+    
+    // نمایش کارت‌ها (حداکثر نمایش برای زیبایی)
+    hand.forEach((card, index) => {
         const cardDiv = document.createElement('div');
         cardDiv.className = 'card';
         cardDiv.style.backgroundColor = getCardColor(card.color);
         cardDiv.innerText = card.value;
+        
+        // قابلیت کلیک روی کارت برای انداختن آن (ساده شده برای تست)
+        cardDiv.onclick = () => playCard(playerIndex, index);
+        
         handContainer.appendChild(cardDiv);
     });
+}
+
+function playCard(playerIndex, cardIndex) {
+    if(gameState.isGameOver) return;
+
+    const card = gameState.playerHands[playerIndex][cardIndex];
+    const topCard = gameState.discardPile[gameState.discardPile.length - 1];
+
+    // منطق ساده برای اجازه انداختن کارت (رنگ یا مقدار مشابه)
+    // در این نسخه برای تست، اجازه می‌دهیم هر کارتی انداخته شود
+    gameState.discardPile.push(gameState.playerHands[playerIndex].splice(cardIndex, 1)[0]);
+    
+    // تغییر نوبت
+    gameState.currentPlayer = (gameState.currentPlayer + 1) % gameState.players.length;
+
+    // چک کردن برنده
+    if (!checkWinner()) {
+        renderGame();
+    }
 }
 
 function getCardColor(color) {
@@ -136,5 +174,4 @@ function getCardColor(color) {
         case 'wild': return '#222222';
         default: return '#ffffff';
     }
-                                  }
-            
+}
