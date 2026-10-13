@@ -13,9 +13,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function initGame() {
     console.log("Game Started - Version " + VERSION);
-    // تست با ۵ بازیکن، هر کدام با ۷ کارت (مجموعاً ۳۵ کارت در بازی)
     createPlayers(5, 7); 
-    createMockHand(15); // دست خود بازیکن: ۱۵ کارت
+    createMockHand(15); 
 }
 
 function createPlayers(count, cardsPerPlayer) {
@@ -30,7 +29,7 @@ function createPlayers(count, cardsPerPlayer) {
 
         const countLabel = document.createElement('div');
         countLabel.className = 'card-count';
-        countLabel.innerText = cardsPerPlayer; // نمایش تعداد کارت‌ها
+        countLabel.innerText = cardsPerPlayer;
 
         wrapper.appendChild(profile);
         wrapper.appendChild(countLabel);
