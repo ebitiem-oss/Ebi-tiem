@@ -1,32 +1,109 @@
-/* ... کدهای قبلی ... */
+:root {
+    --neon-green: #39ff14;
+    --neon-blue: #00f3ff;
+    --card-shadow: 0 0 15px rgba(0, 243, 255, 0.4);
+    --bg-dark: #0a0a0a;
+}
 
-#player-hand {
-    display: flex; /* از Grid به Flex تغییر کرد برای بزرگ‌تر شدن بهتر */
-    flex-wrap: wrap;
+body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-dark);
+    color: white;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+/* بخش بازیکنان در بالا */
+#players-area {
+    display: flex;
+    justify-content: space-around;
+    padding: 15px;
+    height: 15%;
+}
+
+.player-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
+
+.player-profile {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    border: 2px solid #444;
+    background: #222;
+}
+
+.player-profile.active {
+    border-color: var(--neon-green);
+    box-shadow: 0 0 15px var(--neon-green);
+}
+
+.card-count {
+    font-size: 0.8rem;
+    margin-top: 4px;
+    color: var(--neon-blue);
+}
+
+/* بخش وسط میز */
+#game-table {
+    flex-grow: 1;
+    display: flex;
     justify-content: center;
-    gap: 10px;
-    width: 95%;
-    max-width: 600px;
-    height: auto; /* اجازه بده ارتفاع بر اساس تعداد کارت تغییر کند */
-    padding: 10px;
+    align-items: center;
+    gap: 40px;
+    position: relative;
+}
+
+#discard-pile-container, #deck-container {
+    width: 80px;
+    height: 110px;
+}
+
+/* بخش دست بازیکن در پایین */
+#player-hand {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 12px;
+    padding: 20px;
+    height: 25%;
+    width: 100%;
+    overflow-x: auto;
+    background: rgba(255, 255, 255, 0.05);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .card {
-    min-width: 60px; /* کارت‌ها بزرگ‌تر شدند */
-    min-height: 85px; 
-    width: 70px;
-    height: 100px;
-    border-radius: 10px;
+    min-width: 75px; /* کمی بزرگ‌تر از قبل */
+    height: 110px;
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.4rem; /* فونت بزرگ‌تر */
-    font-weight: 900;
+    font-size: 1.5rem;
+    font-weight: bold;
     color: white;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
     box-shadow: var(--card-shadow);
-    border: 2px solid rgba(255,255,255,0.4);
+    border: 2px solid rgba(255, 255, 255, 0.3);
     cursor: pointer;
+    transition: transform 0.2s;
+    user-select: none;
 }
 
-/* ... بقیه کدها ... */
+.card:hover {
+    transform: translateY(-15px);
+}
+
+/* انیمیشن‌های ساده */
+@keyframes glow {
+    from { box-shadow: 0 0 5px var(--neon-blue); }
+    to { box-shadow: 0 0 20px var(--neon-blue); }
+          }
