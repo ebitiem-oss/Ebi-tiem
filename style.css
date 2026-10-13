@@ -1,4 +1,3 @@
-/* Reset & Base Styles */
 * {
     margin: 0;
     padding: 0;
@@ -7,98 +6,125 @@
 }
 
 body {
-    background-color: #1a1a1a;
+    background-color: #050505;
     font-family: sans-serif;
-    overflow: hidden; /* جلوگیری از اسکرول خوردن صفحه */
+    overflow: hidden;
     height: 100vh;
     width: 100vw;
+    color: white;
+}
+
+/* لودینگ سبز */
+#loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    transition: opacity 0.5s ease;
+}
+
+.loader {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #111;
+    border-top: 5px solid #00ff88; /* سبز نئونی */
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 15px;
+    box-shadow: 0 0 15px #00ff88;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
 #game-container {
     display: flex;
-    flex-direction: column; /* چیدمان عمودی: بالا میز، پایین کارت‌ها */
+    flex-direction: column;
     height: 100vh;
     width: 100vw;
 }
 
-/* بخش بالایی: میز و بازیکنان */
+/* بخش بالایی و میز */
 #top-section {
-    flex: 1; /* اشغال فضای بیشتر در بالا */
+    flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-start;
-    padding-top: 20px;
-    background: radial-gradient(circle, #2c3e50 0%, #000000 100%);
-    position: relative;
+    padding: 10px;
 }
 
 #players-area {
     display: flex;
+    flex-wrap: wrap; /* اگر بازیکن زیاد شد، به ردیف بعد برود */
     justify-content: center;
     width: 100%;
-    margin-bottom: 10px;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+/* پروفایل نئونی */
+.player-profile {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: #222;
+    border: 2px solid #00ff88; /* حاشیه نئونی سبز */
+    box-shadow: 0 0 10px #00ff88; /* درخشش نئونی */
+}
+
+#game-table-container {
+    width: 100%;
+    flex-grow: 1; /* میز با فضای موجود بزرگ می‌شود */
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 #game-table {
-    width: 90%;
-    height: 60%;
-    background: #1e4d2b; /* رنگ سبز میز */
-    border: 8px solid #3d2b1f; /* حاشیه چوبی */
-    border-radius: 50px; /* حالت بیضی/دراز */
-    box-shadow: inset 0 0 50px rgba(0,0,0,0.8), 0 10px 20px rgba(0,0,0,0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    width: 95%;
+    height: 90%;
+    background: radial-gradient(circle, #0a2e1a 0%, #000 100%);
+    border: 4px solid #00ff88; /* حاشیه نئونی میز */
+    border-radius: 60px;
+    box-shadow: 0 0 30px rgba(0, 255, 136, 0.3), inset 0 0 40px rgba(0,0,0,0.9);
     position: relative;
 }
 
-#table-center {
-    width: 100%;
-    height: 100%;
-}
-
-/* بخش پایینی: کارت‌های بازیکن */
+/* بخش کارت‌ها */
 #bottom-section {
-    height: 35%; /* فضای اختصاص داده شده به دست کارت‌ها */
-    background: rgba(0, 0, 0, 0.4);
+    height: 30%;
+    background: #111;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-top: 2px solid #444;
+    border-top: 2px solid #00ff88;
 }
 
 #player-hand {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(50px, 1fr)); /* ایجاد ردیف‌های خودکار */
-    grid-template-rows: repeat(2, 1fr); /* اجبار به دو ردیف */
-    gap: 8px;
+    grid-template-columns: repeat(auto-fit, minmax(45px, 1fr));
+    grid-template-rows: repeat(2, 1fr);
+    gap: 6px;
     width: 95%;
-    max-width: 500px;
-    padding: 10px;
 }
 
-/* استایل کارت‌ها */
 .card {
-    aspect-ratio: 2/3;
-    background: white;
-    border-radius: 5px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    background: linear-gradient(135deg, #fff 0%, #ddd 100%);
+    border-radius: 4px;
+    color: #000;
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: bold;
-    font-size: 1.2rem;
-    cursor: pointer;
-    user-select: none;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
 }
 
-/* استایل بازیکنان */
-.player-profile {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background: #555;
-    border: 2px solid #fff;
-    margin: 0 5px;
-}
