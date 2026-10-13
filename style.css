@@ -1,43 +1,40 @@
 :root {
-    --neon-green: #39ff14;
-    --neon-blue: #00f3ff;
-    --card-shadow: 0 0 15px rgba(0, 243, 255, 0.4);
-    --bg-dark: #0a0a0a;
+    --neon-green: #00ff88;
 }
 
 body {
     margin: 0;
     padding: 0;
-    background-color: var(--bg-dark);
+    background-color: #1a1a1a;
     color: white;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    overflow: hidden;
+    font-family: sans-serif;
     display: flex;
     flex-direction: column;
     height: 100vh;
+    overflow: hidden;
 }
 
-/* بخش بازیکنان در بالا */
-#players-area {
-    display: flex;
-    justify-content: space-around;
-    padding: 15px;
-    height: 15%;
-}
-
-.player-wrapper {
+#game-area {
+    flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
-    position: relative;
+    justify-content: space-around;
+}
+
+#players-area {
+    display: flex;
+    gap: 15px;
+    width: 100%;
+    justify-content: center;
 }
 
 .player-profile {
     width: 45px;
     height: 45px;
     border-radius: 50%;
-    border: 2px solid #444;
-    background: #222;
+    border: 3px solid #555;
+    background: #333;
 }
 
 .player-profile.active {
@@ -46,64 +43,73 @@ body {
 }
 
 .card-count {
-    font-size: 0.8rem;
-    margin-top: 4px;
-    color: var(--neon-blue);
+    font-size: 12px;
+    color: var(--neon-green);
+    text-align: center;
 }
 
-/* بخش وسط میز */
-#game-table {
-    flex-grow: 1;
+/* میز اصلی */
+#table-center {
     display: flex;
-    justify-content: center;
-    align-items: center;
     gap: 40px;
-    position: relative;
+    align-items: center;
 }
 
 #discard-pile-container, #deck-container {
-    width: 80px;
-    height: 110px;
-}
-
-/* بخش دست بازیکن در پایین */
-#player-hand {
-    display: flex;
-    justify-content: center;
-    align-items: flex-end;
-    gap: 12px;
-    padding: 20px;
-    height: 25%;
-    width: 100%;
-    overflow-x: auto;
-    background: rgba(255, 255, 255, 0.05);
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.card {
-    min-width: 75px; /* کمی بزرگ‌تر از قبل */
-    height: 110px;
+    width: 80px;  /* بزرگ‌تر شد */
+    height: 80px; /* بزرگ‌تر شد */
     border-radius: 12px;
+}
+
+/* دست بازیکن در پایین صفحه */
+#bottom-section {
+    height: 40%; /* ارتفاع بخش کارت‌ها بیشتر شد */
+    background: #111;
+    border-top: 3px solid var(--neon-green);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+}
+
+#player-hand {
+    display: flex; /* از Grid به Flex تغییر کرد تا کارت‌ها بزرگ‌تر و در یک ردیف/ردیف‌های کم باشند */
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    width: 95%;
+    max-width: 800px;
+}
+
+/* استایل کارت‌های بزرگ */
+.card {
+    width: 70px;  /* اندازه بزرگ‌تر */
+    height: 100px; /* اندازه بزرگ‌تر */
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.5rem;
+    font-size: 1.4rem;
     font-weight: bold;
     color: white;
     text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
-    box-shadow: var(--card-shadow);
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+    border: 2px solid rgba(255,255,255,0.3);
     transition: transform 0.2s;
-    user-select: none;
+    cursor: pointer;
 }
 
-.card:hover {
-    transform: translateY(-15px);
+/* کارت‌های مجاز (Highlight) */
+.card.valid-move {
+    border: 3px solid #fff;
+    box-shadow: 0 0 20px #fff;
+    transform: translateY(-10px);
 }
 
-/* انیمیشن‌های ساده */
-@keyframes glow {
-    from { box-shadow: 0 0 5px var(--neon-blue); }
-    to { box-shadow: 0 0 20px var(--neon-blue); }
-}
+/* رنگ‌ها */
+.card[style*="background-color: red"] { background: linear-gradient(135deg, #ff4b2b, #ff416c) !important; }
+.card[style*="background-color: blue"] { background: linear-gradient(135deg, #2193b0, #6dd5ed) !important; }
+.card[style*="background-color: green"] { background: linear-gradient(135deg, #11998e, #38ef7d) !important; }
+.card[style*="background-color: yellow"] { background: linear-gradient(135deg, #ffe259, #ffa751) !important; }
+.card[style*="background-color: #222"] { background: #222 !important; border: 2px solid gold; }
