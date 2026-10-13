@@ -4,19 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Ebi-tiem UNO</title>
-    <link rel="stylesheet" href="style.css?v=107">
+    <link rel="stylesheet" href="style.css?v=108">
 </head>
 <body>
 
     <div id="players-area"></div>
 
     <div id="game-table">
-        <div id="deck-container"></div>
-        <div id="discard-pile-container"></div>
+        <div id="deck-container">
+            <div id="deck-card" class="card" style="background: #333; font-size: 2rem;">🎴</div>
+            <button class="draw-btn" onclick="drawCard()">DRAW CARD</button>
+        </div>
+        
+        <div id="discard-pile-container">
+            <div id="discard-pile-card" class="card"></div>
+        </div>
     </div>
 
     <div id="player-hand"></div>
 
-    <script src="script.js?v=107"></script>
+    <script src="script.js?v=108"></script>
 </body>
 </html>
