@@ -13,11 +13,6 @@ let gameState = {
 
 document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
-        const loader = document.getElementById('loading-screen');
-        if (loader) {
-            loader.style.opacity = '0';
-            setTimeout(() => loader.style.display = 'none', 500);
-        }
         startNewGame();
     }, 1000);
 });
@@ -46,7 +41,7 @@ function createDeck() {
 function setupPlayers(count) {
     gameState.players = [];
     for (let i = 0; i < count; i++) {
-        gameState.players.push({ id: i, name: `Player ${i + 1}` });
+        gameState.players.push({ id: i, name: `P${i + 1}` });
     }
 }
 
@@ -63,21 +58,20 @@ function dealCards(playerCount, cardsPerPlayer) {
 }
 
 function renderGame() {
-    // رندر پروفایل بازیکنان
+    // ۱. رندر بازیکنان
     const playersArea = document.getElementById('players-area');
     if (playersArea) {
         playersArea.innerHTML = '';
         gameState.players.forEach((player, index) => {
             const wrapper = document.createElement('div');
             wrapper.className = 'player-wrapper';
-            
             const profile = document.createElement('div');
             profile.className = 'player-profile';
-            if(index === gameState.currentPlayer) profile.style.boxShadow = "0 0 15px #fff";
+            if(index === gameState.currentPlayer) profile.style.borderColor = "#fff";
 
             const countLabel = document.createElement('div');
             countLabel.className = 'card-count';
-            countLabel.innerText = gameState.playerHands[index] ? gameState.playerHands[index].length : 0;
+            countLabel.innerText = gameState.playerHands[index].length;
 
             wrapper.appendChild(profile);
             wrapper.appendChild(countLabel);
@@ -85,7 +79,7 @@ function renderGame() {
         });
     }
 
-    // رندر کارت وسط میز (Discard Pile)
+    // ۲. رندر کارت وسط (Discard Pile)
     const discardContainer = document.getElementById('discard-pile-container');
     if (discardContainer) {
         discardContainer.innerHTML = '';
@@ -99,18 +93,32 @@ function renderGame() {
         }
     }
 
-    // رندر دست بازیکن در پایین صفحه
-    renderPlayerHand(0); 
+    // ۳. رندر بانک کارت‌ها (Deck)
+    const deckElement = document.getElementById('card-deck');
+    if (deckElement) {
+        deckElement.onclick = () => {
+            if (deck.length > 0) {
+                const drawn = deck.pop();
+                gameState.playerHands[0].push(drawn);
+                renderGame();
+            }
+        };
+    }
+
+    // ۴. رندر دست بازیکن (پایین صفحه)
+    renderPlayerHand(0);
 }
 
 function renderPlayerHand(playerIndex) {
     const handContainer = document.getElementById('player-hand');
     if (!handContainer) return;
-    
     handContainer.innerHTML = '';
-    const hand = gameState.playerHands[playerIndex] || [];
     
-    hand.forEach(card => {
+    const hand = gameState.playerHands[playerIndex] || [];
+    // محدود کردن نمایش به ۱۵ کارت (طبق درخواست شما)
+    const visibleHand = hand.slice(0, 15);
+
+    visibleHand.forEach(card => {
         const cardDiv = document.createElement('div');
         cardDiv.className = 'card';
         cardDiv.style.backgroundColor = getCardColor(card.color);
@@ -119,27 +127,13 @@ function renderPlayerHand(playerIndex) {
     });
 }
 
-// کلیک روی بانک کارت‌ها برای کشیدن کارت جدید
-const deckElement = document.getElementById('card-deck');
-if (deckElement) {
-    deckElement.addEventListener('click', () => {
-        if (deck.length > 0) {
-            const drawnCard = deck.pop();
-            gameState.playerHands[0].push(drawnCard);
-            renderGame();
-        } else {
-            alert("بانک تمام شد!");
-        }
-    });
-}
-
 function getCardColor(color) {
     switch(color) {
         case 'red': return '#ff5555';
         case 'blue': return '#5555ff';
-        case 'green': return '#55aa55'; /* اصلاح شد */
+        case 'green': return '#55aa55';
         case 'yellow': return '#ffaa00';
-        case 'wild': return '#222222';
+        case 'wild': return '#222';
         default: return '#ffffff';
     }
-                }
+                                                   }
