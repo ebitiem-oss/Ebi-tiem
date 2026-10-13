@@ -1,108 +1,104 @@
-body {
+/* Reset & Base Styles */
+* {
     margin: 0;
     padding: 0;
-    background: #050505;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    background-color: #1a1a1a;
+    font-family: sans-serif;
+    overflow: hidden; /* جلوگیری از اسکرول خوردن صفحه */
+    height: 100vh;
+    width: 100vw;
+}
+
+#game-container {
+    display: flex;
+    flex-direction: column; /* چیدمان عمودی: بالا میز، پایین کارت‌ها */
+    height: 100vh;
+    width: 100vw;
+}
+
+/* بخش بالایی: میز و بازیکنان */
+#top-section {
+    flex: 1; /* اشغال فضای بیشتر در بالا */
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    height: 100vh;
-    overflow: hidden;
-}
-
-.game-environment {
+    padding-top: 20px;
+    background: radial-gradient(circle, #2c3e50 0%, #000000 100%);
     position: relative;
-    margin-top: 20px;
-    width: 95vw;
-    height: 50vh;
-    max-width: 850px;
-    border-radius: 50% / 50%;
-    background: radial-gradient(ellipse at center, #2e7d32 0%, #1b5e20 70%, #0a2e10 100%);
-    border: 10px solid #3e2723;
-    box-shadow: 
-        inset 0 0 60px rgba(0,0,0,0.9), 
-        inset 0 0 20px rgba(0,0,0,0.5),
-        0 20px 40px rgba(0,0,0,1);
+}
+
+#players-area {
     display: flex;
     justify-content: center;
-    align-items: center;
+    width: 100%;
+    margin-bottom: 10px;
 }
 
-.center-area {
+#game-table {
+    width: 90%;
+    height: 60%;
+    background: #1e4d2b; /* رنگ سبز میز */
+    border: 8px solid #3d2b1f; /* حاشیه چوبی */
+    border-radius: 50px; /* حالت بیضی/دراز */
+    box-shadow: inset 0 0 50px rgba(0,0,0,0.8), 0 10px 20px rgba(0,0,0,0.5);
     display: flex;
-    flex-direction: column;
     align-items: center;
-    gap: 15px;
-    z-index: 10;
+    justify-content: center;
+    position: relative;
 }
 
-.deck-area {
+#table-center {
+    width: 100%;
+    height: 100%;
+}
+
+/* بخش پایینی: کارت‌های بازیکن */
+#bottom-section {
+    height: 35%; /* فضای اختصاص داده شده به دست کارت‌ها */
+    background: rgba(0, 0, 0, 0.4);
     display: flex;
-    gap: 20px;
+    align-items: center;
+    justify-content: center;
+    border-top: 2px solid #444;
 }
 
+#player-hand {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(50px, 1fr)); /* ایجاد ردیف‌های خودکار */
+    grid-template-rows: repeat(2, 1fr); /* اجبار به دو ردیف */
+    gap: 8px;
+    width: 95%;
+    max-width: 500px;
+    padding: 10px;
+}
+
+/* استایل کارت‌ها */
 .card {
-    width: 45px;
-    height: 65px;
+    aspect-ratio: 2/3;
+    background: white;
     border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
     font-weight: bold;
-    font-size: 1rem;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+    font-size: 1.2rem;
     cursor: pointer;
     user-select: none;
 }
 
-.red { background: linear-gradient(135deg, #ff5f6d, #ffc371); color: white; border: 2px solid #800000; }
-.blue { background: linear-gradient(135deg, #2193b0, #6dd5ed); color: white; border: 2px solid #000080; }
-.green { background: linear-gradient(135deg, #11998e, #38ef7d); color: white; border: 2px solid #145a32; }
-.yellow { background: linear-gradient(135deg, #f1c40f, #f39c12); color: black; border: 2px solid #9a7d0a; }
-
-#deck {
-    background: linear-gradient(145deg, #2c3e50, #000);
-    color: #ecf0f1;
-    border: 2px solid #bdc3c7;
-}
-
-.hand-area {
-    position: absolute;
-    bottom: -110px;
-    display: grid;
-    grid-template-columns: repeat(6, 45px);
-    grid-template-rows: repeat(2, 65px);
-    gap: 8px;
-    padding: 10px;
-    background: rgba(0,0,0,0.8);
-    border-radius: 12px;
-    border: 1px solid rgba(255,255,255,0.1);
-    backdrop-filter: blur(10px);
-}
-
-.players-grid {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-}
-
-.player-slot {
-    position: absolute;
-    width: 35px;
-    height: 35px;
+/* استایل بازیکنان */
+.player-profile {
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
-    background: rgba(0,0,0,0.7);
-    border: 2px solid rgba(255,255,255,0.4);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: white;
-    font-size: 10px;
-    pointer-events: auto;
-}
-
-.active-player {
-    border-color: #2ecc71;
-    box-shadow: 0 0 12px #2ecc71;
+    background: #555;
+    border: 2px solid #fff;
+    margin: 0 5px;
 }
