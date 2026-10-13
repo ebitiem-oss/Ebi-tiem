@@ -106,4 +106,4 @@ body {
 @keyframes glow {
     from { box-shadow: 0 0 5px var(--neon-blue); }
     to { box-shadow: 0 0 20px var(--neon-blue); }
-          }
+}
