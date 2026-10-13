@@ -1,9 +1,8 @@
-const VERSION = "106";
+const VERSION = "107";
 
 const COLORS = ['red', 'yellow', 'green', 'blue'];
 const VALUES = ['+2', 'Skip', 'Reverse', 'Wild', 'Wild +4', '1', '2', '3', '4', '5', '6', '7', '8'];
 
-let deck = [];
 let gameState = {
     players: [],
     currentPlayer: 0,
@@ -20,12 +19,12 @@ document.addEventListener('DOMContentLoaded', () => {
 function startNewGame() {
     createDeck();
     setupPlayers(5);
-    dealCards(5, 15); // حالا دقیقا ۱۵ کارت به هر نفر داده می‌شود
+    dealCards(5, 15);
     renderGame();
 }
 
 function createDeck() {
-    deck = [];
+    let deck = [];
     COLORS.forEach(color => {
         VALUES.forEach(value => {
             deck.push({ color: color, value: value });
@@ -35,7 +34,7 @@ function createDeck() {
         deck.push({ color: 'wild', value: 'Wild' });
         deck.push({ color: 'wild', value: 'Wild +4' });
     }
-    deck.sort(() => Math.random() - 0.5);
+    gameState.deck = deck.sort(() => Math.random() - 0.5);
 }
 
 function setupPlayers(count) {
@@ -50,11 +49,13 @@ function dealCards(playerCount, cardsPerPlayer) {
     for (let i = 0; i < playerCount; i++) {
         let hand = [];
         for (let j = 0; j < cardsPerPlayer; j++) {
-            if (deck.length > 0) hand.push(deck.pop());
+            if (gameState.deck.length > 0) hand.push(gameState.deck.pop());
         }
         gameState.playerHands.push(hand);
     }
-    if (deck.length > 0) gameState.discardPile.push(deck.pop());
+    if (gameState.deck.length > 0) {
+        gameState.discardPile = [gameState.deck.pop()];
+    }
 }
 
 function renderGame() {
@@ -65,9 +66,9 @@ function renderGame() {
         gameState.players.forEach((player, index) => {
             const wrapper = document.createElement('div');
             wrapper.className = 'player-wrapper';
+            
             const profile = document.createElement('div');
-            profile.className = 'player-profile';
-            if(index === gameState.currentPlayer) profile.style.borderColor = "#fff";
+            profile.className = `player-profile ${index === gameState.currentPlayer ? 'active' : ''}`;
 
             const countLabel = document.createElement('div');
             countLabel.className = 'card-count';
@@ -79,7 +80,7 @@ function renderGame() {
         });
     }
 
-    // ۲. رندر کارت وسط (Discard Pile)
+    // ۲. رندر مرکز میز
     const discardContainer = document.getElementById('discard-pile-container');
     if (discardContainer) {
         discardContainer.innerHTML = '';
@@ -93,21 +94,19 @@ function renderGame() {
         }
     }
 
-    // ۳. رندر بانک کارت‌ها (Deck)
-    const deckElement = document.getElementById('card-deck');
+    // ۳. رندر بانک (Deck)
+    const deckElement = document.getElementById('deck-container');
     if (deckElement) {
         deckElement.onclick = () => {
-            if (deck.length > 0) {
-                const drawn = deck.pop();
-                // اگر دست بازیکن بیشتر از ۱۵ تا شد، کارت جدید اضافه نشود (یا طبق قانون بازی)
-                // اینجا اجازه می‌دهیم اضافه شود اما فقط ۱۵ تا نمایش داده شود
+            if (gameState.deck.length > 0) {
+                const drawn = gameState.deck.pop();
                 gameState.playerHands[0].push(drawn);
                 renderGame();
             }
         };
     }
 
-    // ۴. رندر دست بازیکن (پایین صفحه)
+    // ۴. رندر دست بازیکن
     renderPlayerHand(0);
 }
 
@@ -117,8 +116,6 @@ function renderPlayerHand(playerIndex) {
     handContainer.innerHTML = '';
     
     const hand = gameState.playerHands[playerIndex] || [];
-    
-    // محدود کردن نمایش به حداکثر ۱۵ کارت برای جلوگیری از شلوغی
     const displayHand = hand.slice(0, 15);
 
     displayHand.forEach(card => {
@@ -132,11 +129,11 @@ function renderPlayerHand(playerIndex) {
 
 function getCardColor(color) {
     switch(color) {
-        case 'red': return '#ff5555';
-        case 'blue': return '#5555ff';
-        case 'green': return '#55aa55';
-        case 'yellow': return '#ffaa00';
-        case 'wild': return '#222';
+        case 'red': return '#ff4b2b';
+        case 'blue': return '#2193b0';
+        case 'green': return '#11998e';
+        case 'yellow': return '#ffe259';
+        case 'wild': return '#222222';
         default: return '#ffffff';
     }
-                                         }
+}
