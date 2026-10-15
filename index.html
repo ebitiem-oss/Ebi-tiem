@@ -4,30 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Ebi-tiem UNO</title>
-    <link rel="stylesheet" href="style.css?v=109">
+    <link rel="stylesheet" href="style.css?v=110">
 </head>
 <body>
 
-    <!-- بخش بالا: بازیکنان و دکمه‌های کنترلی -->
     <div id="top-bar">
         <div id="players-area"></div>
         <div id="controls">
-            <button class="action-btn" onclick="drawCard()">DRAW</button>
+            <button class="action-btn" onclick="drawCard()">DRAW CARD</button>
         </div>
     </div>
 
-    <!-- بخش وسط: میز بازی -->
     <div id="game-table">
-        <div id="deck-container"></div>
-        <div id="discard-pile-container"></div>
+        <div id="deck-container">
+            <div class="card deck-card">DECK</div>
+        </div>
+        <div id="discard-pile-container">
+            <!-- کارت وسط اینجا ظاهر می‌شود -->
+        </div>
     </div>
 
-    <!-- بخش پایین: دست بازیکن -->
     <div id="player-hand-container">
         <div id="player-hand"></div>
     </div>
 
-    <!-- بخش چت و صدا (فعلاً فقط ظاهر برای رزرو فضا) -->
     <div id="chat-overlay">
         <div id="chat-messages"></div>
         <div id="chat-input-area">
