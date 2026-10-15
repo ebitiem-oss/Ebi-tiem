@@ -80,6 +80,7 @@ body {
     box-shadow: 0 4px 8px rgba(0,0,0,0.5);
     cursor: pointer;
     user-select: none;
+    flex-shrink: 0;
 }
 
 .deck-card {
@@ -91,6 +92,7 @@ body {
     height: 25%;
     background: #111;
     border-top: 2px solid #333;
+    width: 100%;
 }
 
 #player-hand {
@@ -102,6 +104,7 @@ body {
     padding: 10px;
     height: 100%;
     overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .player-profile { width: 30px; height: 30px; border-radius: 50%; border: 2px solid #444; }
