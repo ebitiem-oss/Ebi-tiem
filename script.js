@@ -1,4 +1,4 @@
-const VERSION = "109";
+const VERSION = "110";
 
 const COLORS = ['red', 'yellow', 'green', 'blue'];
 const VALUES = ['+2', 'Skip', 'Reverse', 'Wild', 'Wild +4', '1', '2', '3', '4', '5', '6', '7', '8'];
@@ -20,7 +20,7 @@ function startNewGame() {
     gameState.isGameOver = false;
     createDeck();
     setupPlayers(5);
-    dealCards(5, 15);
+    dealCards(5, 7); // هر بازیکن ۷ کارت
     renderGame();
 }
 
@@ -62,14 +62,16 @@ function dealCards(playerCount, cardsPerPlayer) {
 function renderGame() {
     if (gameState.isGameOver) return;
 
+    // ۱. رندر بازیکنان در بالا
     const playersArea = document.getElementById('players-area');
     if (playersArea) {
         playersArea.innerHTML = '';
         gameState.players.forEach((player, index) => {
             const wrapper = document.createElement('div');
-            wrapper.className = 'player-wrapper';
+            wrapper.style.textAlign = 'center';
             const profile = document.createElement('div');
             profile.className = `player-profile ${index === gameState.currentPlayer ? 'active' : ''}`;
+            profile.style.margin = '0 auto';
             const countLabel = document.createElement('div');
             countLabel.className = 'card-count';
             countLabel.innerText = gameState.playerHands[index].length;
@@ -79,17 +81,21 @@ function renderGame() {
         });
     }
 
-    const discardCardContainer = document.getElementById('discard-pile-card');
-    if (discardCardContainer) {
-        discardCardContainer.innerHTML = '';
+    // ۲. رندر کارت وسط (Discard Pile)
+    const discardContainer = document.getElementById('discard-pile-container');
+    if (discardContainer) {
+        discardContainer.innerHTML = '';
         const topCard = gameState.discardPile[gameState.discardPile.length - 1];
         if (topCard) {
-            discardCardContainer.className = 'card';
-            discardCardContainer.style.backgroundColor = getCardColor(topCard.color);
-            discardCardContainer.innerText = topCard.value;
+            const cardDiv = document.createElement('div');
+            cardDiv.className = 'card';
+            cardDiv.style.backgroundColor = getCardColor(topCard.color);
+            cardDiv.innerText = topCard.value;
+            discardContainer.appendChild(cardDiv);
         }
     }
 
+    // ۳. رندر دست بازیکن (پایین)
     renderPlayerHand(0);
 }
 
@@ -118,6 +124,8 @@ function drawCard() {
 
 function playCard(playerIndex, cardIndex) {
     if (gameState.isGameOver) return;
+    if (playerIndex !== gameState.currentPlayer) return;
+
     const card = gameState.playerHands[playerIndex].splice(cardIndex, 1)[0];
     gameState.discardPile.push(card);
     
