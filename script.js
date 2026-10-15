@@ -1,4 +1,4 @@
-const VERSION = "110";
+const VERSION = "111"; // نسخه جدید
 
 const COLORS = ['red', 'yellow', 'green', 'blue'];
 const VALUES = ['+2', 'Skip', 'Reverse', 'Wild', 'Wild +4', '1', '2', '3', '4', '5', '6', '7', '8'];
@@ -20,7 +20,7 @@ function startNewGame() {
     gameState.isGameOver = false;
     createDeck();
     setupPlayers(5);
-    dealCards(5, 7); // هر بازیکن ۷ کارت
+    dealCards(5, 7); 
     renderGame();
 }
 
@@ -62,7 +62,7 @@ function dealCards(playerCount, cardsPerPlayer) {
 function renderGame() {
     if (gameState.isGameOver) return;
 
-    // ۱. رندر بازیکنان در بالا
+    // ۱. رندر بازیکنان
     const playersArea = document.getElementById('players-area');
     if (playersArea) {
         playersArea.innerHTML = '';
@@ -81,7 +81,7 @@ function renderGame() {
         });
     }
 
-    // ۲. رندر کارت وسط (Discard Pile)
+    // ۲. رندر کارت وسط
     const discardContainer = document.getElementById('discard-pile-container');
     if (discardContainer) {
         discardContainer.innerHTML = '';
@@ -95,7 +95,7 @@ function renderGame() {
         }
     }
 
-    // ۳. رندر دست بازیکن (پایین)
+    // ۳. رندر دست بازیکن (فقط برای بازیکن فعلی نمایش داده می‌شود در این نسخه ساده)
     renderPlayerHand(0);
 }
 
@@ -115,22 +115,42 @@ function renderPlayerHand(playerIndex) {
     });
 }
 
-function drawCard() {
-    if (gameState.deck.length > 0 && !gameState.isGameOver) {
-        gameState.playerHands[0].push(gameState.deck.pop());
-        nextTurn();
-    }
-}
+// --- منطق اصلی بازی (قوانین تطابق) ---
 
 function playCard(playerIndex, cardIndex) {
     if (gameState.isGameOver) return;
     if (playerIndex !== gameState.currentPlayer) return;
 
-    const card = gameState.playerHands[playerIndex].splice(cardIndex, 1)[0];
-    gameState.discardPile.push(card);
-    
-    if (checkWinner()) return;
-    nextTurn();
+    const hand = gameState.playerHands[playerIndex];
+    const cardToPlay = hand[cardIndex];
+    const topCard = gameState.discardPile[gameState.discardPile.length - 1];
+
+    // بررسی قانون تطابق: رنگ یا عدد باید یکی باشد، یا کارت Wild باشد
+    const isColorMatch = cardToPlay.color === topCard.color;
+    const isValueMatch = cardToPlay.value === topCard.value;
+    const isWildCard = cardToPlay.color === 'wild';
+
+    if (isColorMatch || isValueMatch || isWildCard) {
+        // اگر درست بود، کارت را بازی کن
+        hand.splice(cardIndex, 1);
+        gameState.discardPile.push(cardToPlay);
+        
+        console.log("Card played successfully!");
+
+        if (checkWinner()) return;
+        nextTurn();
+    } else {
+        // اگر اشتباه بود
+        console.log("Invalid move! Match color or value.");
+        // اینجا در مراحل بعد یک پیام قرمز رنگ نشان می‌دهیم
+    }
+}
+
+function drawCard() {
+    if (gameState.deck.length > 0 && !gameState.isGameOver) {
+        gameState.playerHands[0].push(gameState.deck.pop());
+        nextTurn();
+    }
 }
 
 function nextTurn() {
@@ -158,4 +178,4 @@ function getCardColor(color) {
         case 'wild': return '#222222';
         default: return '#ffffff';
     }
-}
+                                }
