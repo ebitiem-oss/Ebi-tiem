@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fa">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Ebi-tiem UNO</title>
-    <link rel="stylesheet" href="style.css?v=112">
+    <link rel="stylesheet" href="style.css?v=114">
 </head>
 <body>
 
@@ -17,7 +17,7 @@
 
     <div id="game-table">
         <div id="deck-container">
-            <div class="card deck-card">DECK</div>
+            <div class="card deck-card" onclick="drawCard()">DECK</div>
         </div>
         <div id="discard-pile-container"></div>
     </div>
@@ -26,13 +26,6 @@
         <div id="player-hand"></div>
     </div>
 
-    <div id="chat-overlay">
-        <div id="chat-messages"></div>
-        <div id="chat-input-area">
-            <button id="voice-btn">🎤</button>
-            <input type="text" id="chat-input" placeholder="Type a message...">
-        </div>
-    </div>
-
+    <script src="script.js?v=114"></script>
 </body>
 </html>
