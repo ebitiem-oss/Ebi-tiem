@@ -4,16 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>بازی اونو نیورا - Neura UNO</title>
-    <link rel="stylesheet" href="style.css?v=118">
+    <link rel="stylesheet" href="style.css?v=120">
 </head>
 <body>
     <!-- صفحه ورود و تنظیم اولیه -->
     <div id="setup-screen" class="setup-screen">
         <div class="setup-card">
             <h1>🎮 بازی آنلاین اونو - نیورا</h1>
-            <p>نام خود را وارد کنید و وارد میز بازی شوید:</p>
-            <input type="text" id="player-name-input" placeholder="نام شما..." value="بازیکن من">
+            <p>نام منحصر‌به‌فرد خود را وارد کنید:</p>
+            <input type="text" id="player-name-input" placeholder="آیدی دلخواه شما...">
+            <div id="name-error" class="error-msg hidden">این آیدی قبلاً توسط بازیکن دیگری انتخاب شده است!</div>
             <button id="start-game-btn" class="neon-btn">ورود به میز بازی</button>
+            <div id="subscription-notice" class="sub-notice hidden">
+                شما قبلاً نام خود را تغییر داده‌اید. تغییر مجدد نام نیاز به <a href="#" onclick="buySubscription()">خرید اشتراک</a> دارد!
+            </div>
         </div>
     </div>
 
@@ -21,9 +25,8 @@
     <div id="game-container" class="game-container hidden">
         <!-- هدر بالای صفحه -->
         <header class="game-header">
-            <div class="brand">Neura UNO <span class="version">v118</span></div>
+            <div class="brand">Neura UNO <span class="version">v120</span></div>
             <div class="header-controls">
-                <!-- کنترل صدا / میکروفون -->
                 <button id="audio-toggle-btn" class="icon-btn" title="قطع/وصل صدا">🔊</button>
                 <button id="mic-toggle-btn" class="icon-btn" title="میکروفون">🎤</button>
             </div>
@@ -31,9 +34,7 @@
 
         <!-- میز بازی و اطلاعات -->
         <main class="table-section">
-            <div id="players-ring" class="players-ring">
-                <!-- پروفایل بازیکنان دور میز اینجا قرار می‌گیرد -->
-            </div>
+            <div id="players-ring" class="players-ring"></div>
 
             <div class="center-arena">
                 <div id="deck-pile" class="card-pile deck-pile" title="برای کشیدن کارت کلیک کنید">
@@ -41,7 +42,6 @@
                     <span class="pile-label">دک (مخزن)</span>
                 </div>
                 <div id="discard-pile" class="card-pile discard-pile">
-                    <!-- آخرین کارت بازی شده -->
                     <span class="pile-label">زمین بازی</span>
                 </div>
             </div>
@@ -51,25 +51,58 @@
             </div>
         </main>
 
-        <!-- پنل پایین: دست بازیکن و چت -->
+        <!-- پنل پایین: دست بازیکن و پیام‌رسان پیشرفته -->
         <footer class="bottom-panel">
             <div class="player-hand-section">
                 <div class="hand-header">
                     <span>کارت‌های شما (<span id="my-card-count">0</span>)</span>
                 </div>
-                <div id="player-hand" class="player-hand">
-                    <!-- کارت‌های دست بازیکن -->
-                </div>
+                <div id="player-hand" class="player-hand"></div>
             </div>
 
-            <!-- بخش چت اتاق -->
-            <div class="room-chat-section">
-                <div id="chat-messages" class="chat-messages">
-                    <div class="chat-msg system">خوش آمدید! پیام‌ها و ورود/خروج افراد اینجا نمایش داده می‌شود.</div>
+            <!-- پیام‌رسان پیشرفته -->
+            <div class="messenger-section">
+                <div class="messenger-tabs">
+                    <button class="tab-btn active" onclick="switchMessengerTab('room')">💬 چت اتاق</button>
+                    <button class="tab-btn" onclick="switchMessengerTab('private')">🔒 پیام خصوصی</button>
+                    <button class="tab-btn" onclick="switchMessengerTab('contacts')">👥 مخاطبین (<span id="online-count">4</span>)</button>
                 </div>
-                <div class="chat-input-box">
-                    <input type="text" id="chat-input" placeholder="پیام خود را بنویسید...">
-                    <button id="send-chat-btn" class="neon-btn-sm">ارسال</button>
+
+                <!-- تب چت اتاق -->
+                <div id="tab-room" class="tab-content active">
+                    <div id="chat-messages" class="chat-messages">
+                        <div class="chat-msg system">پیام‌رسان پیشرفته فعال شد. خوش آمدید!</div>
+                    </div>
+                </div>
+
+                <!-- تب پیام خصوصی -->
+                <div id="tab-private" class="tab-content hidden">
+                    <div id="private-messages" class="chat-messages">
+                        <div class="chat-msg system">هیچ پیام خصوصی جدیدی ندارید. روی نام بازیکنان در تب مخاطبین کلیک کنید.</div>
+                    </div>
+                </div>
+
+                <!-- تب مخاطبین -->
+                <div id="tab-contacts" class="tab-content hidden">
+                    <div id="contacts-list" class="contacts-list">
+                        <!-- فهرست بازیکنان اینجا لود می‌شود -->
+                    </div>
+                </div>
+
+                <!-- نوار ابزار ارسال پیام و ایموجی -->
+                <div class="messenger-input-area">
+                    <div class="quick-emojis">
+                        <button onclick="sendQuickEmoji('😀')">😀</button>
+                        <button onclick="sendQuickEmoji('🔥')">🔥</button>
+                        <button onclick="sendQuickEmoji('👍')">👍</button>
+                        <button onclick="sendQuickEmoji('🎉')">🎉</button>
+                        <button onclick="sendQuickEmoji('😎')">😎</button>
+                        <button onclick="sendQuickEmoji('💩')">💩</button>
+                    </div>
+                    <div class="chat-input-box">
+                        <input type="text" id="chat-input" placeholder="پیام خود را بنویسید...">
+                        <button id="send-chat-btn" class="neon-btn-sm">ارسال</button>
+                    </div>
                 </div>
             </div>
         </footer>
@@ -88,6 +121,7 @@
         </div>
     </div>
 
-    <script src="script.js?v=118"></script>
+    <script src="script.js?v=120"></script>
 </body>
-</html>
+                                           </html>
+                                           
