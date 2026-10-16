@@ -1,86 +1,93 @@
 <!DOCTYPE html>
-<html lang="fa">
+<html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ebi-tiem UNO</title>
-    <link rel="stylesheet" href="style.css?v=117">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بازی اونو نیورا - Neura UNO</title>
+    <link rel="stylesheet" href="style.css?v=118">
 </head>
 <body>
-
-    <!-- صفحه تنظیمات و شروع بازی -->
-    <div id="setup-screen">
-        <div id="setup-box">
-            <h2>تنظیمات بازی اونو</h2>
-            <div style="margin-bottom: 10px; text-align: right;">
-                <label style="font-size: 12px;">نام شما:</label>
-                <input type="text" id="player-name-input" value="You" autocomplete="off">
-            </div>
-            <div style="margin-bottom: 15px; text-align: right;">
-                <label style="font-size: 12px;">تعداد کل بازیکنان (تا ۱۰ نفر):</label>
-                <select id="player-count-select">
-                    <option value="2">۲ بازیکن (۱ ربات)</option>
-                    <option value="3">۳ بازیکن (۲ ربات)</option>
-                    <option value="4" selected>۴ بازیکن (۳ ربات)</option>
-                    <option value="5">۵ بازیکن (۴ ربات)</option>
-                    <option value="6">۶ بازیکن (۵ ربات)</option>
-                    <option value="7">۷ بازیکن (۶ ربات)</option>
-                    <option value="8">۸ بازیکن (۷ ربات)</option>
-                    <option value="9">۹ بازیکن (۸ ربات)</option>
-                    <option value="10">۱۰ بازیکن (۹ ربات)</option>
-                </select>
-            </div>
-            <button onclick="initGameFromSetup()" style="width: 100%; background: var(--neon-green); border: none; padding: 10px; font-weight: bold; cursor: pointer; border-radius: 4px; color: #000;">شروع بازی</button>
+    <!-- صفحه ورود و تنظیم اولیه -->
+    <div id="setup-screen" class="setup-screen">
+        <div class="setup-card">
+            <h1>🎮 بازی آنلاین اونو - نیورا</h1>
+            <p>نام خود را وارد کنید و وارد میز بازی شوید:</p>
+            <input type="text" id="player-name-input" placeholder="نام شما..." value="بازیکن من">
+            <button id="start-game-btn" class="neon-btn">ورود به میز بازی</button>
         </div>
     </div>
 
-    <div id="top-bar">
-        <div id="players-area"></div>
+    <!-- صفحه اصلی بازی -->
+    <div id="game-container" class="game-container hidden">
+        <!-- هدر بالای صفحه -->
+        <header class="game-header">
+            <div class="brand">Neura UNO <span class="version">v118</span></div>
+            <div class="header-controls">
+                <!-- کنترل صدا / میکروفون -->
+                <button id="audio-toggle-btn" class="icon-btn" title="قطع/وصل صدا">🔊</button>
+                <button id="mic-toggle-btn" class="icon-btn" title="میکروفون">🎤</button>
+            </div>
+        </header>
+
+        <!-- میز بازی و اطلاعات -->
+        <main class="table-section">
+            <div id="players-ring" class="players-ring">
+                <!-- پروفایل بازیکنان دور میز اینجا قرار می‌گیرد -->
+            </div>
+
+            <div class="center-arena">
+                <div id="deck-pile" class="card-pile deck-pile" title="برای کشیدن کارت کلیک کنید">
+                    <div class="card back">UNO</div>
+                    <span class="pile-label">دک (مخزن)</span>
+                </div>
+                <div id="discard-pile" class="card-pile discard-pile">
+                    <!-- آخرین کارت بازی شده -->
+                    <span class="pile-label">زمین بازی</span>
+                </div>
+            </div>
+
+            <div class="turn-indicator">
+                نوبت: <span id="current-turn-name">-</span>
+            </div>
+        </main>
+
+        <!-- پنل پایین: دست بازیکن و چت -->
+        <footer class="bottom-panel">
+            <div class="player-hand-section">
+                <div class="hand-header">
+                    <span>کارت‌های شما (<span id="my-card-count">0</span>)</span>
+                </div>
+                <div id="player-hand" class="player-hand">
+                    <!-- کارت‌های دست بازیکن -->
+                </div>
+            </div>
+
+            <!-- بخش چت اتاق -->
+            <div class="room-chat-section">
+                <div id="chat-messages" class="chat-messages">
+                    <div class="chat-msg system">خوش آمدید! پیام‌ها و ورود/خروج افراد اینجا نمایش داده می‌شود.</div>
+                </div>
+                <div class="chat-input-box">
+                    <input type="text" id="chat-input" placeholder="پیام خود را بنویسید...">
+                    <button id="send-chat-btn" class="neon-btn-sm">ارسال</button>
+                </div>
+            </div>
+        </footer>
     </div>
 
-    <div id="game-table">
-        <div id="deck-container">
-            <div class="card deck-card" onclick="drawCard()">DECK</div>
-        </div>
-        <div id="discard-pile-container"></div>
-    </div>
-
-    <!-- بخش چت تعاملی -->
-    <div id="chat-voice-bar">
-        <div id="chat-messages" onclick="openChatModal()">به بازی اونو خوش آمدید! (برای چت کلیک کنید)</div>
-        <button id="mic-btn" onclick="toggleMic()">🎤</button>
-    </div>
-
-    <!-- مودال ارسال پیام -->
-    <div id="chat-modal" style="display:none;">
-        <div id="chat-modal-content">
-            <div id="chat-history"></div>
-            <div style="display: flex; gap: 5px; margin-top: 5px;">
-                <input type="text" id="chat-input" placeholder="پیام خود را بنویسید..." autocomplete="off">
-                <button onclick="sendChatMessage()" style="background: var(--neon-green); border: none; padding: 5px 10px; font-weight: bold; cursor: pointer;">ارسال</button>
-                <button onclick="closeChatModal()" style="background: #444; color: white; border: none; padding: 5px 10px; cursor: pointer;">بستن</button>
+    <!-- پنجره انتخاب رنگ برای کارت Wild -->
+    <div id="color-picker-modal" class="modal hidden">
+        <div class="modal-content">
+            <h3>رنگ مورد نظر را انتخاب کنید:</h3>
+            <div class="color-options">
+                <button class="color-opt red" data-color="red"></button>
+                <button class="color-opt blue" data-color="blue"></button>
+                <button class="color-opt green" data-color="green"></button>
+                <button class="color-opt yellow" data-color="yellow"></button>
             </div>
         </div>
     </div>
 
-    <!-- مودال انتخاب رنگ Wild -->
-    <div id="color-picker-modal" style="display:none;">
-        <div id="color-picker-content">
-            <h3>انتخاب رنگ بعدی</h3>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px;">
-                <button onclick="selectWildColor('red')" style="background: #e74c3c; height: 40px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">قرمز</button>
-                <button onclick="selectWildColor('blue')" style="background: #3498db; height: 40px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">آبی</button>
-                <button onclick="selectWildColor('green')" style="background: #2ecc71; height: 40px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">سبز</button>
-                <button onclick="selectWildColor('yellow')" style="background: #f1c40f; height: 40px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; color: black;">زرد</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="player-hand-container">
-        <div id="player-hand"></div>
-    </div>
-
-    <script src="script.js?v=117"></script>
+    <script src="script.js?v=118"></script>
 </body>
-    </html>
-    
+</html>
