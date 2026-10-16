@@ -4,15 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Ebi-tiem UNO</title>
-    <link rel="stylesheet" href="style.css?v=114">
+    <link rel="stylesheet" href="style.css?v=115">
 </head>
 <body>
 
     <div id="top-bar">
         <div id="players-area"></div>
-        <div id="controls">
-            <button class="action-btn" onclick="drawCard()">DRAW CARD</button>
-        </div>
     </div>
 
     <div id="game-table">
@@ -22,10 +19,16 @@
         <div id="discard-pile-container"></div>
     </div>
 
+    <!-- بخش چت و صوت -->
+    <div id="chat-voice-bar">
+        <div id="chat-messages">نوشته‌ها و پیام‌های بازی...</div>
+        <button id="mic-btn" onclick="toggleMic()">🎤</button>
+    </div>
+
     <div id="player-hand-container">
         <div id="player-hand"></div>
     </div>
 
-    <script src="script.js?v=114"></script>
+    <script src="script.js?v=115"></script>
 </body>
 </html>
