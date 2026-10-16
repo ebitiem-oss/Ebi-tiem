@@ -1,259 +1,383 @@
 :root {
-    --neon-green: #39ff14;
-    --neon-blue: #00f3ff;
-    --bg-dark: #0a0a0a;
+    --bg-color: #0d1117;
+    --neon-green: #00ff66;
+    --neon-blue: #00e5ff;
+    --neon-glow: 0 0 10px rgba(0, 255, 102, 0.4);
+    --card-width: 55px;
+    --card-height: 85px;
 }
 
 * {
     box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: Tahoma, sans-serif;
 }
 
 body {
-    margin: 0;
-    padding: 0;
-    background-color: var(--bg-dark);
-    color: white;
-    font-family: sans-serif;
+    background-color: var(--bg-color);
+    color: #fff;
+    direction: rtl;
+    overflow-x: hidden;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* صفحه ورود */
+.setup-screen {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     height: 100vh;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
+    background: radial-gradient(circle, #1a2332 0%, #0d1117 100%);
 }
 
-/* صفحه تنظیمات اولیه */
-#setup-screen {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.95);
-    z-index: 2000;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-#setup-box {
-    background: #151515;
-    width: 85%;
-    max-width: 320px;
-    border: 1px solid #333;
-    border-radius: 8px;
-    padding: 20px;
+.setup-card {
+    background: #161b22;
+    padding: 30px;
+    border-radius: 15px;
+    border: 1px solid var(--neon-green);
+    box-shadow: var(--neon-glow);
     text-align: center;
+    max-width: 350px;
+    width: 90%;
 }
 
-#setup-box h2 {
-    margin-top: 0;
-    font-size: 16px;
-    color: var(--neon-green);
+.setup-card h1 {
+    font-size: 1.3rem;
     margin-bottom: 15px;
+    color: var(--neon-green);
 }
 
-#setup-box input, #setup-box select {
+.setup-card p {
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+    color: #ccc;
+}
+
+.setup-card input {
     width: 100%;
-    background: #222;
-    border: 1px solid #444;
-    color: white;
-    padding: 8px;
-    font-size: 12px;
-    border-radius: 4px;
-    margin-top: 5px;
-}
-
-#top-bar {
-    height: 15%;
-    display: flex;
-    flex-direction: column;
-    border-bottom: 1px solid #333;
-    background: #111;
-    padding: 5px;
-}
-
-#players-area {
-    flex-grow: 1;
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    overflow-x: auto;
-    gap: 8px;
-    padding: 0 5px;
-}
-
-.player-wrapper {
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    border: 1px solid #30363d;
+    background: #0d1117;
+    color: #fff;
     text-align: center;
-    flex-shrink: 0;
 }
 
-.player-profile {
-    width: 26px;
-    height: 26px;
-    border-radius: 50%;
-    border: 2px solid #444;
-    background-color: #222;
-    margin: 0 auto;
-}
-
-.player-profile.active {
-    border-color: var(--neon-green);
-    box-shadow: 0 0 6px var(--neon-green);
-}
-
-.card-count {
-    font-size: 9px;
-    color: var(--neon-blue);
-    margin-top: 2px;
-}
-
-#game-table {
-    flex-grow: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 20px;
-    background: radial-gradient(circle, #1a1a1a 0%, #0a0a0a 100%);
-}
-
-#deck-container, #discard-pile-container {
-    width: 55px;
-    height: 80px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.card {
-    width: 50px;
-    height: 72px;
-    border-radius: 5px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 11px;
-    font-weight: bold;
-    color: white;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
-    box-shadow: 0 2px 5px rgba(0,0,0,0.6);
-    cursor: pointer;
-    user-select: none;
-    flex-shrink: 0;
-    border: 1px solid rgba(255,255,255,0.2);
-}
-
-.deck-card {
-    background-color: #222 !important;
-    border: 2px dashed var(--neon-blue);
-    font-size: 10px;
-    color: var(--neon-blue);
-}
-
-#chat-voice-bar {
-    height: 35px;
-    background: #141414;
-    border-top: 1px solid #222;
-    display: flex;
-    align-items: center;
-    padding: 0 10px;
-    gap: 10px;
-}
-
-#chat-messages {
-    flex-grow: 1;
-    font-size: 11px;
-    color: #aaa;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    cursor: pointer;
-}
-
-#mic-btn {
-    background: #222;
+.neon-btn {
+    background: transparent;
     color: var(--neon-green);
     border: 1px solid var(--neon-green);
-    border-radius: 50%;
-    width: 26px;
-    height: 26px;
-    font-size: 12px;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    box-shadow: var(--neon-glow);
+    transition: 0.2s;
+    width: 100%;
+}
+
+.neon-btn:active {
+    background: var(--neon-green);
+    color: #000;
+}
+
+/* ساختار بازی */
+.game-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    max-width: 600px;
+    margin: 0 auto;
+    border-left: 1px solid #30363d;
+    border-right: 1px solid #30363d;
+}
+
+.game-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    background: #161b22;
+    border-bottom: 1px solid #30363d;
+}
+
+.brand {
+    font-weight: bold;
+    color: var(--neon-green);
+    font-size: 1rem;
+}
+
+.version {
+    font-size: 0.75rem;
+    color: #8b949e;
+}
+
+.header-controls {
+    display: flex;
+    gap: 8px;
+}
+
+.icon-btn {
+    background: #21262d;
+    border: 1px solid #30363d;
+    color: #fff;
+    padding: 5px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.table-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    padding: 10px;
+    position: relative;
+}
+
+.players-ring {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    max-width: 100%;
+}
+
+.player-node {
+    background: #161b22;
+    border: 1px solid #30363d;
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    text-align: center;
+    min-width: 75px;
+}
+
+.player-node.active-player {
+    border-color: var(--neon-green);
+    box-shadow: var(--neon-glow);
+}
+
+.center-arena {
+    display: flex;
+    gap: 25px;
+    align-items: center;
+    justify-content: center;
+    margin: 10px 0;
+}
+
+.card-pile {
+    width: var(--card-width);
+    height: var(--card-height);
+    border-radius: 6px;
+    position: relative;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
+    font-size: 0.75rem;
+    font-weight: bold;
 }
 
-/* مودال‌ها */
-#chat-modal, #color-picker-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
+.deck-pile .card.back {
     width: 100%;
     height: 100%;
-    background: rgba(0,0,0,0.8);
-    z-index: 1000;
+    background: linear-gradient(135deg, #21262d, #111);
+    border: 2px dashed var(--neon-blue);
+    border-radius: 6px;
     display: flex;
-    justify-content: center;
     align-items: center;
-}
-
-#chat-modal-content, #color-picker-content {
-    background: #1a1a1a;
-    width: 90%;
-    max-width: 320px;
-    border: 1px solid #333;
-    border-radius: 8px;
-    display: flex;
-    flex-direction: column;
-    padding: 15px;
-}
-
-#color-picker-content {
-    text-align: center;
-}
-
-#color-picker-content h3 {
-    margin-top: 0;
-    font-size: 14px;
+    justify-content: center;
     color: var(--neon-blue);
 }
 
-#chat-history {
-    height: 180px;
-    overflow-y: auto;
-    font-size: 11px;
-    color: #ddd;
+.pile-label {
+    position: absolute;
+    bottom: -18px;
+    font-size: 0.65rem;
+    color: #8b949e;
+    width: 100px;
+    text-align: center;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.turn-indicator {
+    font-size: 0.85rem;
+    background: #161b22;
+    padding: 5px 12px;
+    border-radius: 15px;
+    border: 1px solid #30363d;
+}
+
+.turn-indicator span {
+    color: var(--neon-green);
+    font-weight: bold;
+}
+
+/* پنل پایین */
+.bottom-panel {
+    background: #161b22;
+    border-top: 1px solid #30363d;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.player-hand-section {
     display: flex;
     flex-direction: column;
     gap: 4px;
-    border-bottom: 1px solid #333;
-    padding-bottom: 5px;
 }
 
-#chat-input {
-    flex-grow: 1;
-    background: #111;
-    border: 1px solid #444;
-    color: white;
-    padding: 6px;
-    font-size: 11px;
+.hand-header {
+    font-size: 0.75rem;
+    color: #8b949e;
+}
+
+.player-hand {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    max-height: 110px;
+    overflow-y: auto;
+    padding: 4px;
+    background: #0d1117;
+    border-radius: 8px;
+    border: 1px solid #30363d;
+}
+
+/* کارت‌های اونو */
+.uno-card {
+    width: var(--card-width);
+    height: var(--card-height);
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 4px;
+    font-weight: bold;
+    font-size: 0.8rem;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    user-select: none;
+    transition: transform 0.1s;
+}
+
+.uno-card:active {
+    transform: scale(0.95);
+}
+
+.uno-card.red { background: linear-gradient(135deg, #ff4d4d, #cc0000); color: #fff; }
+.uno-card.blue { background: linear-gradient(135deg, #3399ff, #0055cc); color: #fff; }
+.uno-card.green { background: linear-gradient(135deg, #2ecc71, #27ae60); color: #fff; }
+.uno-card.yellow { background: linear-gradient(135deg, #f1c40f, #f39c12); color: #000; }
+.uno-card.wild { background: linear-gradient(135deg, #333, #000); border: 1px solid var(--neon-green); color: var(--neon-green); }
+
+/* چت اتاق */
+.room-chat-section {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.chat-messages {
+    height: 70px;
+    overflow-y: auto;
+    background: #0d1117;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    padding: 5px;
+    font-size: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.chat-msg {
+    padding: 2px 4px;
     border-radius: 4px;
 }
 
-#player-hand-container {
-    height: 28%;
-    background: #111;
-    border-top: 2px solid #333;
-    width: 100%;
+.chat-msg.system {
+    color: #8b949e;
+    font-style: italic;
 }
 
-#player-hand {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    overflow-y: auto;
-    align-content: flex-start;
-    gap: 6px;
-    padding: 6px;
-    width: 100%;
-    height: 100%;
+.chat-msg.user-chat {
+    background: #21262d;
+    color: #c9d1d9;
 }
+
+.chat-input-box {
+    display: flex;
+    gap: 5px;
+}
+
+.chat-input-box input {
+    flex: 1;
+    background: #0d1117;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    padding: 5px 8px;
+    color: #fff;
+    font-size: 0.75rem;
+}
+
+.neon-btn-sm {
+    background: #21262d;
+    border: 1px solid var(--neon-green);
+    color: var(--neon-green);
+    padding: 0 12px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    cursor: pointer;
+}
+
+/* مودال انتخاب رنگ */
+.modal {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: #161b22;
+    border: 1px solid var(--neon-green);
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.color-options {
+    display: grid;
+    grid-template-columns: repeat(2, 60px);
+    gap: 10px;
+    margin-top: 15px;
+    justify-content: center;
+}
+
+.color-opt {
+    height: 50px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+}
+
+.color-opt.red { background: #ff4d4d; }
+.color-opt.blue { background: #3399ff; }
+.color-opt.green { background: #2ecc71; }
+.color-opt.yellow { background: #f1c40f; }
+    
