@@ -4,21 +4,37 @@ const VALUES = ['1', '2', '3', '4', '5', '6', '7', '8', 'Skip', 'Reverse', '+2']
 let gameState = {
     players: [],
     currentPlayer: 0,
+    direction: 1, // 1 برای جهت ساعت‌گرد، -1 برای پاد ساعت‌گرد
     discardPile: [],
     playerHands: [],
     deck: [],
     isGameOver: false,
-    chatLogs: []
+    chatLogs: [],
+    pendingWildCardIndex: null
 };
 
-window.onload = function() {
-    startNewGame();
-};
+function initGameFromSetup() {
+    const nameInput = document.getElementById('player-name-input').value.trim();
+    const countSelect = document.getElementById('player-count-select').value;
+    
+    let playerName = nameInput || 'You';
+    let totalPlayers = parseInt(countSelect);
 
-function startNewGame() {
+    let playersList = [{ id: 0, name: playerName }];
+    for (let i = 1; i < totalPlayers; i++) {
+        playersList.push({ id: i, name: `Bot ${i}` });
+    }
+
+    document.getElementById('setup-screen').style.display = 'none';
+    startNewGame(playersList);
+}
+
+function startNewGame(playersList) {
     gameState.isGameOver = false;
     gameState.currentPlayer = 0;
+    gameState.direction = 1;
     gameState.chatLogs = [{ sender: 'سیستم', text: 'بازی شروع شد! موفق باشید.' }];
+    gameState.players = playersList;
     
     let deck = [];
     COLORS.forEach(color => {
@@ -32,14 +48,6 @@ function startNewGame() {
     }
     gameState.deck = deck.sort(() => Math.random() - 0.5);
 
-    gameState.players = [
-        { id: 0, name: 'You' },
-        { id: 1, name: 'Bot 1' },
-        { id: 2, name: 'Bot 2' },
-        { id: 3, name: 'Bot 3' },
-        { id: 4, name: 'Bot 4' }
-    ];
-
     gameState.playerHands = [];
     gameState.players.forEach(() => {
         let hand = [];
@@ -52,7 +60,13 @@ function startNewGame() {
     });
 
     if (gameState.deck.length > 0) {
-        gameState.discardPile = [gameState.deck.pop()];
+        // مطمئن شویم کارت روی میز عدد ساده باشد تا قوانین شروع درگیر نشوند
+        let firstCard = gameState.deck.pop();
+        while(firstCard.color === 'wild' || firstCard.value === 'Skip' || firstCard.value === 'Reverse' || firstCard.value === '+2') {
+            gameState.deck.unshift(firstCard);
+            firstCard = gameState.deck.pop();
+        }
+        gameState.discardPile = [firstCard];
     }
 
     renderGame();
@@ -84,7 +98,11 @@ function renderGame() {
         const cardDiv = document.createElement('div');
         cardDiv.className = 'card';
         cardDiv.style.backgroundColor = getCardColor(topCard.color);
-        cardDiv.innerText = topCard.value;
+        let displayText = topCard.value;
+        if (topCard.chosenColor) {
+            displayText += ` (${topCard.chosenColor[0].toUpperCase()})`;
+        }
+        cardDiv.innerText = displayText;
         discardContainer.appendChild(cardDiv);
     }
 
@@ -111,39 +129,112 @@ function playCard(playerIndex, cardIndex) {
     let hand = gameState.playerHands[playerIndex];
     let card = hand[cardIndex];
     let topCard = gameState.discardPile[gameState.discardPile.length - 1];
+    let effectiveColor = topCard.chosenColor || topCard.color;
 
-    if (card.color === topCard.color || card.value === topCard.value || card.color === 'wild') {
-        hand.splice(cardIndex, 1);
-        gameState.discardPile.push(card);
-
-        if (hand.length === 0) {
-            gameState.isGameOver = true;
-            addChatMessage('سیستم', '🎉 شما برنده شدید!');
-            setTimeout(() => alert('🎉 برنده شدید!'), 100);
-            return;
+    if (card.color === effectiveColor || card.value === topCard.value || card.color === 'wild') {
+        
+        // اگر کارت Wild بود، رنگ انتخاب شود
+        if (card.color === 'wild') {
+            if (playerIndex === 0) {
+                gameState.pendingWildCardIndex = cardIndex;
+                document.getElementById('color-picker-modal').style.display = 'flex';
+                return;
+            } else {
+                // ربات به صورت تصادفی رنگ انتخاب می‌کند
+                let randomColor = COLORS[Math.floor(Math.random() * COLORS.length)];
+                card.chosenColor = randomColor;
+            }
         }
 
+        executeCardPlay(playerIndex, cardIndex);
+    }
+}
+
+function selectWildColor(color) {
+    document.getElementById('color-picker-modal').style.display = 'none';
+    let cardIndex = gameState.pendingWildCardIndex;
+    let hand = gameState.playerHands[0];
+    hand[cardIndex].chosenColor = color;
+    addChatMessage('You', `رنگ ${color} را انتخاب کرد.`);
+    executeCardPlay(0, cardIndex);
+    gameState.pendingWildCardIndex = null;
+}
+
+function executeCardPlay(playerIndex, cardIndex) {
+    let hand = gameState.playerHands[playerIndex];
+    let card = hand.splice(cardIndex, 1)[0];
+    gameState.discardPile.push(card);
+
+    if (hand.length === 0) {
+        gameState.isGameOver = true;
+        let winnerName = gameState.players[playerIndex].name;
+        addChatMessage('سیستم', `🎉 ${winnerName} برنده شد!`);
+        setTimeout(() => alert(`🎉 ${winnerName} برنده شد!`), 100);
+        return;
+    }
+
+    applyCardEffects(card);
+}
+
+function applyCardEffects(card) {
+    let nextIdx = getNextPlayerIndex();
+
+    if (card.value === 'Skip') {
+        addChatMessage('سیستم', `نوبت ${gameState.players[nextIdx].name} رد شد!`);
+        gameState.currentPlayer = nextIdx; // پرش از بازیکن بعدی
+        nextTurn(false);
+    } else if (card.value === 'Reverse') {
+        gameState.direction *= -1;
+        addChatMessage('سیستم', 'جهت بازی معکوس شد!');
         nextTurn();
+    } else if (card.value === '+2') {
+        for (let i = 0; i < 2; i++) {
+            if (gameState.deck.length > 0) {
+                gameState.playerHands[nextIdx].push(gameState.deck.pop());
+            }
+        }
+        addChatMessage('سیستم', `${gameState.players[nextIdx].name} دو کارت جریمه کشید!`);
+        gameState.currentPlayer = nextIdx;
+        nextTurn(false);
+    } else if (card.value === 'Wild +4') {
+        for (let i = 0; i < 4; i++) {
+            if (gameState.deck.length > 0) {
+                gameState.playerHands[nextIdx].push(gameState.deck.pop());
+            }
+        }
+        addChatMessage('سیستم', `${gameState.players[nextIdx].name} چهار کارت جریمه کشید!`);
+        gameState.currentPlayer = nextIdx;
+        nextTurn(false);
+    } else {
+        nextTurn();
+    }
+}
+
+function getNextPlayerIndex() {
+    let count = gameState.players.length;
+    return (gameState.currentPlayer + gameState.direction + count) % count;
+}
+
+function nextTurn(advance = true) {
+    if (advance) {
+        gameState.currentPlayer = getNextPlayerIndex();
+    }
+    renderGame();
+
+    if (gameState.currentPlayer !== 0 && !gameState.isGameOver) {
+        setTimeout(botTurn, 1000);
     }
 }
 
 function drawCard() {
     if (gameState.isGameOver) return;
+    if (gameState.currentPlayer !== 0) return;
+
     if (gameState.deck.length > 0) {
         let card = gameState.deck.pop();
-        gameState.playerHands[gameState.currentPlayer].push(card);
-        addChatMessage('سیستم', 'یک کارت کشیده شد.');
+        gameState.playerHands[0].push(card);
+        addChatMessage('سیستم', 'یک کارت کشیدید.');
         nextTurn();
-    }
-}
-
-function nextTurn() {
-    gameState.currentPlayer = (gameState.currentPlayer + 1) % gameState.players.length;
-    renderGame();
-
-    // اگر نوبت ربات‌ها بود، به صورت خودکار بازی کنند
-    if (gameState.currentPlayer !== 0 && !gameState.isGameOver) {
-        setTimeout(botTurn, 1000);
     }
 }
 
@@ -152,30 +243,37 @@ function botTurn() {
     let botIdx = gameState.currentPlayer;
     let hand = gameState.playerHands[botIdx];
     let topCard = gameState.discardPile[gameState.discardPile.length - 1];
+    let effectiveColor = topCard.chosenColor || topCard.color;
 
-    let playedIndex = hand.findIndex(c => c.color === topCard.color || c.value === topCard.value || c.color === 'wild');
+    let playedIndex = hand.findIndex(c => c.color === effectiveColor || c.value === topCard.value || c.color === 'wild');
 
     if (playedIndex !== -1) {
-        let card = hand.splice(playedIndex, 1)[0];
+        let card = hand[playedIndex];
+        if (card.color === 'wild') {
+            card.chosenColor = COLORS[Math.floor(Math.random() * COLORS.length)];
+        }
+        hand.splice(playedIndex, 1);
         gameState.discardPile.push(card);
+
         if (hand.length === 0) {
             gameState.isGameOver = true;
             addChatMessage('سیستم', `${gameState.players[botIdx].name} برنده بازی شد!`);
             alert(`😢 ${gameState.players[botIdx].name} برنده شد!`);
             return;
         }
+
+        if (Math.random() < 0.3) {
+            const botMsgs = ['عجب کارتی!', 'کارتام دارن تموم میشن!', 'الان می‌برم!'];
+            let randomMsg = botMsgs[Math.floor(Math.random() * botMsgs.length)];
+            addChatMessage(gameState.players[botIdx].name, randomMsg);
+        }
+
+        applyCardEffects(card);
     } else if (gameState.deck.length > 0) {
         hand.push(gameState.deck.pop());
+        addChatMessage('سیستم', `${gameState.players[botIdx].name} یک کارت کشید.`);
+        nextTurn();
     }
-
-    // ربات‌ها گاهی در چت صحبت می‌کنند
-    if (Math.random() < 0.3) {
-        const botMsgs = ['عجب کارتی!', 'اوه اونو!', 'کارتام دارن تموم میشن!', 'الان می‌برم!'];
-        let randomMsg = botMsgs[Math.floor(Math.random() * botMsgs.length)];
-        addChatMessage(gameState.players[botIdx].name, randomMsg);
-    }
-
-    nextTurn();
 }
 
 function openChatModal() {
@@ -217,7 +315,8 @@ function sendChatMessage() {
     const input = document.getElementById('chat-input');
     let text = input.value.trim();
     if (text) {
-        addChatMessage('You', text);
+        let playerName = gameState.players[0] ? gameState.players[0].name : 'You';
+        addChatMessage(playerName, text);
         input.value = '';
     }
 }
@@ -235,5 +334,5 @@ function getCardColor(color) {
         case 'wild': return '#34495e';
         default: return '#95a5a6';
     }
-    }
-        
+            }
+                                                     
