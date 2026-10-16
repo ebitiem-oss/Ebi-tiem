@@ -1,7 +1,5 @@
-const VERSION = "113";
-
 const COLORS = ['red', 'yellow', 'green', 'blue'];
-const VALUES = ['+2', 'Skip', 'Reverse', 'Wild', 'Wild +4', '1', '2', '3', '4', '5', '6', '7', '8'];
+const VALUES = ['1', '2', '3', '4', '5', '6', '7', '8', 'Skip', 'Reverse', '+2'];
 
 let gameState = {
     players: [],
@@ -12,133 +10,100 @@ let gameState = {
     isGameOver: false
 };
 
-// این تابع بلافاصله بعد از لود شدن صفحه اجرا می‌شود
-window.onload = () => {
-    console.log("Game Starting...");
-    startNewGame();
+window.onload = function() {
+    initGame();
 };
 
-function startNewGame() {
-    // پاکسازی وضعیت قبلی
+function initGame() {
     gameState.isGameOver = false;
     gameState.currentPlayer = 0;
     
-    // ۱. ساختن کارت‌ها
-    createDeck();
-    
-    // ۲. ساختن بازیکن‌ها
-    setupPlayers(5);
-    
-    // ۳. پخش کارت‌ها (بسیار مهم: اول پخش می‌کنیم بعد رندر می‌کنیم)
-    dealCards(5, 7);
-    
-    // ۴. نمایش در صفحه
-    renderGame();
-}
-
-function createDeck() {
+    // ساخت دک
     let deck = [];
     COLORS.forEach(color => {
         VALUES.forEach(value => {
-            deck.push({ color: color, value: value });
+            deck.push({ color, value });
         });
     });
+    // کارت وایلد
     for (let i = 0; i < 4; i++) {
         deck.push({ color: 'wild', value: 'Wild' });
         deck.push({ color: 'wild', value: 'Wild +4' });
     }
     gameState.deck = deck.sort(() => Math.random() - 0.5);
-}
 
-function setupPlayers(count) {
-    gameState.players = [];
-    for (let i = 0; i < count; i++) {
-        gameState.players.push({ id: i, name: `P${i + 1}` });
-    }
-}
+    // ساخت بازیکن‌ها (۵ بازیکن)
+    gameState.players = [
+        { id: 0, name: 'You' },
+        { id: 1, name: 'Bot 1' },
+        { id: 2, name: 'Bot 2' },
+        { id: 3, name: 'Bot 3' },
+        { id: 4, name: 'Bot 4' }
+    ];
 
-function dealCards(playerCount, cardsPerPlayer) {
+    // پخش ۷ کارت به هر بازیکن
     gameState.playerHands = [];
-    for (let i = 0; i < playerCount; i++) {
+    gameState.players.forEach(() => {
         let hand = [];
-        for (let j = 0; j < cardsPerPlayer; j++) {
+        for (let i = 0; i < 7; i++) {
             if (gameState.deck.length > 0) {
                 hand.push(gameState.deck.pop());
             }
         }
         gameState.playerHands.push(hand);
-    }
-    
-    // کارت اول برای وسط میز
+    });
+
+    // کارت روی میز
     if (gameState.deck.length > 0) {
         gameState.discardPile = [gameState.deck.pop()];
-    } else {
-        gameState.discardPile = [gameState.playerHands[0].pop()]; // fallback
     }
+
+    renderGame();
 }
 
 function renderGame() {
-    console.log("Rendering Game State:", gameState);
-
-    // ۱. رندر بخش بازیکن‌ها (بالای صفحه)
+    // ۱. نمایش بازیکن‌ها در بالا
     const playersArea = document.getElementById('players-area');
-    if (playersArea) {
-        playersArea.innerHTML = '';
-        gameState.players.forEach((player, index) => {
-            const wrapper = document.createElement('div');
-            wrapper.style.textAlign = 'center';
-            
-            const profile = document.createElement('div');
-            profile.className = `player-profile ${index === gameState.currentPlayer ? 'active' : ''}`;
-            profile.style.margin = '0 auto';
-            profile.style.backgroundColor = '#333';
-            
-            const countLabel = document.createElement('div');
-            countLabel.className = 'card-count';
-            countLabel.innerText = gameState.playerHands[index].length;
-            
-            wrapper.appendChild(profile);
-            wrapper.appendChild(countLabel);
-            playersArea.appendChild(wrapper);
-        });
-    }
+    playersArea.innerHTML = '';
+    gameState.players.forEach((player, index) => {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'player-wrapper';
+        
+        const profile = document.createElement('div');
+        profile.className = `player-profile ${index === gameState.currentPlayer ? 'active' : ''}`;
+        
+        const countLabel = document.createElement('div');
+        countLabel.className = 'card-count';
+        countLabel.innerText = `${player.name} (${gameState.playerHands[index].length})`;
+        
+        wrapper.appendChild(profile);
+        wrapper.appendChild(countLabel);
+        playersArea.appendChild(wrapper);
+    });
 
-    // ۲. رندر کارت وسط (Discard Pile)
+    // ۲. نمایش کارت روی میز
     const discardContainer = document.getElementById('discard-pile-container');
-    if (discardContainer) {
-        discardContainer.innerHTML = '';
-        const topCard = gameState.discardPile[gameState.discardPile.length - 1];
-        if (topCard) {
-            const cardDiv = document.createElement('div');
-            cardDiv.className = 'card';
-            cardDiv.style.backgroundColor = getCardColor(topCard.color);
-            cardDiv.innerText = topCard.value;
-            discardContainer.appendChild(cardDiv);
-        }
+    discardContainer.innerHTML = '';
+    const topCard = gameState.discardPile[gameState.discardPile.length - 1];
+    if (topCard) {
+        const cardDiv = document.createElement('div');
+        cardDiv.className = 'card';
+        cardDiv.style.backgroundColor = getCardColor(topCard.color);
+        cardDiv.innerText = topCard.value;
+        discardContainer.appendChild(cardDiv);
     }
 
-    // ۳. رندر دست بازیکن (بخش پایین صفحه)
-    renderPlayerHand(0);
-}
-
-function renderPlayerHand(playerIndex) {
+    // ۳. نمایش دست بازیکن (بازیکن شماره 0)
     const handContainer = document.getElementById('player-hand');
-    if (!handContainer) return;
-    
     handContainer.innerHTML = '';
-    const hand = gameState.playerHands[playerIndex];
+    const myHand = gameState.playerHands[0];
     
-    if (!hand || hand.length === 0) {
-        handContainer.innerHTML = '<div style="padding:10px">No cards in hand</div>';
-        return;
-    }
-
-    hand.forEach((card, index) => {
+    myHand.forEach((card, index) => {
         const cardDiv = document.createElement('div');
         cardDiv.className = 'card';
         cardDiv.style.backgroundColor = getCardColor(card.color);
         cardDiv.innerText = card.value;
-        cardDiv.onclick = () => playCard(playerIndex, index);
+        cardDiv.onclick = () => playCard(0, index);
         handContainer.appendChild(cardDiv);
     });
 }
@@ -147,29 +112,32 @@ function playCard(playerIndex, cardIndex) {
     if (gameState.isGameOver) return;
     if (playerIndex !== gameState.currentPlayer) return;
 
-    const hand = gameState.playerHands[playerIndex];
-    const cardToPlay = hand[cardIndex];
-    const topCard = gameState.discardPile[gameState.discardPile.length - 1];
+    let hand = gameState.playerHands[playerIndex];
+    let card = hand[cardIndex];
+    let topCard = gameState.discardPile[gameState.discardPile.length - 1];
 
-    const isColorMatch = cardToPlay.color === topCard.color;
-    const isValueMatch = cardToPlay.value === topCard.value;
-    const isWildCard = cardToPlay.color === 'wild';
-
-    if (isColorMatch || isValueMatch || isWildCard) {
+    // قانون تطابق رنگ، مقدار یا کارت وایلد
+    if (card.color === topCard.color || card.value === topCard.value || card.color === 'wild') {
         hand.splice(cardIndex, 1);
-        gameState.discardPile.push(cardToPlay);
-        
-        if (checkWinner()) return;
+        gameState.discardPile.push(card);
+
+        if (hand.length === 0) {
+            gameState.isGameOver = true;
+            setTimeout(() => alert('🎉 برنده شدید!'), 100);
+            return;
+        }
+
         nextTurn();
     } else {
-        // هیچ پیامی نمایش داده نمی‌شود (طبق درخواست شما)
+        // اگر تطابق نداشت، هیچ اتفاقی نمی‌افتد (سکوت کامل طبق خواسته شما)
     }
 }
 
 function drawCard() {
-    if (gameState.deck.length > 0 && !gameState.isGameOver) {
-        // بازیکن فعلی یک کارت می‌کشد
-        gameState.playerHands[gameState.currentPlayer].push(gameState.deck.pop());
+    if (gameState.isGameOver) return;
+    if (gameState.deck.length > 0) {
+        let card = gameState.deck.pop();
+        gameState.playerHands[gameState.currentPlayer].push(card);
         nextTurn();
     }
 }
@@ -179,25 +147,13 @@ function nextTurn() {
     renderGame();
 }
 
-function checkWinner() {
-    for (let i = 0; i < gameState.playerHands.length; i++) {
-        if (gameState.playerHands[i].length === 0) {
-            gameState.isGameOver = true;
-            setTimeout(() => alert(`🎉 WINNER: Player ${i + 1}!`), 100);
-            return true;
-        }
-    }
-    return false;
-}
-
 function getCardColor(color) {
-    switch(color) {
-        case 'red': return '#ff4b2b';
-        case 'blue': return '#2193b0';
-        case 'green': return '#11998e';
-        case 'yellow': return '#ffe259';
-        case 'wild': return '#222222';
-        default: return '#ffffff';
+    switch (color) {
+        case 'red': return '#e74c3c';
+        case 'blue': return '#3498db';
+        case 'green': return '#2ecc71';
+        case 'yellow': return '#f1c40f';
+        case 'wild': return '#34495e';
+        default: return '#95a5a6';
     }
 }
-    
