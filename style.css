@@ -3,8 +3,8 @@
     --neon-green: #00ff66;
     --neon-blue: #00e5ff;
     --neon-glow: 0 0 10px rgba(0, 255, 102, 0.4);
-    --card-width: 55px;
-    --card-height: 85px;
+    --card-width: 50px;
+    --card-height: 75px;
 }
 
 * {
@@ -25,7 +25,6 @@ body {
     display: none !important;
 }
 
-/* صفحه ورود */
 .setup-screen {
     display: flex;
     justify-content: center;
@@ -60,12 +59,30 @@ body {
 .setup-card input {
     width: 100%;
     padding: 10px;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
     border-radius: 8px;
     border: 1px solid #30363d;
     background: #0d1117;
     color: #fff;
     text-align: center;
+}
+
+.error-msg {
+    color: #ff4d4d;
+    font-size: 0.75rem;
+    margin-bottom: 10px;
+}
+
+.sub-notice {
+    font-size: 0.75rem;
+    color: #f1c40f;
+    margin-top: 12px;
+}
+
+.sub-notice a {
+    color: var(--neon-blue);
+    text-decoration: underline;
+    cursor: pointer;
 }
 
 .neon-btn {
@@ -86,7 +103,6 @@ body {
     color: #000;
 }
 
-/* ساختار بازی */
 .game-container {
     display: flex;
     flex-direction: column;
@@ -101,7 +117,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 15px;
+    padding: 8px 15px;
     background: #161b22;
     border-bottom: 1px solid #30363d;
 }
@@ -109,7 +125,7 @@ body {
 .brand {
     font-weight: bold;
     color: var(--neon-green);
-    font-size: 1rem;
+    font-size: 0.95rem;
 }
 
 .version {
@@ -126,10 +142,10 @@ body {
     background: #21262d;
     border: 1px solid #30363d;
     color: #fff;
-    padding: 5px 8px;
+    padding: 4px 7px;
     border-radius: 6px;
     cursor: pointer;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
 }
 
 .table-section {
@@ -138,7 +154,7 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: space-around;
-    padding: 10px;
+    padding: 8px;
     position: relative;
 }
 
@@ -146,18 +162,18 @@ body {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 8px;
+    gap: 6px;
     max-width: 100%;
 }
 
 .player-node {
     background: #161b22;
     border: 1px solid #30363d;
-    padding: 6px 10px;
+    padding: 5px 8px;
     border-radius: 8px;
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     text-align: center;
-    min-width: 75px;
+    min-width: 70px;
 }
 
 .player-node.active-player {
@@ -167,10 +183,10 @@ body {
 
 .center-arena {
     display: flex;
-    gap: 25px;
+    gap: 20px;
     align-items: center;
     justify-content: center;
-    margin: 10px 0;
+    margin: 5px 0;
 }
 
 .card-pile {
@@ -182,7 +198,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     font-weight: bold;
 }
 
@@ -200,21 +216,22 @@ body {
 
 .pile-label {
     position: absolute;
-    bottom: -18px;
-    font-size: 0.65rem;
+    bottom: -16px;
+    font-size: 0.6rem;
     color: #8b949e;
-    width: 100px;
+    width: 90px;
     text-align: center;
     left: 50%;
     transform: translateX(-50%);
 }
 
 .turn-indicator {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     background: #161b22;
-    padding: 5px 12px;
+    padding: 4px 10px;
     border-radius: 15px;
     border: 1px solid #30363d;
+    margin-top: 5px;
 }
 
 .turn-indicator span {
@@ -222,40 +239,38 @@ body {
     font-weight: bold;
 }
 
-/* پنل پایین */
 .bottom-panel {
     background: #161b22;
     border-top: 1px solid #30363d;
-    padding: 10px;
+    padding: 8px;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
 }
 
 .player-hand-section {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 2px;
 }
 
 .hand-header {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     color: #8b949e;
 }
 
 .player-hand {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px;
-    max-height: 110px;
+    gap: 5px;
+    max-height: 95px;
     overflow-y: auto;
-    padding: 4px;
+    padding: 3px;
     background: #0d1117;
     border-radius: 8px;
     border: 1px solid #30363d;
 }
 
-/* کارت‌های اونو */
 .uno-card {
     width: var(--card-width);
     height: var(--card-height);
@@ -263,11 +278,11 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding: 4px;
+    padding: 3px;
     font-weight: bold;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     cursor: pointer;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
     user-select: none;
     transition: transform 0.1s;
 }
@@ -282,28 +297,60 @@ body {
 .uno-card.yellow { background: linear-gradient(135deg, #f1c40f, #f39c12); color: #000; }
 .uno-card.wild { background: linear-gradient(135deg, #333, #000); border: 1px solid var(--neon-green); color: var(--neon-green); }
 
-/* چت اتاق */
-.room-chat-section {
+/* استایل‌های پیام‌رسان پیشرفته */
+.messenger-section {
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 4px;
+    background: #0d1117;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    padding: 6px;
+}
+
+.messenger-tabs {
+    display: flex;
+    gap: 4px;
+}
+
+.tab-btn {
+    flex: 1;
+    background: #161b22;
+    border: 1px solid #30363d;
+    color: #8b949e;
+    padding: 4px;
+    font-size: 0.7rem;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.tab-btn.active {
+    background: #21262d;
+    color: var(--neon-green);
+    border-color: var(--neon-green);
+}
+
+.tab-content {
+    height: 75px;
+    display: flex;
+    flex-direction: column;
 }
 
 .chat-messages {
-    height: 70px;
+    flex: 1;
     overflow-y: auto;
-    background: #0d1117;
+    background: #161b22;
     border: 1px solid #30363d;
     border-radius: 6px;
-    padding: 5px;
-    font-size: 0.75rem;
+    padding: 4px;
+    font-size: 0.7rem;
     display: flex;
     flex-direction: column;
-    gap: 3px;
+    gap: 2px;
 }
 
 .chat-msg {
-    padding: 2px 4px;
+    padding: 2px 5px;
     border-radius: 4px;
 }
 
@@ -317,32 +364,86 @@ body {
     color: #c9d1d9;
 }
 
+.contacts-list {
+    flex: 1;
+    overflow-y: auto;
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    padding: 4px;
+    font-size: 0.7rem;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.contact-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #0d1117;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.contact-item:hover {
+    border: 1px solid var(--neon-blue);
+}
+
+.online-dot {
+    height: 7px;
+    width: 7px;
+    background-color: var(--neon-green);
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.messenger-input-area {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.quick-emojis {
+    display: flex;
+    gap: 4px;
+}
+
+.quick-emojis button {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 4px;
+    padding: 2px 6px;
+    cursor: pointer;
+    font-size: 0.8rem;
+}
+
 .chat-input-box {
     display: flex;
-    gap: 5px;
+    gap: 4px;
 }
 
 .chat-input-box input {
     flex: 1;
-    background: #0d1117;
+    background: #161b22;
     border: 1px solid #30363d;
     border-radius: 6px;
-    padding: 5px 8px;
+    padding: 4px 8px;
     color: #fff;
-    font-size: 0.75rem;
+    font-size: 0.7rem;
 }
 
 .neon-btn-sm {
     background: #21262d;
     border: 1px solid var(--neon-green);
     color: var(--neon-green);
-    padding: 0 12px;
+    padding: 0 10px;
     border-radius: 6px;
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     cursor: pointer;
 }
 
-/* مودال انتخاب رنگ */
 .modal {
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
