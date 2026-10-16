@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Ebi-tiem UNO</title>
-    <link rel="stylesheet" href="style.css?v=115">
+    <link rel="stylesheet" href="style.css?v=116">
 </head>
 <body>
 
@@ -19,16 +19,28 @@
         <div id="discard-pile-container"></div>
     </div>
 
-    <!-- بخش چت و صوت -->
+    <!-- بخش چت تعاملی -->
     <div id="chat-voice-bar">
-        <div id="chat-messages">نوشته‌ها و پیام‌های بازی...</div>
+        <div id="chat-messages" onclick="openChatModal()">به بازی اونو خوش آمدید! (برای چت کلیک کنید)</div>
         <button id="mic-btn" onclick="toggleMic()">🎤</button>
+    </div>
+
+    <!-- مودال ارسال پیام -->
+    <div id="chat-modal" style="display:none;">
+        <div id="chat-modal-content">
+            <div id="chat-history"></div>
+            <div style="display: flex; gap: 5px; margin-top: 5px;">
+                <input type="text" id="chat-input" placeholder="پیام خود را بنویسید..." autocomplete="off">
+                <button onclick="sendChatMessage()" style="background: var(--neon-green); border: none; padding: 5px 10px; font-weight: bold; cursor: pointer;">ارسال</button>
+                <button onclick="closeChatModal()" style="background: #444; color: white; border: none; padding: 5px 10px; cursor: pointer;">بستن</button>
+            </div>
+        </div>
     </div>
 
     <div id="player-hand-container">
         <div id="player-hand"></div>
     </div>
 
-    <script src="script.js?v=115"></script>
+    <script src="script.js?v=116"></script>
 </body>
 </html>
