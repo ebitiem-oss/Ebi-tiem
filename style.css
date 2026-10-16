@@ -20,6 +20,48 @@ body {
     overflow: hidden;
 }
 
+/* صفحه تنظیمات اولیه */
+#setup-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.95);
+    z-index: 2000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#setup-box {
+    background: #151515;
+    width: 85%;
+    max-width: 320px;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+}
+
+#setup-box h2 {
+    margin-top: 0;
+    font-size: 16px;
+    color: var(--neon-green);
+    margin-bottom: 15px;
+}
+
+#setup-box input, #setup-box select {
+    width: 100%;
+    background: #222;
+    border: 1px solid #444;
+    color: white;
+    padding: 8px;
+    font-size: 12px;
+    border-radius: 4px;
+    margin-top: 5px;
+}
+
 #top-bar {
     height: 15%;
     display: flex;
@@ -32,15 +74,16 @@ body {
 #players-area {
     flex-grow: 1;
     display: flex;
-    justify-content: space-around;
+    justify-content: flex-start;
     align-items: center;
     overflow-x: auto;
+    gap: 8px;
+    padding: 0 5px;
 }
 
 .player-wrapper {
     text-align: center;
     flex-shrink: 0;
-    margin: 0 4px;
 }
 
 .player-profile {
@@ -139,8 +182,8 @@ body {
     justify-content: center;
 }
 
-/* استایل مودال چت */
-#chat-modal {
+/* مودال‌ها */
+#chat-modal, #color-picker-modal {
     position: fixed;
     top: 0;
     left: 0;
@@ -153,20 +196,29 @@ body {
     align-items: center;
 }
 
-#chat-modal-content {
+#chat-modal-content, #color-picker-content {
     background: #1a1a1a;
     width: 90%;
-    max-width: 350px;
-    height: 60%;
+    max-width: 320px;
     border: 1px solid #333;
     border-radius: 8px;
     display: flex;
     flex-direction: column;
-    padding: 10px;
+    padding: 15px;
+}
+
+#color-picker-content {
+    text-align: center;
+}
+
+#color-picker-content h3 {
+    margin-top: 0;
+    font-size: 14px;
+    color: var(--neon-blue);
 }
 
 #chat-history {
-    flex-grow: 1;
+    height: 180px;
     overflow-y: auto;
     font-size: 11px;
     color: #ddd;
