@@ -21,7 +21,7 @@ body {
 }
 
 #top-bar {
-    height: 18%;
+    height: 15%;
     display: flex;
     flex-direction: column;
     border-bottom: 1px solid #333;
@@ -40,12 +40,12 @@ body {
 .player-wrapper {
     text-align: center;
     flex-shrink: 0;
-    margin: 0 5px;
+    margin: 0 4px;
 }
 
 .player-profile {
-    width: 28px;
-    height: 28px;
+    width: 26px;
+    height: 26px;
     border-radius: 50%;
     border: 2px solid #444;
     background-color: #222;
@@ -58,26 +58,9 @@ body {
 }
 
 .card-count {
-    font-size: 10px;
+    font-size: 9px;
     color: var(--neon-blue);
     margin-top: 2px;
-}
-
-#controls {
-    height: 25px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.action-btn {
-    background: #222;
-    color: var(--neon-blue);
-    border: 1px solid var(--neon-blue);
-    border-radius: 4px;
-    padding: 2px 12px;
-    font-size: 10px;
-    font-weight: bold;
 }
 
 #game-table {
@@ -90,25 +73,25 @@ body {
 }
 
 #deck-container, #discard-pile-container {
-    width: 60px;
-    height: 85px;
+    width: 55px;
+    height: 80px;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
 .card {
-    width: 55px;
-    height: 80px;
-    border-radius: 6px;
+    width: 50px;
+    height: 72px;
+    border-radius: 5px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: bold;
     color: white;
     text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
-    box-shadow: 0 3px 6px rgba(0,0,0,0.6);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.6);
     cursor: pointer;
     user-select: none;
     flex-shrink: 0;
@@ -122,22 +105,54 @@ body {
     color: var(--neon-blue);
 }
 
+#chat-voice-bar {
+    height: 35px;
+    background: #141414;
+    border-top: 1px solid #222;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    gap: 10px;
+}
+
+#chat-messages {
+    flex-grow: 1;
+    font-size: 11px;
+    color: #aaa;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#mic-btn {
+    background: #222;
+    color: var(--neon-green);
+    border: 1px solid var(--neon-green);
+    border-radius: 50%;
+    width: 26px;
+    height: 26px;
+    font-size: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 #player-hand-container {
-    height: 32%;
+    height: 28%;
     background: #111;
     border-top: 2px solid #333;
     width: 100%;
-    position: relative;
 }
 
 #player-hand {
     display: flex;
     flex-direction: row;
-    overflow-x: auto;
-    overflow-y: hidden;
-    align-items: center;
-    gap: 8px;
-    padding: 10px;
+    flex-wrap: wrap; /* دو ردیفه شدن کارت‌ها */
+    overflow-y: auto;
+    align-content: flex-start;
+    gap: 6px;
+    padding: 6px;
     width: 100%;
     height: 100%;
 }
