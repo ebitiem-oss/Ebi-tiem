@@ -7,7 +7,8 @@ let gameState = {
     discardPile: [],
     playerHands: [],
     deck: [],
-    isGameOver: false
+    isGameOver: false,
+    chatLogs: []
 };
 
 window.onload = function() {
@@ -17,6 +18,7 @@ window.onload = function() {
 function startNewGame() {
     gameState.isGameOver = false;
     gameState.currentPlayer = 0;
+    gameState.chatLogs = [{ sender: 'سیستم', text: 'بازی شروع شد! موفق باشید.' }];
     
     let deck = [];
     COLORS.forEach(color => {
@@ -98,6 +100,8 @@ function renderGame() {
         cardDiv.onclick = () => playCard(0, index);
         handContainer.appendChild(cardDiv);
     });
+
+    updateChatBar();
 }
 
 function playCard(playerIndex, cardIndex) {
@@ -114,6 +118,7 @@ function playCard(playerIndex, cardIndex) {
 
         if (hand.length === 0) {
             gameState.isGameOver = true;
+            addChatMessage('سیستم', '🎉 شما برنده شدید!');
             setTimeout(() => alert('🎉 برنده شدید!'), 100);
             return;
         }
@@ -127,13 +132,94 @@ function drawCard() {
     if (gameState.deck.length > 0) {
         let card = gameState.deck.pop();
         gameState.playerHands[gameState.currentPlayer].push(card);
-        nextTurn(); // کشیدن کارت به صورت خودکار نوبت را عوض می‌کند
+        addChatMessage('سیستم', 'یک کارت کشیده شد.');
+        nextTurn();
     }
 }
 
 function nextTurn() {
     gameState.currentPlayer = (gameState.currentPlayer + 1) % gameState.players.length;
     renderGame();
+
+    // اگر نوبت ربات‌ها بود، به صورت خودکار بازی کنند
+    if (gameState.currentPlayer !== 0 && !gameState.isGameOver) {
+        setTimeout(botTurn, 1000);
+    }
+}
+
+function botTurn() {
+    if (gameState.isGameOver) return;
+    let botIdx = gameState.currentPlayer;
+    let hand = gameState.playerHands[botIdx];
+    let topCard = gameState.discardPile[gameState.discardPile.length - 1];
+
+    let playedIndex = hand.findIndex(c => c.color === topCard.color || c.value === topCard.value || c.color === 'wild');
+
+    if (playedIndex !== -1) {
+        let card = hand.splice(playedIndex, 1)[0];
+        gameState.discardPile.push(card);
+        if (hand.length === 0) {
+            gameState.isGameOver = true;
+            addChatMessage('سیستم', `${gameState.players[botIdx].name} برنده بازی شد!`);
+            alert(`😢 ${gameState.players[botIdx].name} برنده شد!`);
+            return;
+        }
+    } else if (gameState.deck.length > 0) {
+        hand.push(gameState.deck.pop());
+    }
+
+    // ربات‌ها گاهی در چت صحبت می‌کنند
+    if (Math.random() < 0.3) {
+        const botMsgs = ['عجب کارتی!', 'اوه اونو!', 'کارتام دارن تموم میشن!', 'الان می‌برم!'];
+        let randomMsg = botMsgs[Math.floor(Math.random() * botMsgs.length)];
+        addChatMessage(gameState.players[botIdx].name, randomMsg);
+    }
+
+    nextTurn();
+}
+
+function openChatModal() {
+    document.getElementById('chat-modal').style.display = 'flex';
+    updateChatHistory();
+}
+
+function closeChatModal() {
+    document.getElementById('chat-modal').style.display = 'none';
+}
+
+function addChatMessage(sender, text) {
+    gameState.chatLogs.push({ sender, text });
+    if (gameState.chatLogs.length > 30) gameState.chatLogs.shift();
+    updateChatBar();
+    updateChatHistory();
+}
+
+function updateChatBar() {
+    const chatBar = document.getElementById('chat-messages');
+    if (gameState.chatLogs.length > 0) {
+        let lastMsg = gameState.chatLogs[gameState.chatLogs.length - 1];
+        chatBar.innerText = `${lastMsg.sender}: ${lastMsg.text}`;
+    }
+}
+
+function updateChatHistory() {
+    const historyDiv = document.getElementById('chat-history');
+    historyDiv.innerHTML = '';
+    gameState.chatLogs.forEach(log => {
+        const msgDiv = document.createElement('div');
+        msgDiv.innerHTML = `<b>${log.sender}:</b> ${log.text}`;
+        historyDiv.appendChild(msgDiv);
+    });
+    historyDiv.scrollTop = historyDiv.scrollHeight;
+}
+
+function sendChatMessage() {
+    const input = document.getElementById('chat-input');
+    let text = input.value.trim();
+    if (text) {
+        addChatMessage('You', text);
+        input.value = '';
+    }
 }
 
 function toggleMic() {
@@ -149,4 +235,5 @@ function getCardColor(color) {
         case 'wild': return '#34495e';
         default: return '#95a5a6';
     }
-}
+    }
+        
