@@ -4,9 +4,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Ebi-tiem UNO</title>
-    <link rel="stylesheet" href="style.css?v=116">
+    <link rel="stylesheet" href="style.css?v=117">
 </head>
 <body>
+
+    <!-- صفحه تنظیمات و شروع بازی -->
+    <div id="setup-screen">
+        <div id="setup-box">
+            <h2>تنظیمات بازی اونو</h2>
+            <div style="margin-bottom: 10px; text-align: right;">
+                <label style="font-size: 12px;">نام شما:</label>
+                <input type="text" id="player-name-input" value="You" autocomplete="off">
+            </div>
+            <div style="margin-bottom: 15px; text-align: right;">
+                <label style="font-size: 12px;">تعداد کل بازیکنان (تا ۱۰ نفر):</label>
+                <select id="player-count-select">
+                    <option value="2">۲ بازیکن (۱ ربات)</option>
+                    <option value="3">۳ بازیکن (۲ ربات)</option>
+                    <option value="4" selected>۴ بازیکن (۳ ربات)</option>
+                    <option value="5">۵ بازیکن (۴ ربات)</option>
+                    <option value="6">۶ بازیکن (۵ ربات)</option>
+                    <option value="7">۷ بازیکن (۶ ربات)</option>
+                    <option value="8">۸ بازیکن (۷ ربات)</option>
+                    <option value="9">۹ بازیکن (۸ ربات)</option>
+                    <option value="10">۱۰ بازیکن (۹ ربات)</option>
+                </select>
+            </div>
+            <button onclick="initGameFromSetup()" style="width: 100%; background: var(--neon-green); border: none; padding: 10px; font-weight: bold; cursor: pointer; border-radius: 4px; color: #000;">شروع بازی</button>
+        </div>
+    </div>
 
     <div id="top-bar">
         <div id="players-area"></div>
@@ -37,10 +63,24 @@
         </div>
     </div>
 
+    <!-- مودال انتخاب رنگ Wild -->
+    <div id="color-picker-modal" style="display:none;">
+        <div id="color-picker-content">
+            <h3>انتخاب رنگ بعدی</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px;">
+                <button onclick="selectWildColor('red')" style="background: #e74c3c; height: 40px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">قرمز</button>
+                <button onclick="selectWildColor('blue')" style="background: #3498db; height: 40px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">آبی</button>
+                <button onclick="selectWildColor('green')" style="background: #2ecc71; height: 40px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">سبز</button>
+                <button onclick="selectWildColor('yellow')" style="background: #f1c40f; height: 40px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; color: black;">زرد</button>
+            </div>
+        </div>
+    </div>
+
     <div id="player-hand-container">
         <div id="player-hand"></div>
     </div>
 
-    <script src="script.js?v=116"></script>
+    <script src="script.js?v=117"></script>
 </body>
-</html>
+    </html>
+    
