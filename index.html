@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نیورا - بازی اونو آنلاین</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- صفحه ورود / ثبت نام -->
+    <div id="auth-screen" class="screen active">
+        <div class="auth-container">
+            <div class="logo-area">
+                <i class="fa-solid fa-gamepad auth-logo-icon"></i>
+                <h2>نیورا (Nivra)</h2>
+                <p>بازی آنلاین اونو</p>
+            </div>
+            
+            <!-- فرم ورود/ثبت‌نام اولیه -->
+            <div id="login-form-box" class="form-box">
+                <div class="input-group">
+                    <label><i class="fa-solid fa-at"></i> آیدی کاربری</label>
+                    <input type="text" id="login-id" placeholder="مثال: ebi_tiem">
+                </div>
+                <div class="input-group">
+                    <label><i class="fa-solid fa-lock"></i> رمز عبور (۸ رقمی/کاراکتری)</label>
+                    <input type="password" id="login-pass" maxlength="8" placeholder="********">
+                </div>
+                <button class="primary-btn" onclick="handleLogin()">ورود / ثبت‌نام</button>
+                <div class="auth-links">
+                    <a href="#" onclick="showForgotPass()">رمز عبور خود را فراموش کرده‌اید؟</a>
+                </div>
+            </div>
+
+            <!-- بخش فراموشی رمز عبور -->
+            <div id="forgot-box" class="form-box" style="display: none;">
+                <p class="support-text">برای بازیابی رمز عبور با پشتیبانی تماس بگیرید:</p>
+                <div class="support-number-box">
+                    <a href="tel:09991990035"><i class="fa-solid fa-phone"></i> 09991990035</a>
+                </div>
+                <button class="secondary-btn" onclick="backToLogin()">بازگشت به ورود</button>
+            </div>
+
+            <!-- پیام مسدودیت (۳۰ دقیقه) -->
+            <div id="block-box" class="form-box" style="display: none;">
+                <div class="block-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                <h3>حساب موقتاً مسدود است</h3>
+                <p>به دلیل ۳ بار ورود ناموفق، دسترسی شما تا ۳۰ دقیقه محدود شد.</p>
+                <div id="countdown-timer">00:30:00</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- اپلیکیشن اصلی (بعد از ورود) -->
+    <div id="main-app" class="screen" style="display: none;">
+        
+        <!-- محتوای صفحات (Tab Content) -->
+        <div class="content-container">
+            
+            <!-- ۱. بخش بازی‌ها و اتاق‌ها -->
+            <div id="tab-games" class="tab-content active">
+                <header class="app-header">
+                    <h2>بازی‌ها و اتاق‌ها</h2>
+                    <button class="create-room-btn" onclick="openCreateRoomModal()"><i class="fa-solid fa-plus"></i> ساخت اتاق</button>
+                </header>
+                <div class="rooms-list" id="rooms-list-container">
+                    <!-- لیست اتاق‌ها به صورت داینامیک اینجا قرار می‌گیرد -->
+                </div>
+            </div>
+
+            <!-- ۲. بخش پیام‌رسان (فقط PV) -->
+            <div id="tab-messenger" class="tab-content">
+                <header class="app-header">
+                    <h2>پیام‌رسان (چت خصوصی)</h2>
+                </header>
+                <div class="messenger-list">
+                    <div class="pv-item" onclick="openChat('پشتیبانی نیورا', 'support')">
+                        <div class="pv-avatar"><i class="fa-solid fa-headset"></i></div>
+                        <div class="pv-info">
+                            <h4>پشتیبانی نیورا</h4>
+                            <p>راهنمایی و سوالات متداول</p>
+                        </div>
+                    </div>
+                    <div class="pv-item" onclick="openChat('ربات تمرینی اونو', 'bot')">
+                        <div class="pv-avatar"><i class="fa-solid fa-robot"></i></div>
+                        <div class="pv-info">
+                            <h4>ربات تمرینی اونو</h4>
+                            <p>آماده شروع بازی تمرینی...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ۳. بخش تنظیمات و پروفایل -->
+            <div id="tab-settings" class="tab-content">
+                <header class="app-header">
+                    <h2>تنظیمات و پروفایل</h2>
+                </header>
+                <div class="settings-body">
+                    <div class="profile-card">
+                        <div class="avatar-edit-box">
+                            <img id="current-avatar" src="https://via.placeholder.com/80" alt="پروفایل">
+                            <label for="avatar-file" class="upload-ico"><i class="fa-solid fa-camera"></i></label>
+                            <input type="file" id="avatar-file" accept="image/*" onchange="updateAvatar(event)" style="display: none;">
+                        </div>
+                        <div class="username-edit-group">
+                            <input type="text" id="setting-username" value="">
+                            <button onclick="saveUsername()">ذخیره نام</button>
+                        </div>
+                        <p id="username-change-warning" class="sub-warn">تغییر آیدی/نام فقط یک‌بار رایگان است.</p>
+                        <div id="subscription-box" style="display: none; margin-top: 10px;">
+                            <button class="sub-btn" onclick="buySubscription()">خرید اشتراک برای تغییر نام</button>
+                        </div>
+                    </div>
+
+                    <!-- بخش اختصاصی سازنده (Ebitiem) -->
+                    <div id="creator-admin-panel" class="admin-panel" style="display: none;">
+                        <h3>پنل مدیریت سازنده (Ebitiem)</h3>
+                        <p>ریست کردن رمز عبور سایر کاربران:</p>
+                        <div class="input-group">
+                            <input type="text" id="admin-target-id" placeholder="آیدی کاربر مورد نظر">
+                        </div>
+                        <button class="danger-btn" onclick="adminResetPassword()">بازنشانی رمز کاربر</button>
+                    </div>
+
+                    <div class="settings-options">
+                        <div class="option-row">
+                            <span>صدای بازی</span>
+                            <label class="switch"><input type="checkbox" id="sound-toggle" checked><span class="slider"></span></label>
+                        </div>
+                        <div class="option-row">
+                            <span>درخواست دعوت دوستان</span>
+                            <label class="switch"><input type="checkbox" id="invite-toggle" checked><span class="slider"></span></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- صفحه چت خصوصی (PV) -->
+        <div id="chat-screen" class="sub-screen" style="display: none;">
+            <header class="app-header">
+                <button class="back-arrow" onclick="closeChat()"><i class="fa-solid fa-arrow-right"></i></button>
+                <h3 id="chat-title">چت</h3>
+            </header>
+            <div class="chat-messages" id="chat-messages-box"></div>
+            <div class="chat-input-bar">
+                <input type="text" id="chat-input-text" placeholder="پیام خود را بنویسید...">
+                <button onclick="sendChatMessage()"><i class="fa-solid fa-paper-plane"></i></button>
+            </div>
+        </div>
+
+        <!-- صفحه اتاق بازی (داخل اتاق) -->
+        <div id="room-screen" class="sub-screen" style="display: none;">
+            <header class="room-header">
+                <button class="back-arrow" onclick="leaveRoom()"><i class="fa-solid fa-arrow-right"></i></button>
+                <div class="room-host-info">
+                    <img id="room-host-avatar" src="" alt="Host">
+                    <span id="room-host-name">میزبان</span>
+                </div>
+                <div class="room-header-actions">
+                    <button onclick="toggleReady()"><i class="fa-solid fa-check"></i> آماده</button>
+                    <button onclick="openRoomMenu()"><i class="fa-solid fa-ellipsis-vertical"></i></button>
+                </div>
+            </header>
+            
+            <!-- لیست صندلی‌های اتاق (۱ تا ۱۰) -->
+            <div class="seats-container" id="room-seats-list">
+                <!-- صندلی‌ها به صورت داینامیک -->
+            </div>
+
+            <!-- کنترل‌های پایین اتاق (میکروفون و چت اتاق) -->
+            <div class="room-bottom-bar">
+                <button id="mic-btn" onclick="toggleMic()"><i class="fa-solid fa-microphone"></i></button>
+                <input type="text" id="room-chat-input" placeholder="پیام در اتاق...">
+                <button onclick="sendRoomMessage()"><i class="fa-solid fa-paper-plane"></i></button>
+            </div>
+        </div>
+
+        <!-- منوی پایین (Bottom Navigation) -->
+        <nav class="bottom-nav">
+            <button class="nav-item active" onclick="switchTab('games', this)">
+                <i class="fa-solid fa-dice"></i>
+                <span>بازی‌ها</span>
+            </button>
+            <button class="nav-item" onclick="switchTab('messenger', this)">
+                <i class="fa-solid fa-message"></i>
+                <span>پیام‌رسان</span>
+            </button>
+            <button class="nav-item" onclick="switchTab('settings', this)">
+                <i class="fa-solid fa-gear"></i>
+                <span>تنظیمات</span>
+            </button>
+        </nav>
+    </div>
+
+    <!-- مودال منوی سه نقطه اتاق (مخصوص میزبان/تنظیمات) -->
+    <div id="room-settings-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h3>تنظیمات اتاق</h3>
+            <div class="option-row">
+                <span>قفل کردن چت اتاق</span>
+                <input type="checkbox" id="lock-chat" onchange="updateRoomSettings()">
+            </div>
+            <div class="option-row">
+                <span>قفل کردن میکروفون‌ها</span>
+                <input type="checkbox" id="lock-mic" onchange="updateRoomSettings()">
+            </div>
+            <div class="option-row">
+                <span>قفل کردن اتاق</span>
+                <input type="checkbox" id="lock-room" onchange="updateRoomSettings()">
+            </div>
+            <button class="secondary-btn" onclick="closeRoomMenu()">بستن</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+  </html>
+                      
