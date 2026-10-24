@@ -2,13 +2,13 @@
 <html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NIVRA TEST</title>
-    <!-- دقت کن نام دقیقاً style.css باشد -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NIVRA</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
+    <!-- صفحه ورود -->
     <div id="login-screen" class="screen active">
         <div class="login-container">
             <h1 class="logo">NIVRA</h1>
@@ -19,22 +19,80 @@
                 <input type="password" id="login-pass" placeholder="رمز عبور (۸ کاراکتر)">
             </div>
             <button id="btn-login" class="main-btn">ورود</button>
+            <div class="forgot-pass" id="btn-forgot">فراموشی رمز عبور؟</div>
         </div>
     </div>
 
+    <!-- صفحه اصلی (منوها) -->
     <div id="main-screen" class="screen">
-        <div class="header"><span class="app-title">منوی اصلی</span></div>
-        <div id="tab-games" class="tab-content active">
-            <div id="room-list" class="room-list-container"></div>
+        <div class="header"><span class="app-title">NIVRA</span></div>
+        
+        <div class="content-area">
+            <!-- بخش بازی‌ها (لیست اتاق‌ها) -->
+            <div id="tab-games" class="tab-content active">
+                <div class="room-list" id="room-list">
+                    <!-- اتاق‌ها اینجا ساخته می‌شوند -->
+                </div>
+            </div>
+
+            <!-- بخش پیام‌رسان -->
+            <div id="tab-messenger" class="tab-content">
+                <div class="chat-list" id="chat-list">
+                    <p class="empty-msg">هیچ چتی وجود ندارد</p>
+                </div>
+            </div>
+
+            <!-- بخش تنظیمات و پروفایل -->
+            <div id="tab-settings" class="tab-content">
+                <div class="profile-section">
+                    <div class="profile-card">
+                        <div class="profile-pic-large" id="my-pic"></div>
+                        <h2 id="my-name">نام کاربری</h2>
+                        <p id="my-id">@id</p>
+                    </div>
+                    <div class="settings-actions">
+                        <button class="sec-btn" id="btn-edit-profile">ویرایش پروفایل</button>
+                        <button class="sec-btn sub-btn" id="btn-subscribe">خرید اشتراک</button>
+                    </div>
+                    <div class="extra-settings">
+                        <div class="toggle-item"><span>صدای بازی</span><input type="checkbox" checked></div>
+                        <div class="toggle-item"><span>دعوت از دوستان</span><input type="checkbox" checked></div>
+                    </div>
+                    <!-- دکمه مخفی سازنده -->
+                    <button class="admin-btn" id="btn-admin" style="display:none;">پنل مدیریت سازنده</button>
+                </div>
+            </div>
         </div>
+
+        <!-- بخش داخل اتاق (Overlay) -->
+        <div id="room-overlay" class="overlay">
+            <div class="room-container">
+                <div class="room-header">
+                    <button class="back-btn" id="close-room">←</button>
+                    <div class="host-info">
+                        <div class="small-pic"></div>
+                        <span id="room-host-name">میزبان</span>
+                    </div>
+                    <div class="menu-dots">⋮</div>
+                </div>
+                <div class="seats-list" id="seats-container">
+                    <!-- صندلی‌ها اینجا ساخته می‌شوند -->
+                </div>
+                <div class="room-controls">
+                    <input type="text" placeholder="پیام...">
+                    <button class="mic-btn">🎤</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ناوبری پایین -->
         <div class="bottom-nav">
-            <div class="nav-item active" data-target="tab-games"><span>🎮</span><span>بازی</span></div>
-            <div class="nav-item" data-target="tab-messenger"><span>💬</span><span>چت</span></div>
+            <div class="nav-item active" data-target="tab-games"><span>🎮</span><span>بازی‌ها</span></div>
+            <div class="nav-item" data-target="tab-messenger"><span>💬</span><span>پیام‌رسان</span></div>
             <div class="nav-item" data-target="tab-settings"><span>⚙️</span><span>تنظیمات</span></div>
         </div>
     </div>
 
-    <!-- دقت کن نام دقیقاً script.js باشد -->
     <script src="script.js"></script>
 </body>
 </html>
