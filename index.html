@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نیورا - بازی آنلاین</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: Tahoma, sans-serif; }
+        body { background: #121212; color: #fff; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
+        .app-container { width: 100%; max-width: 480px; height: 100%; background: #1e1e1e; display: flex; flex-direction: column; position: relative; box-shadow: 0 0 20px rgba(0,0,0,0.8); }
+        .screen { flex: 1; display: none; flex-direction: column; overflow-y: auto; padding: 16px; position: relative; }
+        .screen.active { display: flex; }
+        
+        /* فرم‌ها و ورودی‌ها */
+        input, button { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: none; font-size: 14px; }
+        input { background: #2c2c2c; color: #fff; }
+        button { background: #6200ee; color: #fff; font-weight: bold; cursor: pointer; }
+        button:active { background: #3700b3; }
+        
+        /* نویگیشن پایین صفحه */
+        .bottom-nav { height: 60px; background: #252525; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #333; }
+        .nav-item { background: none; color: #888; border: none; font-size: 12px; cursor: pointer; flex: 1; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .nav-item.active { color: #bb86fc; }
+
+        /* لابی و صندلی‌ها */
+        .room-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 70px; }
+        .seat { background: #2c2c2c; border: 2px dashed #444; border-radius: 10px; padding: 15px; text-align: center; cursor: pointer; min-height: 80px; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .seat.occupied { border-style: solid; border-color: #bb86fc; background: #2d233d; }
+
+        /* کنترل‌های پایین اتاق (آمادگی، برخاستن، میکروفون، چت) */
+        .room-controls-bottom { position: absolute; bottom: 65px; left: 16px; right: 16px; background: #1e1e1e; padding: 10px; border-top: 1px solid #333; display: flex; flex-direction: column; gap: 8px; }
+        .action-buttons { display: flex; gap: 10px; }
+        .action-buttons button { margin: 0; }
+        .chat-mic-bar { display: flex; gap: 8px; align-items: center; }
+        
+        .error-msg { color: #cf6679; font-size: 12px; text-align: center; margin-top: 5px; }
+        .success-msg { color: #03dac6; font-size: 12px; text-align: center; margin-top: 5px; }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    
+    <!-- ۱. صفحه ورود / ثبت‌نام -->
+    <div id="auth-screen" class="screen active">
+        <h2 style="text-align: center; margin: 20px 0;">ورود به نیورا</h2>
+        <input type="text" id="username-input" placeholder="آیدی (۴ تا ۱۶ حرف، بدون ایموجی و نقطه)">
+        <input type="password" id="password-input" placeholder="رمز عبور (حداقل ۸ کاراکتر)">
+        <button onclick="handleLogin()">ورود / ثبت‌نام</button>
+        <button onclick="showForgotPassword()" style="background: transparent; color: #bb86fc; margin-top: 5px;">رمز خود را فراموش کرده‌اید؟</button>
+        <div id="auth-error" class="error-msg"></div>
+    </div>
+
+    <!-- صفحه فراموشی رمز -->
+    <div id="forgot-screen" class="screen">
+        <h2>بازیابی رمز عبور</h2>
+        <p style="margin: 15px 0; font-size: 14px; line-height: 1.6;">برای بازیابی رمز عبور با پشتیبانی تماس بگیرید:</p>
+        <div style="background: #2c2c2c; padding: 15px; border-radius: 8px; text-align: center; font-size: 18px; color: #03dac6; font-weight: bold;">
+            09991990035
+        </div>
+        <button onclick="showScreen('auth-screen')" style="margin-top: 20px;">بازگشت به ورود</button>
+    </div>
+
+    <!-- ۲. صفحه اصلی (بازی‌ها) -->
+    <div id="games-screen" class="screen">
+        <h3>لیست اتاق‌ها</h3>
+        <div id="room-list" style="margin-top: 10px; display: flex; flex-direction: column; gap: 10px;">
+            <div onclick="joinRoom(1)" style="background: #2c2c2c; padding: 12px; border-radius: 8px; cursor: pointer;">
+                <h4>اتاق شماره ۱ (بازی اونو)</h4>
+                <p style="font-size: 12px; color: #aaa; margin-top: 4px;">میزبان: علی | ۳/۱۰ بازیکن</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ۳. صفحه داخل اتاق / لابی بازی -->
+    <div id="room-lobby-screen" class="screen">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <h3 id="room-title">اتاق بازی</h3>
+            <button onclick="leaveRoom()" style="width: auto; padding: 6px 12px; background: #cf6679;">خروج</button>
+        </div>
+        
+        <!-- ۱۰ صندلی بازیکنان -->
+        <div class="room-grid" id="seats-container">
+            <!-- صندلی‌ها با جاوااسکریپت ساخته می‌شوند -->
+        </div>
+
+        <!-- دکمه‌ها و کنترل‌های پایین صفحه (دقیقاً بالای چت و میکروفون) -->
+        <div class="room-controls-bottom">
+            <div class="action-buttons">
+                <button onclick="toggleReady()" id="ready-btn" style="background: #03dac6; color: #000;">اعلام آمادگی (Ready)</button>
+                <button onclick="standUp()" id="standup-btn" style="background: #cf6679;">برخاستن</button>
+            </div>
+            <div class="chat-mic-bar">
+                <button style="width: 50px; background: #333;" onclick="toggleMic()">🎤</button>
+                <input type="text" placeholder="پیام در اتاق..." style="margin: 0; flex: 1;">
+                <button style="width: 70px; margin: 0;">ارسال</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ۴. صفحه پیام‌رسان (PV) -->
+    <div id="messenger-screen" class="screen">
+        <h3>پیام‌رسان (چت خصوصی)</h3>
+        <p style="color: #888; font-size: 13px; margin-top: 10px;">هیچ پیام خصوصی وجود ندارد.</p>
+    </div>
+
+    <!-- ۵. صفحه تنظیمات و پروفایل -->
+    <div id="settings-screen" class="screen">
+        <h3>تنظیمات و پروفایل</h3>
+        <input type="text" id="profile-username" placeholder="ویرایش آیدی">
+        <button onclick="saveProfile()">ذخیره تغییرات</button>
+        
+        <div style="margin-top: 30px; border-top: 1px solid #333; padding-top: 15px;" id="admin-panel">
+            <h4>پنل مدیریت (مخصوص سازنده)</h4>
+            <input type="email" id="admin-user-email" placeholder="جیمیل کاربر">
+            <input type="text" id="admin-code-input" placeholder="کد تایید">
+            <button onclick="adminResetAccount()" style="background: #03dac6; color: #000;">بازیابی اکانت کاربر</button>
+        </div>
+    </div>
+
+    <!-- نویگیشن پایین صفحه (۳ بخش اصلی) -->
+    <div class="bottom-nav">
+        <button class="nav-item active" onclick="switchTab('games-screen', this)">بازی‌ها</button>
+        <button class="nav-item" onclick="switchTab('messenger-screen', this)">پیام‌رسان</button>
+        <button class="nav-item" onclick="switchTab('settings-screen', this)">تنظیمات</button>
+    </div>
+
+</div>
+
+<script>
+    function showScreen(screenId) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(screenId).classList.add('active');
+    }
+
+    function switchTab(screenId, btn) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(screenId).classList.add('active');
+        document.querySelectorAll('.bottom-nav .nav-item').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+    }
+
+    function handleLogin() {
+        const u = document.getElementById('username-input').value;
+        const p = document.getElementById('password-input').value;
+        if(u.length < 4 || p.length < 8) {
+            document.getElementById('auth-error').innerText = 'آیدی باید حداقل ۴ حرف و رمز حداقل ۸ کاراکتر باشد.';
+            return;
+        }
+        // ورود موفق به صفحه بازی‌ها
+        document.querySelector('.bottom-nav').style.display = 'flex';
+        showScreen('games-screen');
+    }
+
+    function showForgotPassword() {
+        showScreen('forgot-screen');
+    }
+
+    function joinRoom(roomId) {
+        showScreen('room-lobby-screen');
+        renderSeats();
+    }
+
+    function leaveRoom() {
+        showScreen('games-screen');
+    }
+
+    function renderSeats() {
+        const container = document.getElementById('seats-container');
+        container.innerHTML = '';
+        for(let i = 1; i <= 10; i++) {
+            container.innerHTML += `<div class="seat" onclick="sitInSeat(${i})">صندلی ${i}<br><span style="font-size:11px; color:#aaa;">خالی</span></div>`;
+        }
+    }
+
+    function sitInSeat(seatNum) {
+        alert('شما روی صندلی ' + seatNum + ' نشستید.');
+    }
+
+    function toggleReady() {
+        alert('وضعیت آمادگی تغییر کرد.');
+    }
+
+    function standUp() {
+        alert('از صندلی برخاستید.');
+    }
+
+    function toggleMic() {
+        alert('میکروفون فعال/غیرفعال شد.');
+    }
+
+    function saveProfile() {
+        alert('تغییرات ذخیره شد.');
+    }
+
+    function adminResetAccount() {
+        alert('اکانت با موفقیت توسط مدیریت بازیابی شد.');
+    }
+
+    // پنهان کردن منوی پایین در صفحه ورود
+    document.querySelector('.bottom-nav').style.display = 'none';
+</script>
+
+</body>
+</html>
