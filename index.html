@@ -2,13 +2,13 @@
 <html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Nivra - نیورا</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نیورا - Nivra</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- صفحه ورود (Login) -->
+    <!-- صفحه ورود -->
     <div id="login-screen" class="screen active">
         <div class="login-container">
             <h1 class="logo">NIVRA</h1>
@@ -16,116 +16,81 @@
                 <input type="text" id="login-id" placeholder="آیدی خود را وارد کنید">
             </div>
             <div class="input-group">
-                <input type="password" id="login-pass" placeholder="رمز عبور (۸ کاراکتر)">
+                <input type="password" id="login-pass" placeholder="رمز عبور (حداقل ۸ کاراکتر)">
             </div>
-            <button id="btn-login" class="main-btn">ورود</button>
-            <p id="forgot-pass" class="forgot-link">رمز عبور را فراموش کرده‌اید؟</p>
+            <button id="btn-login" class="main-btn">ورود به بازی</button>
+            <div id="forgot-pass" class="forgot-link">فراموشی رمز عبور؟</div>
         </div>
     </div>
 
-    <!-- صفحه اصلی (Main Menu) -->
-    <div id="main-menu" class="screen">
+    <!-- منوی اصلی و ساختار برنامک -->
+    <div id="main-screen" class="screen">
         <div class="header">
-            <span class="app-title">نیورا</span>
+            <span class="app-title" id="header-title">بازی‌های اونو</span>
         </div>
-        
-        <div class="menu-items">
-            <div class="menu-card" id="menu-games">
-                <div class="icon">🎮</div>
+
+        <!-- بخش ۱: بازی‌ها (لیست اتاق‌ها و لابی) -->
+        <div id="tab-games" class="tab-content active">
+            <div class="room-list-container" id="room-list">
+                <!-- اتاق‌ها به صورت پویا بارگذاری می‌شوند -->
+            </div>
+        </div>
+
+        <!-- بخش ۲: پیام‌رسان (چت خصوصی PV) -->
+        <div id="tab-messenger" class="tab-content">
+            <div class="chat-placeholder">
+                <p>بخش پیام‌رسان (چت خصوصی)</p>
+            </div>
+        </div>
+
+        <!-- بخش ۳: تنظیمات و پروفایل -->
+        <div id="tab-settings" class="tab-content">
+            <div class="settings-container">
+                <div class="profile-section">
+                    <div class="profile-pic-wrapper">
+                        <img id="user-avatar" src="https://via.placeholder.com/80" alt="پروفایل">
+                    </div>
+                    <h3 id="display-username">کاربر</h3>
+                    <p id="subscription-msg" class="sub-text" style="display:none;">آیدی شما قبلاً تغییر کرده است</p>
+                    <button id="btn-change-profile" class="secondary-btn">تغییر آیدی پروفایل</button>
+                    <button id="btn-buy-sub" class="sub-btn" style="display:none;">خرید اشتراک ویژه</button>
+                </div>
+
+                <div class="settings-list">
+                    <div class="setting-item">
+                        <span>صدای بازی</span>
+                        <input type="checkbox" id="sound-toggle" checked>
+                    </div>
+                    <div class="setting-item">
+                        <span>درخواست‌های دعوت</span>
+                        <input type="checkbox" id="invite-toggle" checked>
+                    </div>
+                </div>
+
+                <!-- پنل اختصاصی سازنده -->
+                <div id="admin-panel" class="admin-section" style="display:none;">
+                    <h4>پنل مدیریت سازنده (ebitiem)</h4>
+                    <input type="text" id="admin-target-id" placeholder="آیدی کاربر جهت ریست رمز">
+                    <button id="btn-reset-user-pass" class="admin-btn">ریست رمز عبور کاربر</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- نویگیشن پایین صفحه (ترتیب دقیق) -->
+        <div class="bottom-nav">
+            <div class="nav-item active" data-target="tab-games">
+                <span>🎮</span>
                 <span>بازی‌ها</span>
             </div>
-            <div class="menu-card" id="menu-chat">
-                <div class="icon">💬</div>
+            <div class="nav-item" data-target="tab-messenger">
+                <span>💬</span>
                 <span>پیام‌رسان</span>
             </div>
-            <div class="menu-card" id="menu-settings">
-                <div class="icon">⚙️</div>
+            <div class="nav-item" data-target="tab-settings">
+                <span>⚙️</span>
                 <span>تنظیمات</span>
             </div>
         </div>
-
-        <nav class="bottom-nav">
-            <div class="nav-item active" data-target="menu-games"><span>🎮</span><span>بازی‌ها</span></div>
-            <div class="nav-item" data-target="menu-chat"><span>💬</span><span>پیام‌رسان</span></div>
-            <div class="nav-item" data-target="menu-settings"><span>⚙️</span><span>تنظیمات</span></div>
-        </nav>
-    </div>
-
-    <!-- صفحه تنظیمات (Settings) -->
-    <div id="menu-settings" class="screen">
-        <div class="header">
-            <button class="back-btn">←</button>
-            <span class="app-title">تنظیمات</span>
-        </div>
-        
-        <div class="settings-container">
-            <div class="profile-section">
-                <div class="profile-pic-wrapper">
-                    <img src="https://via.placeholder.com/80" id="user-avatar" alt="Profile">
-                </div>
-                <h2 id="display-username">نام کاربری</h2>
-                <button id="btn-change-profile" class="secondary-btn">ویرایش پروفایل</button>
-                <p id="subscription-msg" class="sub-text" style="display:none;">برای تغییر آیدی نیاز به اشتراک دارید</p>
-                <button id="btn-buy-sub" class="sub-btn" style="display:none;">خرید اشتراک</button>
-            </div>
-
-            <div class="settings-list">
-                <div class="setting-item">
-                    <span>صدای بازی</span>
-                    <input type="checkbox" id="toggle-sound" checked>
-                </div>
-                <div class="setting-item">
-                    <span>دعوت از دوستان</span>
-                    <input type="checkbox" id="toggle-invite" checked>
-                </div>
-            </div>
-
-            <!-- بخش مخصوص سازنده (فقط برای ادمین نمایش داده می‌شود) -->
-            <div id="admin-panel" class="admin-section" style="display:none;">
-                <hr>
-                <p>پنل مدیریت (سازنده)</p>
-                <input type="text" id="admin-target-id" placeholder="آیدی کاربر مورد نظر">
-                <button id="btn-reset-user-pass" class="admin-btn">بازنشانی رمز عبور کاربر</button>
-            </div>
-        </div>
-
-        <nav class="bottom-nav">
-            <div class="nav-item" data-target="menu-games"><span>🎮</span><span>بازی‌ها</span></div>
-            <div class="nav-item" data-target="menu-chat"><span>💬</span><span>پیام‌رسان</span></div>
-            <div class="nav-item active" data-target="menu-settings"><span>⚙️</span><span>تنظیمات</span></div>
-        </nav>
-    </div>
-
-    <!-- صفحه بازی‌ها (Games/Lobby) -->
-    <div id="menu-games" class="screen">
-        <div class="header">
-            <button class="back-btn">←</button>
-            <span class="app-title">لیست اتاق‌ها</span>
-        </div>
-        <div id="room-list" class="room-list-container">
-            <!-- اتاق‌ها اینجا اضافه می‌شوند -->
-        </div>
-        <nav class="bottom-nav">
-            <div class="nav-item active" data-target="menu-games"><span>🎮</span><span>بازی‌ها</span></div>
-            <div class="nav-item" data-target="menu-chat"><span>💬</span><span>پیام‌رسان</span></div>
-            <div class="nav-item" data-target="menu-settings"><span>⚙️</span><span>تنظیمات</span></div>
-        </nav>
-    </div>
-
-    <!-- صفحه پیام‌رسان (Messenger/PV) -->
-    <div id="menu-chat" class="screen">
-        <div class="header">
-            <button class="back-btn">←</button>
-            <span class="app-title">پیام‌رسان</span>
-        </div>
-        <div class="chat-placeholder">
-            <p>پیامی وجود ندارد</p>
-        </div>
-        <nav class="bottom-nav">
-            <div class="nav-item" data-target="menu-games"><span>🎮</span><span>بازی‌ها</span></div>
-            <div class="nav-item active" data-target="menu-chat"><span>💬</span><span>پیام‌رسان</span></div>
-            <div class="nav-item" data-target="menu-settings"><span>⚙️</span><span>تنظیمات</span></div>
-        </nav>
     </div>
 
     <script src="script.js"></script>
