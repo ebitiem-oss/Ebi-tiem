@@ -3,331 +3,593 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نیورا - بازی آنلاین اونو</title>
+    <title>نیورا - بازی اونو آنلاین</title>
     <style>
         :root {
             --bg-color: #0f172a;
             --card-bg: #1e293b;
-            --accent-color: #38bdf8;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
+            --accent-color: #3b82f6;
+            --accent-hover: #2563eb;
+            --text-color: #f8fafc;
+            --text-secondary: #94a3b8;
             --border-color: #334155;
             --danger: #ef4444;
             --success: #22c55e;
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: Tahoma, sans-serif; }
-        body { background-color: var(--bg-color); color: var(--text-main); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .screen {
+            display: none;
+            flex: 1;
+            flex-direction: column;
+            height: 100%;
+            overflow-y: auto;
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        /* Auth Screen */
+        .auth-container {
+            max-width: 400px;
+            margin: auto;
+            padding: 24px;
+            background: var(--card-bg);
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            width: 90%;
+            text-align: center;
+        }
+
+        .auth-container h2 {
+            margin-bottom: 20px;
+            color: var(--accent-color);
+        }
+
+        .input-group {
+            margin-bottom: 16px;
+            text-align: right;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-color);
+            color: var(--text-color);
+            font-size: 16px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: var(--accent-color);
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn:hover {
+            background: var(--accent-hover);
+        }
+
+        /* Bottom Nav */
+        .bottom-nav {
+            display: flex;
+            background: var(--card-bg);
+            border-top: 1px solid var(--border-color);
+            height: 60px;
+        }
+
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 12px;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .nav-item.active {
+            color: var(--accent-color);
+        }
+
+        .nav-item span.icon {
+            font-size: 20px;
+            margin-bottom: 2px;
+        }
+
+        /* Top Header */
+        .app-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .app-header h3 {
+            font-size: 18px;
+        }
+
+        /* Telegram PV Style Lists */
+        .pv-list {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .pv-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .pv-item:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            overflow: hidden;
+            flex-shrink: 0;
+            margin-left: 12px;
+        }
+
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .pv-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .pv-title {
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .pv-subtitle {
+            font-size: 13px;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Seats Dots */
+        .seats-dots {
+            display: flex;
+            gap: 3px;
+            margin-top: 6px;
+        }
+
+        .seat-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--border-color);
+        }
+
+        .seat-dot.filled {
+            background: var(--success);
+        }
+
+        /* Inside Room Layout */
+        .room-screen {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            background: var(--bg-color);
+        }
+
+        .room-header {
+            display: flex;
+            align-items: center;
+            padding: 10px 16px;
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            gap: 12px;
+        }
+
+        .back-arrow {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 22px;
+            cursor: pointer;
+        }
+
+        .room-players-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 8px 0;
+        }
+
+        .player-row {
+            display: flex;
+            align-items: center;
+            padding: 10px 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            gap: 12px;
+        }
+
+        .player-row.empty {
+            opacity: 0.5;
+        }
+
+        .player-details {
+            flex: 1;
+        }
+
+        .player-name {
+            font-weight: bold;
+            font-size: 15px;
+        }
+
+        .player-meta {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .ready-badge {
+            color: var(--success);
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        /* Bottom Chat & Mic */
+        .room-bottom-controls {
+            display: flex;
+            align-items: center;
+            padding: 10px 16px;
+            background: var(--card-bg);
+            border-top: 1px solid var(--border-color);
+            gap: 10px;
+        }
+
+        .room-bottom-controls input {
+            flex: 1;
+            padding: 10px 14px;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-color);
+            color: var(--text-color);
+            font-size: 14px;
+        }
+
+        .icon-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 20px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: color 0.2s;
+        }
+
+        .icon-btn:hover {
+            color: var(--accent-color);
+        }
+
+        /* Settings Screen */
+        .settings-content {
+            padding: 16px;
+        }
         
-        .app-container { flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative; }
-        .view { display: none; flex: 1; flex-direction: column; overflow-y: auto; padding-bottom: 75px; }
-        .view.active { display: flex; }
-        
-        /* Bottom Navigation */
-        .bottom-nav { position: absolute; bottom: 0; left: 0; right: 0; height: 65px; background: var(--card-bg); border-top: 1px solid var(--border-color); display: flex; justify-content: space-around; align-items: center; z-index: 100; }
-        .nav-item { background: none; border: none; color: var(--text-muted); font-size: 12px; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; flex: 1; }
-        .nav-item.active { color: var(--accent-color); }
-        .nav-item svg { width: 22px; height: 22px; fill: currentColor; }
-
-        /* Common Elements */
-        .header { background: var(--card-bg); padding: 14px 16px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; font-weight: bold; font-size: 16px; }
-        .btn { background: var(--accent-color); color: #000; border: none; padding: 10px 16px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 13px; }
-        .btn-danger { background: var(--danger); color: #fff; }
-        .input { background: #090d16; border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 8px; width: 100%; outline: none; margin-top: 6px; font-size: 13px; }
-
-        /* Rooms List (Telegram PV style) */
-        .room-row { display: flex; align-items: center; padding: 12px 16px; border-bottom: 1px solid var(--border-color); gap: 12px; cursor: pointer; background: rgba(255,255,255,0.01); }
-        .room-avatar { width: 50px; height: 50px; border-radius: 50%; background: #334155; object-fit: cover; flex-shrink: 0; }
-        .room-info { flex: 1; display: flex; flex-direction: column; gap: 4px; }
-        .room-host { font-weight: bold; font-size: 15px; }
-        .seats-indicator { display: flex; gap: 3px; align-items: center; margin-top: 4px; }
-        .seat-dot { width: 8px; height: 8px; border-radius: 50%; background: #475569; }
-        .seat-dot.filled { background: var(--success); }
-
-        /* Room Inside View */
-        #room-view { background: var(--bg-color); position: absolute; inset: 0; z-index: 200; display: none; flex-direction: column; }
-        #room-view.active { display: flex; }
-        .seats-list { flex: 1; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 8px; padding-bottom: 70px; }
-        .seat-row { background: var(--card-bg); padding: 10px 14px; border-radius: 10px; display: flex; align-items: center; justify-content: space-between; border: 1px solid var(--border-color); }
-        .seat-row.empty { background: rgba(30, 41, 59, 0.4); border: 1px dashed var(--border-color); }
-        .seat-user-info { display: flex; align-items: center; gap: 10px; }
-        .seat-avatar { width: 40px; height: 40px; border-radius: 50%; background: #475569; object-fit: cover; }
-        .user-meta { display: flex; flex-direction: column; gap: 2px; }
-        .user-name { font-weight: bold; font-size: 14px; }
-        .user-level { font-size: 11px; color: var(--accent-color); }
-        .host-badge { background: #38bdf822; color: var(--accent-color); font-size: 10px; padding: 2px 6px; border-radius: 4px; width: fit-content; }
-        
-        .ready-check { width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--border-color); display: flex; align-items: center; justify-content: center; cursor: pointer; }
-        .ready-check.checked { background: var(--success); border-color: var(--success); color: #fff; }
-
-        .room-footer { position: absolute; bottom: 0; left: 0; right: 0; padding: 10px 16px; background: var(--card-bg); border-top: 1px solid var(--border-color); display: flex; gap: 10px; align-items: center; z-index: 210; }
-        .room-footer input { flex: 1; margin: 0; }
-        .icon-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 20px; padding: 4px; }
-        
-        /* Dropdown Menu for 3-dots */
-        .dropdown-menu { position: absolute; top: 55px; left: 16px; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; display: none; flex-direction: column; z-index: 300; width: 160px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
-        .dropdown-menu.active { display: flex; }
-        .dropdown-item { padding: 10px 14px; font-size: 13px; border-bottom: 1px solid var(--border-color); cursor: pointer; text-align: right; background: none; border: none; color: var(--text-main); width: 100%; }
-        .dropdown-item:last-child { border-bottom: none; }
-        .dropdown-item:hover { background: rgba(255,255,255,0.05); }
-
-        /* Toast Notification */
-        #toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #334155; color: #fff; padding: 8px 16px; border-radius: 20px; font-size: 13px; z-index: 1000; display: none; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        .settings-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            border: 1px solid var(--border-color);
+        }
     </style>
 </head>
 <body>
 
-<div id="toast">پیام</div>
-
-<div class="app-container">
-    <!-- View 1: Games / Rooms List -->
-    <div id="games-view" class="view active">
-        <div class="header">اتاق‌های بازی اونو</div>
-        <div id="rooms-list"></div>
-    </div>
-
-    <!-- View 2: Messenger (PV / Chat) -->
-    <div id="messenger-view" class="view">
-        <div class="header">پیام‌رسان (چت خصوصی)</div>
-        <div style="padding: 20px; text-align: center; color: var(--text-muted);">هیچ پیام خصوصی وجود ندارد</div>
-    </div>
-
-    <!-- View 3: Settings & Profile -->
-    <div id="settings-view" class="view">
-        <div class="header">تنظیمات و پروفایل</div>
-        <div style="padding: 16px; display: flex; flex-direction: column; gap: 16px;">
-            <!-- Profile & Username -->
-            <div style="display: flex; align-items: center; gap: 16px; background: var(--card-bg); padding: 12px; border-radius: 10px; border: 1px solid var(--border-color);">
-                <label for="avatar-input" style="cursor: pointer; position: relative;">
-                    <img id="profile-avatar" src="" style="width: 65px; height: 65px; border-radius: 50%; background: #334155; object-fit: cover;" alt="پروفایل">
-                    <input type="file" id="avatar-input" accept="image/*" style="display: none;" onchange="updateAvatar(event)">
-                </label>
-                <div style="flex: 1;">
-                    <input type="text" id="username-input" class="input" placeholder="آیدی شما">
-                    <button class="btn" style="margin-top: 8px; padding: 6px 12px; font-size: 11px;" onclick="saveUsername()">ذخیره آیدی (فقط ۱ بار رایگان)</button>
+    <!-- Auth / Login Screen -->
+    <div id="authScreen" class="screen active">
+        <div style="display: flex; align-items: center; justify-content: center; height: 100%;">
+            <div class="auth-container">
+                <h2>ورود به نیورا</h2>
+                <div class="input-group">
+                    <label>آیدی کاربری</label>
+                    <input type="text" id="usernameInput" placeholder="آیدی خود را وارد کنید">
                 </div>
-            </div>
-
-            <!-- Subscription / Membership -->
-            <div style="background: linear-gradient(135deg, #1e293b, #0f172a); border: 1px solid var(--accent-color); padding: 14px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center;">
-                <div>
-                    <div style="font-weight: bold; font-size: 14px; color: var(--accent-color);">اشتراک ویژه نیورا</div>
-                    <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">تغییر نام نامحدود و امکانات اختصاصی</div>
+                <div class="input-group">
+                    <label>رمز عبور (۸ کاراکتر)</label>
+                    <input type="password" id="passwordInput" placeholder="رمز عبور">
                 </div>
-                <button class="btn" style="padding: 8px 12px; font-size: 12px;" onclick="showToast('سیستم اشتراک به زودی فعال می‌شود')">خرید اشتراک</button>
-            </div>
-
-            <!-- Security & Password -->
-            <div style="background: var(--card-bg); padding: 14px; border-radius: 10px; border: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 10px;">
-                <div style="font-weight: bold; font-size: 14px;">امنیت و رمز عبور</div>
-                <input type="password" id="current-pass" class="input" placeholder="رمز عبور فعلی">
-                <input type="password" id="new-pass" class="input" placeholder="رمز عبور جدید (حداقل ۸ حرف انگلیسی/عدد)">
-                <div style="display: flex; gap: 8px; margin-top: 4px;">
-                    <button class="btn" style="flex: 1; padding: 8px;" onclick="savePassword()">تغییر رمز</button>
-                    <button class="btn btn-danger" style="flex: 1; padding: 8px; font-size: 12px;" onclick="forgotPassword()">رمز را فراموش کردید؟</button>
-                </div>
-            </div>
-
-            <!-- Game Toggles -->
-            <div style="background: var(--card-bg); padding: 14px; border-radius: 10px; border: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 12px;">
-                <label style="display: flex; justify-content: space-between; align-items: center; font-size: 14px;">
-                    <span>صداهای بازی</span>
-                    <input type="checkbox" checked style="width: 18px; height: 18px;">
-                </label>
-                <label style="display: flex; justify-content: space-between; align-items: center; font-size: 14px;">
-                    <span>دعوت به بازی (Invite)</span>
-                    <input type="checkbox" checked style="width: 18px; height: 18px;">
-                </label>
-            </div>
-
-            <div style="font-size: 12px; color: var(--text-muted); text-align: center; margin-top: 10px;">
-                پشتیبانی: 09991990035
+                <button class="btn" onclick="login()">ورود به بازی</button>
             </div>
         </div>
     </div>
 
-    <!-- Bottom Navigation Bar -->
-    <nav class="bottom-nav">
-        <button class="nav-item active" onclick="switchView('games-view', this)">
-            <svg viewBox="0 0 24 24"><path d="M21 6H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 10H3V8h18v8zM6 15h2v-2h2v-2H8V9H6v2H4v2h2z"/></svg>
-            بازی‌ها
-        </button>
-        <button class="nav-item" onclick="switchView('messenger-view', this)">
-            <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0-2-.9-2-2V4c0-1.1-.9-2-2-2z"/></svg>
-            پیام‌رسان
-        </button>
-        <button class="nav-item" onclick="switchView('settings-view', this)">
-            <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
-            تنظیمات
-        </button>
-    </nav>
-</div>
-
-<!-- Room Inside View -->
-<div id="room-view">
-    <div class="header">
-        <div style="display: flex; align-items: center; gap: 10px;">
-            <button class="icon-btn" onclick="leaveRoom()">➔</button>
-            <span id="room-header-title">اتاق بازی</span>
-        </div>
-        <button class="icon-btn" onclick="toggleMenu()">⋮</button>
-        <!-- 3-Dot Dropdown Menu -->
-        <div class="dropdown-menu" id="room-menu">
-            <button class="dropdown-item" onclick="showToast('لینک دعوت کپی شد')">دعوت دوستان</button>
-            <button class="dropdown-item" onclick="showToast('تنظیمات اتاق')">تنظیمات اتاق</button>
-        </div>
-    </div>
-
-    <div class="seats-list" id="seats-container"></div>
-
-    <div class="room-footer">
-        <button class="icon-btn">🎤</button>
-        <input type="text" class="input" placeholder="پیام در اتاق...">
-        <button class="btn" style="padding: 8px 12px;">ارسال</button>
-    </div>
-</div>
-
-<script>
-    const rooms = [
-        { id: 1, host: 'علی‌رضا', playersCount: 3 },
-        { id: 2, host: 'سارا', playersCount: 6 },
-        { id: 3, host: 'محمد', playersCount: 2 },
-        { id: 4, host: 'نیلوفر', playersCount: 9 },
-        { id: 5, host: 'رضا', playersCount: 4 }
-    ];
-
-    function renderRooms() {
-        const container = document.getElementById('rooms-list');
-        container.innerHTML = '';
-        rooms.forEach(room => {
-            let dots = '';
-            for(let i=0; i<10; i++) {
-                dots += `<div class="seat-dot ${i < room.playersCount ? 'filled' : ''}"></div>`;
-            }
-            container.innerHTML += `
-                <div class="room-row" onclick="joinRoom('${room.host}', ${room.playersCount})">
-                    <div class="room-avatar"></div>
-                    <div class="room-info">
-                        <div class="room-host">${room.host}</div>
-                        <div class="seats-indicator">${dots}</div>
-                    </div>
-                </div>
-            `;
-        });
-    }
-
-    function joinRoom(hostName, count) {
-        document.getElementById('room-header-title').innerText = `اتاق ${hostName}`;
-        const seatsContainer = document.getElementById('seats-container');
-        seatsContainer.innerHTML = '';
+    <!-- Main App Container -->
+    <div id="mainApp" class="screen" style="display: none; flex-direction: column;">
         
-        for(let i = 1; i <= 10; i++) {
-            let isOccupied = i <= count;
-            let isHost = (i === 1);
+        <!-- Content Area -->
+        <div style="flex: 1; overflow-y: auto; position: relative;">
             
-            if (isOccupied) {
-                // Seated player
-                seatsContainer.innerHTML += `
-                    <div class="seat-row">
-                        <div class="seat-user-info">
-                            <div class="seat-avatar"></div>
-                            <div class="user-meta">
-                                <span class="user-name">${isHost ? hostName : 'بازیکن ' + i}</span>
-                                <span class="user-level">لول ${i * 3}</span>
-                                ${isHost ? '<span class="host-badge">میزبان</span>' : ''}
-                            </div>
+            <!-- 1. Games Screen (Default) -->
+            <div id="tabGames" class="tab-content">
+                <div class="app-header">
+                    <h3>اتاق‌های بازی اونو</h3>
+                    <button class="btn" style="width: auto; padding: 6px 12px; font-size: 13px;" onclick="createRoom()">ساخت اتاق</button>
+                </div>
+                <div class="pv-list" id="roomsListContainer">
+                    <!-- Dynamic Rooms List -->
+                </div>
+            </div>
+
+            <!-- 2. Messenger Screen -->
+            <div id="tabMessenger" class="tab-content" style="display: none;">
+                <div class="app-header">
+                    <h3>پیام‌رسان (چت خصوصی)</h3>
+                </div>
+                <div class="pv-list">
+                    <div class="pv-item" onclick="openPV('ربات پشتیبان نیورا')">
+                        <div class="avatar">پ</div>
+                        <div class="pv-info">
+                            <div class="pv-title">ربات پشتیبان نیورا</div>
+                            <div class="pv-subtitle">خوش آمدید! برای راهنمایی پیام دهید.</div>
                         </div>
-                        <div class="ready-check" onclick="toggleReady(this)">✓</div>
                     </div>
-                `;
-            } else {
-                // Empty seat (No level, no tick, just empty slot with join option)
-                seatsContainer.innerHTML += `
-                    <div class="seat-row empty">
-                        <div class="seat-user-info">
-                            <div style="width: 40px; height: 40px; border-radius: 50%; border: 1px dashed var(--text-muted); display: flex; align-items: center; justify-content: center; color: var(--text-muted);">+</div>
-                            <div class="user-meta">
-                                <span class="user-name" style="color: var(--text-muted); font-size: 13px;">صندلی خالی</span>
-                            </div>
+                </div>
+            </div>
+
+            <!-- 3. Settings Screen -->
+            <div id="tabSettings" class="tab-content" style="display: none;">
+                <div class="app-header">
+                    <h3>تنظیمات و پروفایل</h3>
+                </div>
+                <div class="settings-content">
+                    <div class="settings-card" style="text-align: center;">
+                        <div class="avatar" style="width: 80px; height: 80px; margin: 0 auto 12px auto; cursor: pointer;" onclick="document.getElementById('avatarUpload').click();">
+                            <img id="profileImg" src="" style="display: none;" alt="Profile">
+                            <span id="avatarPlaceholder">📷</span>
                         </div>
-                        <button class="btn" style="padding: 4px 10px; font-size: 11px;" onclick="showToast('روی صندلی نشستید')">نشستن</button>
+                        <input type="file" id="avatarUpload" style="display: none;" accept="image/*" onchange="loadAvatar(event)">
+                        <h4 id="profileUsernameName">کاربر نیورا</h4>
+                        <p style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;">تغییر آیدی: فقط یک‌بار رایگان</p>
                     </div>
-                `;
+
+                    <div class="settings-card">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                            <span>صدای بازی</span>
+                            <input type="checkbox" checked onchange="toggleSound(this)">
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span>دعوت دوستان</span>
+                            <input type="checkbox" checked>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Inside Room Screen (Hidden by default) -->
+            <div id="roomInsideScreen" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-color); z-index: 10; flex-direction: column;">
+                <div class="room-header">
+                    <button class="back-arrow" onclick="exitRoom()">←</button>
+                    <div class="avatar" style="width: 36px; height: 36px; font-size: 14px;" id="roomHostAvatar">م</div>
+                    <div style="flex: 1; min-width: 0;">
+                        <div id="roomTitle" style="font-weight: bold; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">اتاق میزبان</div>
+                        <div style="font-size: 11px; color: var(--text-secondary);">اتاق اونو (تا ۱۰ بازیکن)</div>
+                    </div>
+                </div>
+
+                <!-- Vertical 1-to-10 Telegram PV style rows for seats -->
+                <div class="room-players-list" id="roomPlayersList">
+                    <!-- Generated via JS -->
+                </div>
+
+                <!-- Bottom Chat & Mic -->
+                <div class="room-bottom-controls">
+                    <button class="icon-btn" title="میکروفون">🎤</button>
+                    <input type="text" placeholder="پیام در اتاق...">
+                    <button class="icon-btn" title="ارسال">➤</button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Bottom Navigation Bar -->
+        <nav class="bottom-nav">
+            <a class="nav-item active" onclick="switchTab('Games', this)">
+                <span class="icon">🎮</span>
+                <span>بازی‌ها</span>
+            </a>
+            <a class="nav-item" onclick="switchTab('Messenger', this)">
+                <span class="icon">💬</span>
+                <span>پیام‌رسان</span>
+            </a>
+            <a class="nav-item" onclick="switchTab('Settings', this)">
+                <span class="icon">⚙️</span>
+                <span>تنظیمات</span>
+            </a>
+        </nav>
+    </div>
+
+    <script>
+        let currentUser = "";
+        let rooms = [
+            { id: 1, host: "سارا", playersCount: 3, maxPlayers: 10, avatar: "س" },
+            { id: 2, host: "علی", playersCount: 7, maxPlayers: 10, avatar: "ع" }
+        ];
+
+        function login() {
+            const username = document.getElementById('usernameInput').value.trim();
+            const pass = document.getElementById('passwordInput').value.trim();
+            if (!username || pass.length < 8) {
+                alert('لطفاً آیدی و رمز عبور معتبر (حداقل ۸ کاراکتر) وارد کنید.');
+                return;
             }
+            currentUser = username;
+            document.getElementById('profileUsernameName').innerText = username;
+            document.getElementById('authScreen').classList.remove('active');
+            document.getElementById('mainApp').style.display = 'flex';
+            renderRooms();
         }
-        document.getElementById('room-view').classList.add('active');
-    }
 
-    function leaveRoom() {
-        document.getElementById('room-view').classList.remove('active');
-        document.getElementById('room-menu').classList.remove('active');
-    }
-
-    function toggleReady(el) {
-        el.classList.toggle('checked');
-    }
-
-    function toggleMenu() {
-        document.getElementById('room-menu').classList.toggle('active');
-    }
-
-    function switchView(viewId, btn) {
-        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-        document.getElementById(viewId).classList.add('active');
-        btn.classList.add('active');
-    }
-
-    function showToast(msg) {
-        const t = document.getElementById('toast');
-        t.innerText = msg;
-        t.style.display = 'block';
-        setTimeout(() => t.style.display = 'none', 2000);
-    }
-
-    // Username restriction logic
-    let usernameChanged = localStorage.getItem('usernameChanged') === 'true';
-    function saveUsername() {
-        if(usernameChanged) {
-            showToast('تغییر آیدی فقط یک‌بار رایگان است! برای تغییرات بیشتر نیاز به اشتراک دارید.');
-            return;
+        function switchTab(tabName, el) {
+            document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            
+            document.getElementById('tab' + tabName).style.display = 'block';
+            el.classList.add('active');
+            document.getElementById('roomInsideScreen').style.display = 'none';
         }
-        const val = document.getElementById('username-input').value;
-        if(val.trim() !== '') {
-            localStorage.setItem('usernameChanged', 'true');
-            usernameChanged = true;
-            showToast('آیدی با موفقیت ذخیره شد.');
-        } else {
-            showToast('لطفاً نام معتبری وارد کنید');
+
+        function renderRooms() {
+            const container = document.getElementById('roomsListContainer');
+            container.innerHTML = '';
+            
+            rooms.forEach(room => {
+                let dotsHtml = '';
+                for (let i = 0; i < room.maxPlayers; i++) {
+                    dotsHtml += `<div class="seat-dot ${i < room.playersCount ? 'filled' : ''}"></div>`;
+                }
+
+                container.innerHTML += `
+                    <div class="pv-item" onclick="joinRoom(${room.id})">
+                        <div class="avatar">${room.avatar}</div>
+                        <div class="pv-info">
+                            <div class="pv-title">${room.host}</div>
+                            <div class="pv-subtitle">بازیکنان: ${room.playersCount} از ${room.maxPlayers}</div>
+                            <div class="seats-dots">${dotsHtml}</div>
+                        </div>
+                    </div>
+                `;
+            });
         }
-    }
 
-    // Password validation logic
-    function savePassword() {
-        const pass = document.getElementById('new-pass').value;
-        if(pass.length < 8) {
-            showToast('رمز عبور باید حداقل ۸ کاراکتر (انگلیسی/عدد) باشد.');
-            return;
+        function createRoom() {
+            const newRoom = {
+                id: rooms.length + 1,
+                host: currentUser,
+                playersCount: 1,
+                maxPlayers: 10,
+                avatar: currentUser.charAt(0).toUpperCase()
+            };
+            rooms.unshift(newRoom);
+            renderRooms();
+            joinRoom(newRoom.id);
         }
-        showToast('رمز عبور با موفقیت تغییر کرد.');
-    }
 
-    function forgotPassword() {
-        showToast('برای بازیابی رمز با پشتیبانی تماس بگیرید: 09991990035');
-    }
+        function joinRoom(roomId) {
+            const room = rooms.find(r => r.id === roomId);
+            if (!room) return;
 
-    function updateAvatar(event) {
-        if(event.target.files && event.target.files[0]) {
+            document.getElementById('roomTitle').innerText = room.host;
+            document.getElementById('roomHostAvatar').innerText = room.avatar;
+            
+            const listContainer = document.getElementById('roomPlayersList');
+            listContainer.innerHTML = '';
+
+            // Generate 10 vertical rows like Telegram PV list
+            for (let i = 1; i <= room.maxPlayers; i++) {
+                if (i <= room.playersCount) {
+                    // Occupied seat (with profile, name, level, ready tick)
+                    listContainer.innerHTML += `
+                        <div class="player-row">
+                            <div class="avatar" style="width: 40px; height: 40px; font-size: 14px;">${i === 1 ? room.avatar : 'ک'}</div>
+                            <div class="player-details">
+                                <div class="player-name">${i === 1 ? room.host + ' (میزبان)' : 'کاربر مهمان ' + i}</div>
+                                <div class="player-meta">لینک سطح: ${i * 5}</div>
+                            </div>
+                            <div class="ready-badge">✓</div>
+                        </div>
+                    `;
+                } else {
+                    // Empty seat (NO levels, NO ticks, clean placeholder)
+                    listContainer.innerHTML += `
+                        <div class="player-row empty">
+                            <div class="avatar" style="width: 40px; height: 40px; font-size: 14px; background: transparent; border: 1px dashed var(--border-color);">خالی</div>
+                            <div class="player-details">
+                                <div class="player-name" style="color: var(--text-secondary);">صندلی خالی ${i}</div>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+
+            document.getElementById('roomInsideScreen').style.display = 'flex';
+        }
+
+        function exitRoom() {
+            document.getElementById('roomInsideScreen').style.display = 'none';
+        }
+
+        function loadAvatar(event) {
             const reader = new FileReader();
-            reader.onload = function(e) {
-                document.getElementById('profile-avatar').src = e.target.result;
-                showToast('تصویر پروفایل به‌روز شد.');
-            }
+            reader.onload = function(){
+                const output = document.getElementById('profileImg');
+                output.src = reader.result;
+                output.style.display = 'block';
+                document.getElementById('avatarPlaceholder').style.display = 'none';
+            };
             reader.readAsDataURL(event.target.files[0]);
         }
-    }
 
-    renderRooms();
-</script>
+        function toggleSound(el) {
+            console.log("Sound toggled:", el.checked);
+        }
+
+        function openPV(name) {
+            alert('باز کردن چت خصوصی با ' + name);
+        }
+    </script>
 </body>
 </html>
 
