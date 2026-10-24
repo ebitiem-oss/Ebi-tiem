@@ -90,7 +90,7 @@ body {
     cursor: pointer;
 }
 
-/* هدر و ناوبری */
+/* هدر و تب‌ها */
 .header {
     height: 56px;
     background-color: var(--card-bg);
@@ -98,7 +98,6 @@ body {
     align-items: center;
     padding: 0 16px;
     border-bottom: 1px solid var(--border-color);
-    position: relative;
 }
 
 .app-title {
@@ -106,6 +105,19 @@ body {
     font-weight: bold;
 }
 
+.tab-content {
+    display: none;
+    flex: 1;
+    overflow-y: auto;
+    padding-bottom: 70px;
+}
+
+.tab-content.active {
+    display: flex;
+    flex-direction: column;
+}
+
+/* ناوبری پایین */
 .bottom-nav {
     height: 60px;
     background-color: var(--card-bg);
@@ -137,43 +149,51 @@ body {
     margin-bottom: 2px;
 }
 
-/* منوی اصلی کارت‌ها */
-.menu-items {
-    padding: 20px;
+/* کارت‌های اتاق و لابی */
+.room-list-container {
+    padding: 15px;
     display: flex;
     flex-direction: column;
-    gap: 15px;
-    overflow-y: auto;
-    flex: 1;
-    padding-bottom: 80px;
+    gap: 12px;
 }
 
-.menu-card {
+.room-card {
     background-color: var(--card-bg);
-    padding: 20px;
+    padding: 14px 16px;
     border-radius: 12px;
     display: flex;
     align-items: center;
-    gap: 20px;
-    cursor: pointer;
+    gap: 15px;
     border: 1px solid var(--border-color);
+    cursor: pointer;
 }
 
-.menu-card .icon {
-    font-size: 28px;
+.room-card img {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    object-fit: cover;
 }
 
-.menu-card span {
-    font-size: 18px;
+.room-info {
+    flex: 1;
+    text-align: right;
+}
+
+.host-name {
     font-weight: bold;
+    font-size: 15px;
+    margin-bottom: 4px;
 }
 
-/* تنظیمات */
+.dots-container {
+    display: flex;
+    gap: 3px;
+}
+
+/* تنظیمات و پروفایل */
 .settings-container {
     padding: 20px;
-    overflow-y: auto;
-    flex: 1;
-    padding-bottom: 80px;
 }
 
 .profile-section {
@@ -269,11 +289,10 @@ body {
     cursor: pointer;
 }
 
-.room-list-container, .chat-placeholder {
-    padding: 15px;
-    overflow-y: auto;
-    flex: 1;
-    padding-bottom: 80px;
-    text-align: center;
+.chat-placeholder {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
     color: var(--text-muted);
 }
