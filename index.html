@@ -1,205 +1,517 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نیورا - بازی آنلاین</title>
+    <title>Nivra - نیورا</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: Tahoma, sans-serif; }
-        body { background: #121212; color: #fff; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
-        .app-container { width: 100%; max-width: 480px; height: 100%; background: #1e1e1e; display: flex; flex-direction: column; position: relative; box-shadow: 0 0 20px rgba(0,0,0,0.8); }
-        .screen { flex: 1; display: none; flex-direction: column; overflow-y: auto; padding: 16px; position: relative; }
-        .screen.active { display: flex; }
-        
-        /* فرم‌ها و ورودی‌ها */
-        input, button { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: none; font-size: 14px; }
-        input { background: #2c2c2c; color: #fff; }
-        button { background: #6200ee; color: #fff; font-weight: bold; cursor: pointer; }
-        button:active { background: #3700b3; }
-        
-        /* نویگیشن پایین صفحه */
-        .bottom-nav { height: 60px; background: #252525; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #333; }
-        .nav-item { background: none; color: #888; border: none; font-size: 12px; cursor: pointer; flex: 1; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-        .nav-item.active { color: #bb86fc; }
+        :root {
+            --primary: #6200ee;
+            --secondary: #03dac6;
+            --bg: #121212;
+            --surface: #1e1e1e;
+            --text: #ffffff;
+            --text-dim: #b0b0b0;
+            --border: #2a2a2a;
+        }
 
-        /* لابی و صندلی‌ها */
-        .room-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 70px; }
-        .seat { background: #2c2c2c; border: 2px dashed #444; border-radius: 10px; padding: 15px; text-align: center; cursor: pointer; min-height: 80px; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-        .seat.occupied { border-style: solid; border-color: #bb86fc; background: #2d233d; }
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Tahoma', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            user-select: none;
+        }
 
-        /* کنترل‌های پایین اتاق (آمادگی، برخاستن، میکروفون، چت) */
-        .room-controls-bottom { position: absolute; bottom: 65px; left: 16px; right: 16px; background: #1e1e1e; padding: 10px; border-top: 1px solid #333; display: flex; flex-direction: column; gap: 8px; }
-        .action-buttons { display: flex; gap: 10px; }
-        .action-buttons button { margin: 0; }
-        .chat-mic-bar { display: flex; gap: 8px; align-items: center; }
-        
-        .error-msg { color: #cf6679; font-size: 12px; text-align: center; margin-top: 5px; }
-        .success-msg { color: #03dac6; font-size: 12px; text-align: center; margin-top: 5px; }
+        .page { display: none; padding-bottom: 80px; }
+        .page.active { display: block; }
+
+        /* Bottom Navigation */
+        .nav-bar {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            height: 60px;
+            background-color: var(--surface);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            border-top: 1px solid var(--border);
+            z-index: 1000;
+        }
+
+        .nav-item {
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-dim);
+            cursor: pointer;
+        }
+
+        .nav-item.active {
+            color: var(--secondary);
+        }
+
+        .nav-icon {
+            font-size: 20px;
+            display: block;
+        }
+
+        /* Container & Headers */
+        .container { padding: 15px; }
+        h2 { color: var(--secondary); font-size: 18px; margin-bottom: 15px; }
+
+        /* Telegram Style Row Lists */
+        .tg-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .tg-item {
+            background-color: var(--surface);
+            padding: 10px 12px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            border: 1px solid var(--border);
+        }
+
+        .tg-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background-color: #333;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .tg-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .tg-info {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .tg-title { font-weight: bold; font-size: 15px; }
+        .tg-subtitle { font-size: 12px; color: var(--text-dim); }
+        .tg-badge { font-size: 11px; background: #333; padding: 2px 6px; border-radius: 6px; width: max-content; }
+        .host-label { color: var(--secondary); font-size: 11px; }
+
+        /* Settings Page */
+        .settings-card {
+            background: var(--surface);
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            border: 1px solid var(--border);
+        }
+        .settings-card label { display: block; font-size: 13px; color: var(--text-dim); margin-bottom: 5px; }
+        .settings-card input {
+            width: 100%;
+            padding: 10px;
+            background: #111;
+            border: 1px solid var(--border);
+            color: white;
+            border-radius: 8px;
+            box-sizing: border-box;
+            margin-bottom: 10px;
+        }
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: bold;
+        }
+        .btn-sub { background: #ff9800; margin-top: 10px; }
+
+        /* Room Interior Header & 3 Dots */
+        .room-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--surface);
+            padding: 10px 15px;
+            border-bottom: 1px solid var(--border);
+        }
+        .menu-dots { font-size: 20px; cursor: pointer; padding: 0 10px; }
+
+        /* Seats Grid (10 Players) */
+        .seats-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            padding: 15px;
+        }
+
+        .seat {
+            background: var(--surface);
+            border: 1px dashed var(--text-dim);
+            border-radius: 10px;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-height: 50px;
+            cursor: pointer;
+        }
+
+        .seat.occupied {
+            border: 1px solid var(--secondary);
+            border-style: solid;
+        }
+
+        /* Room Bottom Actions */
+        .room-bottom-panel {
+            position: fixed;
+            bottom: 60px;
+            width: 100%;
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        .chat-mic-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 8px;
+            align-items: center;
+        }
+
+        .chat-input {
+            flex-grow: 1;
+            background: #111;
+            border: 1px solid var(--border);
+            padding: 8px;
+            border-radius: 6px;
+            color: white;
+        }
+
+        .mic-btn, .send-btn {
+            background: #333;
+            border: none;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .action-buttons-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-buttons-row button {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .btn-ready { background: #4caf50; color: white; }
+        .btn-stand { background: #f44336; color: white; }
+
+        /* Modals / Popups */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+        .modal-content {
+            background: var(--surface);
+            padding: 20px;
+            border-radius: 12px;
+            width: 80%;
+            max-width: 300px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            border: 1px solid var(--border);
+        }
+        .modal-content button {
+            background: #333;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: right;
+        }
     </style>
 </head>
 <body>
 
-<div class="app-container">
-    
-    <!-- ۱. صفحه ورود / ثبت‌نام -->
-    <div id="auth-screen" class="screen active">
-        <h2 style="text-align: center; margin: 20px 0;">ورود به نیورا</h2>
-        <input type="text" id="username-input" placeholder="آیدی (۴ تا ۱۶ حرف، بدون ایموجی و نقطه)">
-        <input type="password" id="password-input" placeholder="رمز عبور (حداقل ۸ کاراکتر)">
-        <button onclick="handleLogin()">ورود / ثبت‌نام</button>
-        <button onclick="showForgotPassword()" style="background: transparent; color: #bb86fc; margin-top: 5px;">رمز خود را فراموش کرده‌اید؟</button>
-        <div id="auth-error" class="error-msg"></div>
-    </div>
-
-    <!-- صفحه فراموشی رمز -->
-    <div id="forgot-screen" class="screen">
-        <h2>بازیابی رمز عبور</h2>
-        <p style="margin: 15px 0; font-size: 14px; line-height: 1.6;">برای بازیابی رمز عبور با پشتیبانی تماس بگیرید:</p>
-        <div style="background: #2c2c2c; padding: 15px; border-radius: 8px; text-align: center; font-size: 18px; color: #03dac6; font-weight: bold;">
-            09991990035
-        </div>
-        <button onclick="showScreen('auth-screen')" style="margin-top: 20px;">بازگشت به ورود</button>
-    </div>
-
-    <!-- ۲. صفحه اصلی (بازی‌ها) -->
-    <div id="games-screen" class="screen">
-        <h3>لیست اتاق‌ها</h3>
-        <div id="room-list" style="margin-top: 10px; display: flex; flex-direction: column; gap: 10px;">
-            <div onclick="joinRoom(1)" style="background: #2c2c2c; padding: 12px; border-radius: 8px; cursor: pointer;">
-                <h4>اتاق شماره ۱ (بازی اونو)</h4>
-                <p style="font-size: 12px; color: #aaa; margin-top: 4px;">میزبان: علی | ۳/۱۰ بازیکن</p>
+    <!-- PAGE 1: GAMES (Lobby) -->
+    <div id="games-page" class="page active">
+        <div class="container">
+            <h2>بازی‌ها (اتاق‌های اونو)</h2>
+            <div class="tg-list">
+                <div class="tg-item" onclick="enterRoom('مهمانی اونو 🃏', 'علی')">
+                    <div class="tg-avatar"><img src="https://via.placeholder.com/45" alt=""></div>
+                    <div class="tg-info">
+                        <div class="tg-title">مهمانی اونو 🃏</div>
+                        <div class="tg-subtitle">میزبان: علی</div>
+                        <div class="tg-badge">4 از 10 بازیکن</div>
+                    </div>
+                </div>
+                <div class="tg-item" onclick="enterRoom('دورهمی سریع', 'سارا')">
+                    <div class="tg-avatar"><img src="https://via.placeholder.com/45" alt=""></div>
+                    <div class="tg-info">
+                        <div class="tg-title">دورهمی سریع</div>
+                        <div class="tg-subtitle">میزبان: سارا</div>
+                        <div class="tg-badge">8 از 10 بازیکن</div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- ۳. صفحه داخل اتاق / لابی بازی -->
-    <div id="room-lobby-screen" class="screen">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-            <h3 id="room-title">اتاق بازی</h3>
-            <button onclick="leaveRoom()" style="width: auto; padding: 6px 12px; background: #cf6679;">خروج</button>
-        </div>
-        
-        <!-- ۱۰ صندلی بازیکنان -->
-        <div class="room-grid" id="seats-container">
-            <!-- صندلی‌ها با جاوااسکریپت ساخته می‌شوند -->
-        </div>
-
-        <!-- دکمه‌ها و کنترل‌های پایین صفحه (دقیقاً بالای چت و میکروفون) -->
-        <div class="room-controls-bottom">
-            <div class="action-buttons">
-                <button onclick="toggleReady()" id="ready-btn" style="background: #03dac6; color: #000;">اعلام آمادگی (Ready)</button>
-                <button onclick="standUp()" id="standup-btn" style="background: #cf6679;">برخاستن</button>
-            </div>
-            <div class="chat-mic-bar">
-                <button style="width: 50px; background: #333;" onclick="toggleMic()">🎤</button>
-                <input type="text" placeholder="پیام در اتاق..." style="margin: 0; flex: 1;">
-                <button style="width: 70px; margin: 0;">ارسال</button>
+    <!-- PAGE 2: MESSENGER -->
+    <div id="messenger-page" class="page">
+        <div class="container">
+            <h2>پیام‌رسان (چت خصوصی PV)</h2>
+            <div class="tg-list">
+                <div class="tg-item">
+                    <div class="tg-avatar"><img src="https://via.placeholder.com/45" alt=""></div>
+                    <div class="tg-info">
+                        <div class="tg-title">رضا</div>
+                        <div class="tg-subtitle">سلام، آماده‌ای بازی کنیم؟</div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- ۴. صفحه پیام‌رسان (PV) -->
-    <div id="messenger-screen" class="screen">
-        <h3>پیام‌رسان (چت خصوصی)</h3>
-        <p style="color: #888; font-size: 13px; margin-top: 10px;">هیچ پیام خصوصی وجود ندارد.</p>
-    </div>
-
-    <!-- ۵. صفحه تنظیمات و پروفایل -->
-    <div id="settings-screen" class="screen">
-        <h3>تنظیمات و پروفایل</h3>
-        <input type="text" id="profile-username" placeholder="ویرایش آیدی">
-        <button onclick="saveProfile()">ذخیره تغییرات</button>
-        
-        <div style="margin-top: 30px; border-top: 1px solid #333; padding-top: 15px;" id="admin-panel">
-            <h4>پنل مدیریت (مخصوص سازنده)</h4>
-            <input type="email" id="admin-user-email" placeholder="جیمیل کاربر">
-            <input type="text" id="admin-code-input" placeholder="کد تایید">
-            <button onclick="adminResetAccount()" style="background: #03dac6; color: #000;">بازیابی اکانت کاربر</button>
+    <!-- PAGE 3: SETTINGS -->
+    <div id="settings-page" class="page">
+        <div class="container">
+            <h2>تنظیمات پروفایل</h2>
+            <div class="settings-card">
+                <label>عکس پروفایل</label>
+                <input type="file" accept="image/*">
+            </div>
+            <div class="settings-card">
+                <label>آیدی کاربری (فقط یک‌بار قابل تغییر است)</label>
+                <input type="text" id="username-input" value="EbiTiem">
+                <button class="btn" onclick="alert('آیدی با موفقیت ذخیره شد و دیگر قابل تغییر نیست!')">ذخیره آیدی</button>
+            </div>
+            <button class="btn btn-sub" onclick="alert('سیستم اشتراک به زودی فعال می‌شود.')">خرید اشتراک ویژه 🌟</button>
         </div>
     </div>
 
-    <!-- نویگیشن پایین صفحه (۳ بخش اصلی) -->
-    <div class="bottom-nav">
-        <button class="nav-item active" onclick="switchTab('games-screen', this)">بازی‌ها</button>
-        <button class="nav-item" onclick="switchTab('messenger-screen', this)">پیام‌رسان</button>
-        <button class="nav-item" onclick="switchTab('settings-screen', this)">تنظیمات</button>
+    <!-- ROOM INTERIOR PAGE -->
+    <div id="room-page" class="page">
+        <div class="room-header">
+            <span id="room-title-display">نام اتاق</span>
+            <span class="menu-dots" onclick="openRoomMenu()">⋮</span>
+        </div>
+
+        <div class="seats-container" id="seats-grid">
+            <!-- Seats will be generated by JS -->
+        </div>
+
+        <div class="room-bottom-panel">
+            <div class="chat-mic-row">
+                <button class="mic-btn" onclick="toggleMic()">🎤</button>
+                <input type="text" class="chat-input" placeholder="پیام در اتاق...">
+                <button class="send-btn">ارسال</button>
+            </div>
+            <div class="action-buttons-row">
+                <button class="btn-ready" onclick="toggleReady(this)">اعلام آمادگی</button>
+                <button class="btn-stand" onclick="leaveSeat()">برخاستن</button>
+            </div>
+        </div>
     </div>
 
-</div>
+    <!-- ROOM MENU MODAL -->
+    <div id="room-menu-modal" class="modal" onclick="closeModals(event)">
+        <div class="modal-content">
+            <h3 style="margin:0; font-size:16px; color:var(--secondary);">منوی اتاق</h3>
+            <button onclick="inviteFriend()">➕ دعوت از دوستان</button>
+            <button onclick="showRoomMembers()">👥 حاضرین در اتاق</button>
+            <button onclick="closeModal('room-menu-modal')">بستن</button>
+        </div>
+    </div>
 
-<script>
-    function showScreen(screenId) {
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        document.getElementById(screenId).classList.add('active');
-    }
+    <!-- MEMBERS MODAL -->
+    <div id="members-modal" class="modal" onclick="closeModals(event)">
+        <div class="modal-content" style="max-height: 300px; overflow-y: auto;">
+            <h3 style="margin:0; font-size:16px; color:var(--secondary);">حاضرین در اتاق</h3>
+            <div class="tg-list" id="members-list">
+                <!-- Filled via JS -->
+            </div>
+            <button onclick="closeModal('members-modal')">بستن</button>
+        </div>
+    </div>
 
-    function switchTab(screenId, btn) {
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        document.getElementById(screenId).classList.add('active');
-        document.querySelectorAll('.bottom-nav .nav-item').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-    }
+    <!-- PLAYER ACTIONS MODAL (When clicking a player) -->
+    <div id="player-action-modal" class="modal" onclick="closeModals(event)">
+        <div class="modal-content">
+            <h3 id="modal-player-name" style="margin:0; font-size:16px; color:var(--secondary);">پروفایل بازیکن</h3>
+            <button onclick="actionProfile()">1. پروفایل</button>
+            <button onclick="actionAddFriend()">2. اضافه به دوستان</button>
+            <button onclick="actionReport()">3. گزارش کردن</button>
+            <button onclick="actionBlacklist()">4. لیست سیاه</button>
+            <button onclick="closeModal('player-action-modal')">بستن</button>
+        </div>
+    </div>
 
-    function handleLogin() {
-        const u = document.getElementById('username-input').value;
-        const p = document.getElementById('password-input').value;
-        if(u.length < 4 || p.length < 8) {
-            document.getElementById('auth-error').innerText = 'آیدی باید حداقل ۴ حرف و رمز حداقل ۸ کاراکتر باشد.';
-            return;
+    <!-- INVITATION ALERT MODAL -->
+    <div id="invite-alert-modal" class="modal">
+        <div class="modal-content" style="text-align: center;">
+            <p id="invite-text">علی شما را به بازی اونو دعوت کرده است.</p>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn-ready" style="flex:1;" onclick="acceptInvite()">تایید</button>
+                <button class="btn-stand" style="flex:1;" onclick="rejectInvite()">خیر</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- BOTTOM NAV -->
+    <nav class="nav-bar" id="main-nav">
+        <div class="nav-item active" onclick="showPage('games-page', this)">
+            <span class="nav-icon">🎮</span>
+            <span>بازی‌ها</span>
+        </div>
+        <div class="nav-item" onclick="showPage('messenger-page', this)">
+            <span class="nav-icon">💬</span>
+            <span>پیام‌رسان</span>
+        </div>
+        <div class="nav-item" onclick="showPage('settings-page', this)">
+            <span class="nav-icon">⚙️</span>
+            <span>تنظیمات</span>
+        </div>
+    </nav>
+
+    <script>
+        function showPage(pageId, element) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            if(element) element.classList.add('active');
+            
+            // Hide main nav when inside room
+            document.getElementById('main-nav').style.display = (pageId === 'room-page') ? 'none' : 'flex';
         }
-        // ورود موفق به صفحه بازی‌ها
-        document.querySelector('.bottom-nav').style.display = 'flex';
-        showScreen('games-screen');
-    }
 
-    function showForgotPassword() {
-        showScreen('forgot-screen');
-    }
-
-    function joinRoom(roomId) {
-        showScreen('room-lobby-screen');
-        renderSeats();
-    }
-
-    function leaveRoom() {
-        showScreen('games-screen');
-    }
-
-    function renderSeats() {
-        const container = document.getElementById('seats-container');
-        container.innerHTML = '';
-        for(let i = 1; i <= 10; i++) {
-            container.innerHTML += `<div class="seat" onclick="sitInSeat(${i})">صندلی ${i}<br><span style="font-size:11px; color:#aaa;">خالی</span></div>`;
+        function enterRoom(roomName, hostName) {
+            document.getElementById('room-title-display').innerText = roomName + ' (میزبان: ' + hostName + ')';
+            showPage('room-page', null);
+            buildSeats();
         }
-    }
 
-    function sitInSeat(seatNum) {
-        alert('شما روی صندلی ' + seatNum + ' نشستید.');
-    }
+        function buildSeats() {
+            const grid = document.getElementById('seats-grid');
+            grid.innerHTML = '';
+            for(let i = 1; i <= 10; i++) {
+                let isOccupied = (i === 1); // Mock seat 1 taken
+                let seat = document.createElement('div');
+                seat.className = 'seat ' + (isOccupied ? 'occupied' : '');
+                if(isOccupied) {
+                    seat.innerHTML = `
+                        <div class="tg-avatar" style="width:35px;height:35px;"><img src="https://via.placeholder.com/35" alt=""></div>
+                        <div style="font-size:12px;">
+                            <div style="font-weight:bold;">علی (میزبان)</div>
+                            <div style="color:var(--text-dim);">لول: 12</div>
+                        </div>
+                    `;
+                    seat.onclick = () => openPlayerAction('علی');
+                } else {
+                    seat.innerHTML = `<div style="font-size:12px; color:var(--text-dim);">صندلی خالی ${i} (کلیک برای نشستن)</div>`;
+                    seat.onclick = () => alert('روی صندلی نشستید!');
+                }
+                grid.appendChild(seat);
+            }
+        }
 
-    function toggleReady() {
-        alert('وضعیت آمادگی تغییر کرد.');
-    }
+        function openRoomMenu() { document.getElementById('room-menu-modal').style.display = 'flex'; }
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+        function closeModals(e) { if(e.target.classList.contains('modal')) e.target.style.display = 'none'; }
 
-    function standUp() {
-        alert('از صندلی برخاستید.');
-    }
+        function inviteFriend() {
+            closeModal('room-menu-modal');
+            alert('دعوت‌نامه برای دوستان ارسال شد! (شبیه‌سازی)');
+            // Simulate receiving invite on another screen
+            setTimeout(() => {
+                document.getElementById('invite-alert-modal').style.display = 'flex';
+            }, 1000);
+        }
 
-    function toggleMic() {
-        alert('میکروفون فعال/غیرفعال شد.');
-    }
+        function acceptInvite() {
+            closeModal('invite-alert-modal');
+            enterRoom('اتاق دعوت شده', 'دوست شما');
+        }
 
-    function saveProfile() {
-        alert('تغییرات ذخیره شد.');
-    }
+        function rejectInvite() {
+            closeModal('invite-alert-modal');
+        }
 
-    function adminResetAccount() {
-        alert('اکانت با موفقیت توسط مدیریت بازیابی شد.');
-    }
+        function showRoomMembers() {
+            closeModal('room-menu-modal');
+            const list = document.getElementById('members-list');
+            list.innerHTML = `
+                <div class="tg-item">
+                    <div class="tg-avatar"><img src="https://via.placeholder.com/45" alt=""></div>
+                    <div class="tg-info">
+                        <div class="tg-title">علی <span class="host-label">(میزبان)</span></div>
+                        <div class="tg-subtitle">لول: 12</div>
+                    </div>
+                </div>
+                <div class="tg-item">
+                    <div class="tg-avatar"><img src="https://via.placeholder.com/45" alt=""></div>
+                    <div class="tg-info">
+                        <div class="tg-title">سارا</div>
+                        <div class="tg-subtitle">لول: 8</div>
+                    </div>
+                </div>
+            `;
+            document.getElementById('members-modal').style.display = 'flex';
+        }
 
-    // پنهان کردن منوی پایین در صفحه ورود
-    document.querySelector('.bottom-nav').style.display = 'none';
-</script>
+        function openPlayerAction(name) {
+            document.getElementById('modal-player-name').innerText = 'پروفایل: ' + name;
+            document.getElementById('player-action-modal').style.display = 'flex';
+        }
 
+        function actionProfile() { alert('نمایش پروفایل کامل بازیکن'); }
+        function actionAddFriend() { alert('به لیست دوستان اضافه شد.'); closeModal('player-action-modal'); }
+        function actionReport() { alert('گزارش تخلف ثبت شد.'); closeModal('player-action-modal'); }
+        function actionBlacklist() { alert('به لیست سیاه اضافه شد.'); closeModal('player-action-modal'); }
+
+        function toggleReady(btn) {
+            if(btn.style.background === 'rgb(76, 175, 80)') {
+                btn.style.background = '#333';
+                btn.innerText = 'اعلام آمادگی';
+            } else {
+                btn.style.background = '#4caf50';
+                btn.innerText = 'آماده ✔️';
+            }
+        }
+
+        function leaveSeat() { alert('از صندلی برخاستید.'); }
+        function toggleMic() { alert('مایک فعال/غیرفعال شد'); }
+    </script>
 </body>
 </html>
+
