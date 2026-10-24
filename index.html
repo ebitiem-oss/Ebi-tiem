@@ -18,25 +18,25 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: Tahoma, sans-serif; }
         body { background-color: var(--bg-color); color: var(--text-main); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
         
-        /* Layout */
         .app-container { flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative; }
-        .view { display: none; flex: 1; flex-direction: column; overflow-y: auto; padding-bottom: 70px; }
+        .view { display: none; flex: 1; flex-direction: column; overflow-y: auto; padding-bottom: 75px; }
         .view.active { display: flex; }
         
         /* Bottom Navigation */
-        .bottom-nav { position: absolute; bottom: 0; left: 0; right: 0; height: 60px; background: var(--card-bg); border-top: 1px solid var(--border-color); display: flex; justify-content: space-around; align-items: center; z-index: 100; }
+        .bottom-nav { position: absolute; bottom: 0; left: 0; right: 0; height: 65px; background: var(--card-bg); border-top: 1px solid var(--border-color); display: flex; justify-content: space-around; align-items: center; z-index: 100; }
         .nav-item { background: none; border: none; color: var(--text-muted); font-size: 12px; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; flex: 1; }
         .nav-item.active { color: var(--accent-color); }
         .nav-item svg { width: 22px; height: 22px; fill: currentColor; }
 
         /* Common Elements */
-        .header { background: var(--card-bg); padding: 12px 16px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; font-weight: bold; }
-        .btn { background: var(--accent-color); color: #000; border: none; padding: 10px 16px; border-radius: 8px; font-weight: bold; cursor: pointer; }
-        .input { background: #090d16; border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 8px; width: 100%; outline: none; margin-top: 6px; }
+        .header { background: var(--card-bg); padding: 14px 16px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; font-weight: bold; font-size: 16px; }
+        .btn { background: var(--accent-color); color: #000; border: none; padding: 10px 16px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 13px; }
+        .btn-danger { background: var(--danger); color: #fff; }
+        .input { background: #090d16; border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 8px; width: 100%; outline: none; margin-top: 6px; font-size: 13px; }
 
         /* Rooms List (Telegram PV style) */
         .room-row { display: flex; align-items: center; padding: 12px 16px; border-bottom: 1px solid var(--border-color); gap: 12px; cursor: pointer; background: rgba(255,255,255,0.01); }
-        .room-avatar { width: 50px; height: 50px; border-radius: 50%; background: #334155; object-fit: cover; }
+        .room-avatar { width: 50px; height: 50px; border-radius: 50%; background: #334155; object-fit: cover; flex-shrink: 0; }
         .room-info { flex: 1; display: flex; flex-direction: column; gap: 4px; }
         .room-host { font-weight: bold; font-size: 15px; }
         .seats-indicator { display: flex; gap: 3px; align-items: center; margin-top: 4px; }
@@ -46,26 +46,32 @@
         /* Room Inside View */
         #room-view { background: var(--bg-color); position: absolute; inset: 0; z-index: 200; display: none; flex-direction: column; }
         #room-view.active { display: flex; }
-        .seats-list { flex: 1; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+        .seats-list { flex: 1; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 8px; padding-bottom: 70px; }
         .seat-row { background: var(--card-bg); padding: 10px 14px; border-radius: 10px; display: flex; align-items: center; justify-content: space-between; border: 1px solid var(--border-color); }
+        .seat-row.empty { background: rgba(30, 41, 59, 0.4); border: 1px dashed var(--border-color); }
         .seat-user-info { display: flex; align-items: center; gap: 10px; }
         .seat-avatar { width: 40px; height: 40px; border-radius: 50%; background: #475569; object-fit: cover; }
-        .user-meta { display: flex; flex-direction: column; }
+        .user-meta { display: flex; flex-direction: column; gap: 2px; }
         .user-name { font-weight: bold; font-size: 14px; }
         .user-level { font-size: 11px; color: var(--accent-color); }
-        .host-badge { background: #38bdf822; color: var(--accent-color); font-size: 10px; padding: 2px 6px; border-radius: 4px; margin-top: 2px; width: fit-content; }
+        .host-badge { background: #38bdf822; color: var(--accent-color); font-size: 10px; padding: 2px 6px; border-radius: 4px; width: fit-content; }
         
-        /* Interactive Tick / Ready */
         .ready-check { width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--border-color); display: flex; align-items: center; justify-content: center; cursor: pointer; }
         .ready-check.checked { background: var(--success); border-color: var(--success); color: #fff; }
 
-        /* Bottom Chat & Mic in Room */
-        .room-footer { padding: 10px 16px; background: var(--card-bg); border-top: 1px solid var(--border-color); display: flex; gap: 10px; align-items: center; }
+        .room-footer { position: absolute; bottom: 0; left: 0; right: 0; padding: 10px 16px; background: var(--card-bg); border-top: 1px solid var(--border-color); display: flex; gap: 10px; align-items: center; z-index: 210; }
         .room-footer input { flex: 1; margin: 0; }
-        .icon-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 20px; }
+        .icon-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 20px; padding: 4px; }
         
-        /* Toast */
-        #toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #334155; color: #fff; padding: 8px 16px; border-radius: 20px; font-size: 13px; z-index: 1000; display: none; }
+        /* Dropdown Menu for 3-dots */
+        .dropdown-menu { position: absolute; top: 55px; left: 16px; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; display: none; flex-direction: column; z-index: 300; width: 160px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+        .dropdown-menu.active { display: flex; }
+        .dropdown-item { padding: 10px 14px; font-size: 13px; border-bottom: 1px solid var(--border-color); cursor: pointer; text-align: right; background: none; border: none; color: var(--text-main); width: 100%; }
+        .dropdown-item:last-child { border-bottom: none; }
+        .dropdown-item:hover { background: rgba(255,255,255,0.05); }
+
+        /* Toast Notification */
+        #toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #334155; color: #fff; padding: 8px 16px; border-radius: 20px; font-size: 13px; z-index: 1000; display: none; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
     </style>
 </head>
 <body>
@@ -76,51 +82,70 @@
     <!-- View 1: Games / Rooms List -->
     <div id="games-view" class="view active">
         <div class="header">اتاق‌های بازی اونو</div>
-        <div id="rooms-list">
-            <!-- Dynamic Rooms -->
-        </div>
+        <div id="rooms-list"></div>
     </div>
 
-    <!-- View 2: Messenger -->
+    <!-- View 2: Messenger (PV / Chat) -->
     <div id="messenger-view" class="view">
         <div class="header">پیام‌رسان (چت خصوصی)</div>
-        <div style="padding: 20px; text-align: center; color: var(--text-muted);">پیامی وجود ندارد</div>
+        <div style="padding: 20px; text-align: center; color: var(--text-muted);">هیچ پیام خصوصی وجود ندارد</div>
     </div>
 
     <!-- View 3: Settings & Profile -->
     <div id="settings-view" class="view">
         <div class="header">تنظیمات و پروفایل</div>
         <div style="padding: 16px; display: flex; flex-direction: column; gap: 16px;">
-            <div style="display: flex; align-items: center; gap: 16px;">
+            <!-- Profile & Username -->
+            <div style="display: flex; align-items: center; gap: 16px; background: var(--card-bg); padding: 12px; border-radius: 10px; border: 1px solid var(--border-color);">
                 <label for="avatar-input" style="cursor: pointer; position: relative;">
-                    <img id="profile-avatar" src="" style="width: 70px; height: 70px; border-radius: 50%; background: #334155; object-fit: cover;" alt="پروفایل">
+                    <img id="profile-avatar" src="" style="width: 65px; height: 65px; border-radius: 50%; background: #334155; object-fit: cover;" alt="پروفایل">
                     <input type="file" id="avatar-input" accept="image/*" style="display: none;" onchange="updateAvatar(event)">
                 </label>
-                <div>
+                <div style="flex: 1;">
                     <input type="text" id="username-input" class="input" placeholder="آیدی شما">
-                    <button class="btn" style="margin-top: 8px; padding: 6px 12px; font-size: 12px;" onclick="saveUsername()">ذخیره آیدی (فقط یک‌بار)</button>
+                    <button class="btn" style="margin-top: 8px; padding: 6px 12px; font-size: 11px;" onclick="saveUsername()">ذخیره آیدی (فقط ۱ بار رایگان)</button>
                 </div>
             </div>
-            <hr style="border-color: var(--border-color);">
-            <div>
-                <label style="display: flex; justify-content: space-between; align-items: center;">
+
+            <!-- Subscription / Membership -->
+            <div style="background: linear-gradient(135deg, #1e293b, #0f172a); border: 1px solid var(--accent-color); padding: 14px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <div style="font-weight: bold; font-size: 14px; color: var(--accent-color);">اشتراک ویژه نیورا</div>
+                    <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">تغییر نام نامحدود و امکانات اختصاصی</div>
+                </div>
+                <button class="btn" style="padding: 8px 12px; font-size: 12px;" onclick="showToast('سیستم اشتراک به زودی فعال می‌شود')">خرید اشتراک</button>
+            </div>
+
+            <!-- Security & Password -->
+            <div style="background: var(--card-bg); padding: 14px; border-radius: 10px; border: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 10px;">
+                <div style="font-weight: bold; font-size: 14px;">امنیت و رمز عبور</div>
+                <input type="password" id="current-pass" class="input" placeholder="رمز عبور فعلی">
+                <input type="password" id="new-pass" class="input" placeholder="رمز عبور جدید (حداقل ۸ حرف انگلیسی/عدد)">
+                <div style="display: flex; gap: 8px; margin-top: 4px;">
+                    <button class="btn" style="flex: 1; padding: 8px;" onclick="savePassword()">تغییر رمز</button>
+                    <button class="btn btn-danger" style="flex: 1; padding: 8px; font-size: 12px;" onclick="forgotPassword()">رمز را فراموش کردید؟</button>
+                </div>
+            </div>
+
+            <!-- Game Toggles -->
+            <div style="background: var(--card-bg); padding: 14px; border-radius: 10px; border: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 12px;">
+                <label style="display: flex; justify-content: space-between; align-items: center; font-size: 14px;">
                     <span>صداهای بازی</span>
                     <input type="checkbox" checked style="width: 18px; height: 18px;">
                 </label>
-            </div>
-            <div>
-                <label style="display: flex; justify-content: space-between; align-items: center;">
-                    <span>دعوت به بازی</span>
+                <label style="display: flex; justify-content: space-between; align-items: center; font-size: 14px;">
+                    <span>دعوت به بازی (Invite)</span>
                     <input type="checkbox" checked style="width: 18px; height: 18px;">
                 </label>
             </div>
-            <div style="font-size: 12px; color: var(--text-muted); margin-top: 20px;">
+
+            <div style="font-size: 12px; color: var(--text-muted); text-align: center; margin-top: 10px;">
                 پشتیبانی: 09991990035
             </div>
         </div>
     </div>
 
-    <!-- Bottom Navigation -->
+    <!-- Bottom Navigation Bar -->
     <nav class="bottom-nav">
         <button class="nav-item active" onclick="switchView('games-view', this)">
             <svg viewBox="0 0 24 24"><path d="M21 6H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 10H3V8h18v8zM6 15h2v-2h2v-2H8V9H6v2H4v2h2z"/></svg>
@@ -137,15 +162,23 @@
     </nav>
 </div>
 
-<!-- Room Inside View (Full Overlay) -->
+<!-- Room Inside View -->
 <div id="room-view">
     <div class="header">
-        <span id="room-header-title">اتاق بازی</span>
-        <button class="icon-btn" onclick="leaveRoom()">➔</button>
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <button class="icon-btn" onclick="leaveRoom()">➔</button>
+            <span id="room-header-title">اتاق بازی</span>
+        </div>
+        <button class="icon-btn" onclick="toggleMenu()">⋮</button>
+        <!-- 3-Dot Dropdown Menu -->
+        <div class="dropdown-menu" id="room-menu">
+            <button class="dropdown-item" onclick="showToast('لینک دعوت کپی شد')">دعوت دوستان</button>
+            <button class="dropdown-item" onclick="showToast('تنظیمات اتاق')">تنظیمات اتاق</button>
+        </div>
     </div>
-    <div class="seats-list" id="seats-container">
-        <!-- 10 Seats Rendered Here -->
-    </div>
+
+    <div class="seats-list" id="seats-container"></div>
+
     <div class="room-footer">
         <button class="icon-btn">🎤</button>
         <input type="text" class="input" placeholder="پیام در اتاق...">
@@ -154,13 +187,12 @@
 </div>
 
 <script>
-    // Mock Data for Rooms
     const rooms = [
-        { id: 1, host: 'علی‌رضا', avatar: '', playersCount: 4 },
-        { id: 2, host: 'سارا', avatar: '', playersCount: 7 },
-        { id: 3, host: 'محمد', avatar: '', playersCount: 2 },
-        { id: 4, host: 'نیلوفر', avatar: '', playersCount: 10 },
-        { id: 5, host: 'رضا', avatar: '', playersCount: 5 }
+        { id: 1, host: 'علی‌رضا', playersCount: 3 },
+        { id: 2, host: 'سارا', playersCount: 6 },
+        { id: 3, host: 'محمد', playersCount: 2 },
+        { id: 4, host: 'نیلوفر', playersCount: 9 },
+        { id: 5, host: 'رضا', playersCount: 4 }
     ];
 
     function renderRooms() {
@@ -172,7 +204,7 @@
                 dots += `<div class="seat-dot ${i < room.playersCount ? 'filled' : ''}"></div>`;
             }
             container.innerHTML += `
-                <div class="room-row" onclick="joinRoom('${room.host}')">
+                <div class="room-row" onclick="joinRoom('${room.host}', ${room.playersCount})">
                     <div class="room-avatar"></div>
                     <div class="room-info">
                         <div class="room-host">${room.host}</div>
@@ -183,36 +215,59 @@
         });
     }
 
-    function joinRoom(hostName) {
+    function joinRoom(hostName, count) {
         document.getElementById('room-header-title').innerText = `اتاق ${hostName}`;
         const seatsContainer = document.getElementById('seats-container');
         seatsContainer.innerHTML = '';
         
         for(let i = 1; i <= 10; i++) {
+            let isOccupied = i <= count;
             let isHost = (i === 1);
-            seatsContainer.innerHTML += `
-                <div class="seat-row">
-                    <div class="seat-user-info">
-                        <div class="seat-avatar"></div>
-                        <div class="user-meta">
-                            <span class="user-name">${isHost ? hostName : (i <= 4 ? 'بازیکن ' + i : 'صندلی خالی')}</span>
-                            <span class="user-level">لول ${i * 5}</span>
-                            ${isHost ? '<span class="host-badge">میزبان</span>' : ''}
+            
+            if (isOccupied) {
+                // Seated player
+                seatsContainer.innerHTML += `
+                    <div class="seat-row">
+                        <div class="seat-user-info">
+                            <div class="seat-avatar"></div>
+                            <div class="user-meta">
+                                <span class="user-name">${isHost ? hostName : 'بازیکن ' + i}</span>
+                                <span class="user-level">لول ${i * 3}</span>
+                                ${isHost ? '<span class="host-badge">میزبان</span>' : ''}
+                            </div>
                         </div>
+                        <div class="ready-check" onclick="toggleReady(this)">✓</div>
                     </div>
-                    <div class="ready-check" onclick="toggleReady(this)">✓</div>
-                </div>
-            `;
+                `;
+            } else {
+                // Empty seat (No level, no tick, just empty slot with join option)
+                seatsContainer.innerHTML += `
+                    <div class="seat-row empty">
+                        <div class="seat-user-info">
+                            <div style="width: 40px; height: 40px; border-radius: 50%; border: 1px dashed var(--text-muted); display: flex; align-items: center; justify-content: center; color: var(--text-muted);">+</div>
+                            <div class="user-meta">
+                                <span class="user-name" style="color: var(--text-muted); font-size: 13px;">صندلی خالی</span>
+                            </div>
+                        </div>
+                        <button class="btn" style="padding: 4px 10px; font-size: 11px;" onclick="showToast('روی صندلی نشستید')">نشستن</button>
+                    </div>
+                `;
+            }
         }
         document.getElementById('room-view').classList.add('active');
     }
 
     function leaveRoom() {
         document.getElementById('room-view').classList.remove('active');
+        document.getElementById('room-menu').classList.remove('active');
     }
 
     function toggleReady(el) {
         el.classList.toggle('checked');
+    }
+
+    function toggleMenu() {
+        document.getElementById('room-menu').classList.toggle('active');
     }
 
     function switchView(viewId, btn) {
@@ -229,28 +284,46 @@
         setTimeout(() => t.style.display = 'none', 2000);
     }
 
-    // Username change restriction logic
+    // Username restriction logic
     let usernameChanged = localStorage.getItem('usernameChanged') === 'true';
     function saveUsername() {
         if(usernameChanged) {
-            showToast('تغییر آیدی فقط یک‌بار مجاز است! نیاز به اشتراک.');
+            showToast('تغییر آیدی فقط یک‌بار رایگان است! برای تغییرات بیشتر نیاز به اشتراک دارید.');
             return;
         }
         const val = document.getElementById('username-input').value;
-        if(val) {
+        if(val.trim() !== '') {
             localStorage.setItem('usernameChanged', 'true');
             usernameChanged = true;
-            showToast('آیدی ذخیره شد.');
+            showToast('آیدی با موفقیت ذخیره شد.');
+        } else {
+            showToast('لطفاً نام معتبری وارد کنید');
         }
     }
 
-    function updateAvatar(event) {
-        const reader = new FileReader();
-        reader.onload = function() {
-            document.getElementById('profile-avatar').src = reader.result;
-            showToast('تصویر پروفایل به‌روز شد.');
+    // Password validation logic
+    function savePassword() {
+        const pass = document.getElementById('new-pass').value;
+        if(pass.length < 8) {
+            showToast('رمز عبور باید حداقل ۸ کاراکتر (انگلیسی/عدد) باشد.');
+            return;
         }
-        reader.readAsDataURL(event.target.files[0]);
+        showToast('رمز عبور با موفقیت تغییر کرد.');
+    }
+
+    function forgotPassword() {
+        showToast('برای بازیابی رمز با پشتیبانی تماس بگیرید: 09991990035');
+    }
+
+    function updateAvatar(event) {
+        if(event.target.files && event.target.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('profile-avatar').src = e.target.result;
+                showToast('تصویر پروفایل به‌روز شد.');
+            }
+            reader.readAsDataURL(event.target.files[0]);
+        }
     }
 
     renderRooms();
