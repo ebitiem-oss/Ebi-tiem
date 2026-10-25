@@ -13,14 +13,28 @@ let bullets = [];
 
 let playerHP = 100;
 let playerScore = 0;
+let gameStarted = false;
 
-init3DGame();
-initOnlineMultiplayer();
-animate();
+function startMatchmaking() {
+    document.getElementById('main-menu').style.display = 'none';
+    document.getElementById('game-container').style.display = 'block';
+
+    if (!renderer) {
+        init3DGame();
+        initOnlineMultiplayer();
+        animate();
+    }
+    gameStarted = true;
+}
+
+function returnToMenu() {
+    gameStarted = false;
+    document.getElementById('game-container').style.display = 'none';
+    document.getElementById('main-menu').style.display = 'flex';
+}
 
 function init3DGame() {
     scene = new THREE.Scene();
-    // آسمان روشن روزانه
     scene.background = new THREE.Color(0x87CEEB);
     scene.fog = new THREE.FogExp2(0x87CEEB, 0.02);
 
@@ -32,7 +46,6 @@ function init3DGame() {
     renderer.setPixelRatio(window.devicePixelRatio);
     document.getElementById('canvas-container').appendChild(renderer.domElement);
 
-    // نورپردازی محیط روز
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.85);
     scene.add(ambientLight);
 
@@ -48,14 +61,12 @@ function init3DGame() {
 }
 
 function createDaylightBattlefield() {
-    // زمین چمن روشن
     const floorGeo = new THREE.PlaneGeometry(150, 150);
     const floorMat = new THREE.MeshStandardMaterial({ color: 0x557a46, roughness: 0.9 });
     const floor = new THREE.Mesh(floorGeo, floorMat);
     floor.rotation.x = -Math.PI / 2;
     scene.add(floor);
 
-    // موانع و جعبه‌ها
     const boxMat = new THREE.MeshStandardMaterial({ color: 0x8b5a2b, roughness: 0.6 });
     for (let i = 0; i < 35; i++) {
         const size = Math.random() * 3 + 1.5;
@@ -230,6 +241,7 @@ function setupControls() {
     }
 
     window.addEventListener('touchstart', (e) => {
+        if (!gameStarted) return;
         const touch = e.touches[0];
         if (touch.clientX > window.innerWidth / 2 && !isDraggingJoystick) {
             touchStartX = touch.clientX;
@@ -238,6 +250,7 @@ function setupControls() {
     });
 
     window.addEventListener('touchmove', (e) => {
+        if (!gameStarted) return;
         const touch = e.touches[0];
 
         if (isDraggingJoystick) {
@@ -287,6 +300,7 @@ function setupControls() {
 let lastNetworkSend = 0;
 function animate() {
     requestAnimationFrame(animate);
+    if (!gameStarted) return;
 
     camera.rotation.y = cameraRotationY;
     camera.rotation.x = cameraRotationX;
@@ -318,11 +332,9 @@ function animate() {
         b.position.add(b.velocity);
         b.life--;
         
-        // بررسی برخورد گلوله با بازیکنان حریف
         for (let id in remotePlayers) {
             const pMesh = remotePlayers[id].mesh;
             if (b.position.distanceTo(pMesh.position) < 1.0) {
-                // برخورد موفق!
                 playerScore += 10;
                 document.getElementById('player-score').innerText = playerScore;
                 
@@ -387,7 +399,9 @@ function drawMinimap() {
 }
 
 function onWindowResize() {
+    if (!renderer) return;
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
-}
+            }
+        
