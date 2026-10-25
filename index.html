@@ -1,68 +1,18 @@
-<!DOCTYPE html>
-<html lang="fa" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>نیورا - کالاف دیوتی موبایل</title>
-    <link rel="stylesheet" href="style.css">
-    <!-- کتابخانه گرافیک سه‌بعدی Three.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-</head>
-<body>
+<!-- اضافه کردن این بخش‌ها داخل <div id="game-screen"> -->
+<div id="game-screen" class="screen">
+    <div id="canvas-container"></div>
+    <div id="damage-overlay" class="damage-flash"></div>
+    <div id="crosshair"></div>
 
-    <!-- صفحه ورود -->
-    <div id="login-screen" class="screen active">
-        <div class="login-box">
-            <h2>⚔️ نیورا شوتر</h2>
-            <p>ورود به میدان نبرد آنلاین</p>
-            <input type="text" id="login-id" placeholder="نام یا آیدی سرباز..." autocomplete="off">
-            <button id="btn-login" class="btn-primary">ورود به بازی</button>
+    <!-- نوار سلامت پایین سمت چپ -->
+    <div class="hud-bottom-left">
+        <div class="health-container">
+            <div id="health-bar"></div>
         </div>
+        <div class="health-text">HP: <span id="hp-val">100</span></div>
     </div>
 
-    <!-- منوی انتخاب حالت بازی -->
-    <div id="menu-screen" class="screen">
-        <div class="menu-container">
-            <h1>NIVRA OPS</h1>
-            <p id="welcome-user">خوش آمدید، سرباز</p>
-            
-            <div class="mode-select">
-                <h3>انتخاب حالت نبرد</h3>
-                <button class="btn-mode" onclick="startGameMode('solo')">مبارزه تکی (Solo)</button>
-                <button class="btn-mode" onclick="startGameMode('4player')">نبرد ۴ نفره (Squad)</button>
-                <button class="btn-mode" onclick="startGameMode('8player')">جنگ ۸ نفره (War)</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- صفحه اصلی بازی (عمودی) -->
-    <div id="game-screen" class="screen">
-        <!-- بوم گرافیکی Three.js -->
-        <div id="canvas-container"></div>
-
-        <!-- رابط کاربری بالا (مایک کوچک و مینی‌مپ) -->
-        <div class="hud-top-bar">
-            <button id="btn-mic-top" class="mic-icon-btn" onclick="toggleMic()">🎤</button>
-            <div class="mini-map">
-                <div id="player-dot"></div>
-            </div>
-            <span id="room-info-badge">تکی</span>
-        </div>
-
-        <!-- کنترل‌های لمسی موبایل (در حالت عمودی) -->
-        <div class="mobile-hud-portrait">
-            <!-- جو استیک حرکتی (سمت چپ) -->
-            <div id="move-joystick" class="joystick-base">
-                <div id="move-stick" class="joystick-knob"></div>
-            </div>
-
-            <!-- دکمه شلیک و چرخش (سمت راست) -->
-            <div id="fire-joystick" class="fire-area">
-                <button class="fire-btn" onclick="shootWeapon()">💥 شلیک</button>
-            </div>
-        </div>
-    </div>
-
-    <script src="script.js"></script>
-</body>
-</html>
+    <!-- سایر المان‌های قبلی (مایک، مینی‌مپ، جو استیک) اینجا بمانند -->
+    <div class="hud-top-bar">...</div>
+    <div class="mobile-hud-portrait">...</div>
+</div>
