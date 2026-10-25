@@ -3,112 +3,100 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نیورا - بازی آنلاین</title>
+    <title>نیورا - پیام‌رسان و تنظیمات</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="no-screenshot">
 
     <!-- صفحه ورود -->
     <div id="login-screen" class="screen active">
         <div class="login-container">
             <h2>ورود به نیورا</h2>
             <input type="text" id="login-id" placeholder="آیدی کاربری">
-            <input type="password" id="login-pass" placeholder="رمز عبور (۸ کاراکتر)">
+            <input type="password" id="login-pass" placeholder="رمز عبور">
             <button id="btn-login">ورود</button>
-            <button id="btn-forgot" style="background:none; color:#5288c1; border:none; margin-top:10px; cursor:pointer;">فراموشی رمز عبور؟</button>
         </div>
     </div>
 
     <!-- صفحه اصلی اپلیکیشن -->
     <div id="main-screen" class="screen">
         
-        <!-- تب‌ها -->
-        <div class="tab-content active" id="tab-games">
-            <div class="header-bar">لیست اتاق‌ها (لابی)</div>
-            <div id="room-list" class="room-list-container">
-                <!-- اتاق‌ها به صورت پویا ساخته می‌شوند -->
-            </div>
+        <!-- تب بازی‌ها -->
+        <div class="tab-content" id="tab-games">
+            <div class="header-bar">بخش بازی‌ها</div>
+            <div style="padding: 20px; text-align: center; color: #829ab1;">لیست بازی‌های آنلاین نیورا</div>
         </div>
 
-        <div class="tab-content" id="tab-messenger">
+        <!-- تب پیام‌رسان (PV) -->
+        <div class="tab-content active" id="tab-messenger">
             <div class="header-bar">پیام‌رسان (چت خصوصی)</div>
-            <div style="padding: 20px; text-align: center; color: #829ab1;">چت خصوصی (PV) فعال است.</div>
+            <div id="pv-list" class="pv-list-container">
+                <!-- لیست پی‌وی‌ها اینجا قرار می‌گیرد -->
+            </div>
+            <!-- دکمه گرد + برای افزودن دوست -->
+            <button id="btn-add-pv" class="fab-btn">+</button>
         </div>
 
+        <!-- تب تنظیمات -->
         <div class="tab-content" id="tab-settings">
             <div class="header-bar">تنظیمات و پروفایل</div>
             <div class="settings-body">
-                <div class="profile-box">
-                    <div class="item-pic" style="width:70px; height:70px; border-radius:50%; background:#2b5278; margin:0 auto 10px;"></div>
-                    <div id="my-name" style="font-weight:bold; font-size:18px;">نام کاربر</div>
-                    <div id="my-id" style="color:#829ab1; font-size:14px;">@id</div>
+                <!-- دکمه گرد پروفایل بالا -->
+                <div class="profile-header-center">
+                    <div class="profile-circle-pic" id="profile-pic-btn" title="تغییر عکس پروفایل"></div>
+                    <input type="file" id="file-input-pic" style="display:none;" accept="image/*">
+                    <div id="my-name-display" style="font-weight:bold; font-size:16px; margin-top:5px;">نام کاربر</div>
+                    <div id="my-id-display" style="color:#829ab1; font-size:13px;">@id</div>
                 </div>
                 
                 <div class="setting-item">
                     <label>تغییر نام کاربری (فقط یک‌بار رایگان):</label>
                     <input type="text" id="new-username-input" placeholder="نام جدید">
                     <button id="btn-change-username">ثبت تغییر نام</button>
-                    <button id="btn-buy-subscription" style="display:none; background:#d14545; margin-top:5px;">خرید اشتراک (برای تغییرات بیشتر)</button>
                 </div>
 
-                <div class="small-toggles">
+                <div class="setting-item">
+                    <label>تغییر رمز عبور:</label>
+                    <input type="password" id="old-pass-input" placeholder="رمز فعلی">
+                    <input type="password" id="new-pass-input" placeholder="رمز جدید">
+                    <button id="btn-change-password">تغییر رمز</button>
+                </div>
+
+                <div class="setting-item" style="gap:10px;">
                     <label><input type="checkbox" id="toggle-sound" checked> صدای بازی</label>
-                    <label><input type="checkbox" id="toggle-invite" checked> امکان دعوت</label>
+                    <label><input type="checkbox" id="toggle-invite" checked> امکان دعوت دوستان</label>
                 </div>
 
-                <!-- دکمه مختص سازنده -->
-                <button id="btn-admin" style="display:none; background:#ff8c00; margin-top:20px;">پنل سازنده (ریست رمز کاربران)</button>
+                <button id="btn-buy-sub" class="sub-btn">خرید اشتراک ویژه</button>
             </div>
         </div>
 
         <!-- منوی ناوبری پایین -->
         <div class="bottom-nav">
-            <div class="nav-item active" data-target="tab-games">بازی‌ها</div>
-            <div class="nav-item" data-target="tab-messenger">پیام‌رسان</div>
+            <div class="nav-item" data-target="tab-games">بازی‌ها</div>
+            <div class="nav-item active" data-target="tab-messenger">پیام‌رسان</div>
             <div class="nav-item" data-target="tab-settings">تنظیمات</div>
         </div>
     </div>
 
-    <!-- پنجره داخل اتاق -->
-    <div id="room-overlay" class="room-overlay">
+    <!-- صفحه چت خصوصی (PV) بازشو -->
+    <div id="chat-overlay" class="chat-overlay">
         <div class="room-header">
             <div style="display:flex; align-items:center; gap:10px;">
-                <div id="close-room" style="font-size:22px; cursor:pointer; padding:0 5px;">←</div>
+                <div id="close-chat" style="font-size:22px; cursor:pointer; padding:0 5px;">←</div>
                 <div class="item-pic" style="width:35px; height:35px; border-radius:50%; background:#2b5278;"></div>
                 <div>
-                    <div id="room-host-name" style="font-weight:bold; font-size:14px;">نام میزبان</div>
-                    <div style="font-size:11px; color:#829ab1;">اتاق آنلاین</div>
-                </div>
-            </div>
-            <div style="position:relative;">
-                <div id="room-menu-btn" style="font-size:20px; cursor:pointer; padding:0 10px;">⋮</div>
-                <!-- منوی سه‌نقطه بالایی -->
-                <div id="room-dropdown-menu" class="dropdown-menu" style="display:none;">
-                    <div id="menu-invite">دعوت دوستان</div>
-                    <div id="menu-attendees">لیست افراد داخل اتاق</div>
-                    <div id="menu-settings">تنظیمات اتاق (میزبان)</div>
+                    <div id="chat-target-name" style="font-weight:bold; font-size:14px;">نام مخاطب</div>
+                    <div style="font-size:11px; color:#829ab1;">آنلاین</div>
                 </div>
             </div>
         </div>
-
-        <div id="seats-container" class="seats-container">
-            <!-- صندلی‌ها و چت داخل اتاق -->
+        <div id="chat-messages-area" class="chat-messages-area">
+            <!-- پیام‌ها -->
         </div>
-
         <div class="room-footer">
-            <input type="text" id="chat-input" placeholder="پیام خود را بنویسید...">
-            <button id="send-chat-btn">ارسال</button>
-        </div>
-    </div>
-
-    <!-- مودال تنظیمات میزبان -->
-    <div id="host-settings-modal" class="modal" style="display:none;">
-        <div class="modal-content">
-            <h3>تنظیمات اتاق (مخصوص میزبان)</h3>
-            <label><input type="checkbox" id="lock-chat-toggle"> قفل کردن چت</label>
-            <label><input type="checkbox" id="lock-mic-toggle"> قفل کردن میکروفون</label>
-            <label><input type="checkbox" id="lock-room-toggle"> قفل کردن اتاق</label>
-            <button id="close-host-settings" style="margin-top:15px;">بستن</button>
+            <input type="text" id="pv-chat-input" placeholder="نوشتن پیام...">
+            <button id="send-pv-btn">ارسال</button>
         </div>
     </div>
 
