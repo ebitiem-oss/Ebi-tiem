@@ -35,16 +35,15 @@
         }
         #start-btn:hover { background: rgba(0, 150, 255, 0.3); border-color: #0096ff; }
 
-        /* --- استایل HUD (رابط کاربری داخل بازی) --- */
+        /* --- استایل HUD --- */
         #game-ui {
-            display: none; /* در ابتدا مخفی است */
+            display: none;
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
             z-index: 500;
-            pointer-events: none; /* اجازه کلیک به لایه‌های زیرین داده شود */
+            pointer-events: none;
         }
 
-        /* پروفایل کاربر در بالا سمت راست */
         #player-profile {
             position: absolute;
             top: 20px; right: 20px;
@@ -54,14 +53,13 @@
             border-radius: 8px;
             border-left: 4px solid #0096ff;
             color: white;
-            pointer-events: auto; /* پروفایل قابل کلیک باشد */
+            pointer-events: auto;
         }
 
         #player-name {
             font-size: 22px; font-weight: bold;
             letter-spacing: 2px; text-transform: uppercase;
             margin-left: 15px;
-            text-shadow: 0 0 10px rgba(255,255,255,0.5);
         }
 
         .profile-icon {
@@ -70,7 +68,6 @@
             border-radius: 50%;
         }
 
-        /* هشدار چرخش */
         #orientation-warning {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #000; z-index: 9999; color: white; text-align: center; 
@@ -86,13 +83,11 @@
         <p>لطفاً گوشی را در حالت افقی نگه دارید</p>
     </div>
 
-    <!-- لابی -->
     <div id="lobby-container">
         <h1 id="game-title">NIVRA</h1>
         <button id="start-btn">START MISSION</button>
     </div>
 
-    <!-- UI بازی (پروفایل و دکمه‌ها) -->
     <div id="game-ui">
         <div id="player-profile">
             <div class="profile-icon"></div>
@@ -103,36 +98,27 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
     <script>
-        // ۱. تنظیمات موتور گرافیکی
+        let isGameStarted = false;
+        let weaponGroup; // گروهی که اسلحه را نگه می‌دارد
+
+        // ۱. تنظیمات پایه
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.shadowMap.enabled = true; // فعال سازی سایه‌ها برای واقعی‌تر شدن
         document.body.appendChild(renderer.domElement);
 
-        // ۲. ساخت ذرات لابی (Particle System)
+        // ۲. لابی (ذرات)
         const particlesGeometry = new THREE.BufferGeometry();
         const count = 400;
         const posArray = new Float32Array(count * 3);
-        const colorArray = new Float32Array(count * 3);
-
-        for(let i=0; i<count * 3; i++) {
-            posArray[i] = (Math.random() - 0.5) * 15;
-            colorArray[i] = Math.random();
-        }
+        for(let i=0; i<count * 3; i++) posArray[i] = (Math.random() - 0.5) * 15;
         particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-        particlesGeometry.setAttribute('color', new THREE.BufferAttribute(colorArray, 3));
-        
-        const particlesMaterial = new THREE.PointsMaterial({
-            size: 0.05,
-            vertexColors: true,
-            transparent: true,
-            blending: THREE.AdditiveBlending
-        });
+        const particlesMaterial = new THREE.PointsMaterial({ size: 0.05, color: 0x0096ff, transparent: true });
         const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
         scene.add(particlesMesh);
 
-        // ۳. نورپردازی
         const light = new THREE.PointLight(0x0096ff, 2, 50);
         light.position.set(0, 2, 2);
         scene.add(light);
@@ -140,51 +126,83 @@
 
         camera.position.z = 5;
 
-        // ۴. انیمیشن لابی
+        // ۳. ساخت محیط بازی (زمین و آسمان)
+        function initWorld() {
+            // زمین
+            const floorGeo = new THREE.PlaneGeometry(100, 100);
+            const floorMat = new THREE.MeshStandardMaterial({ color: 0x222222 });
+            const floor = new THREE.Mesh(floorGeo, floorMat);
+            floor.rotation.x = -Math.PI / 2;
+            floor.receiveShadow = true;
+            scene.add(floor);
+
+            // آسمان تاریک
+            scene.background = new THREE.Color(0x050505);
+        }
+
+        // ۴. ساخت اسلحه (Weapon Model)
+        function createWeapon() {
+            weaponGroup = new THREE.Group();
+
+            // بدنه اصلی اسلحه (یک استوانه متمایل)
+            const bodyGeo = new THREE.BoxGeometry(0.2, 0.2, 1);
+            const bodyMat = new THREE.MeshStandardMaterial({ color: 0x111111 });
+            const body = new THREE.Mesh(bodyGeo, bodyMat);
+            
+            // لوله اسلحه
+            const barrelGeo = new THREE.CylinderGeometry(0.05, 0.05, 0.8);
+            const barrelMat = new THREE.MeshStandardMaterial({ color: 0x000000 });
+            const barrel = new THREE.Mesh(barrelGeo, barrelMat);
+            barrel.rotation.x = Math.PI / 2;
+            barrel.position.z = -0.5;
+
+            weaponGroup.add(body);
+            weaponGroup.add(barrel);
+
+            // قرار دادن اسلحه در جلوی دوربین
+            weaponGroup.position.set(0.4, -0.4, -0.8); 
+            camera.add(weaponGroup); // اسلحه فرزند دوربین می‌شود (با حرکت دوربین حرکت می‌کند)
+            scene.add(camera); 
+        }
+
+        // ۵. انیمیشن‌ها
         function animateLobby() {
-            requestAnimationFrame(animateLobby);
-            particlesMesh.rotation.y += 0.001;
-            particlesMesh.rotation.x += 0.0005;
+            if (!isGameStarted) {
+                requestAnimationFrame(animateLobby);
+                particlesMesh.rotation.y += 0.001;
+                renderer.render(scene, camera);
+            }
+        }
+
+        function animateGame() {
+            requestAnimationFrame(animateGame);
+            
+            // انیمیشن شناور بودن بسیار ملایم اسلحه (حس تنفس کاراکتر)
+            if(weaponGroup) {
+                weaponGroup.position.y = -0.4 + Math.sin(Date.now() * 0.002) * 0.01;
+            }
+
             renderer.render(scene, camera);
         }
-        animateLobby();
 
-        // ۵. ورود به دنیای بازی
+        // ۶. مدیریت شروع بازی
         const startBtn = document.getElementById('start-btn');
         const lobby = document.getElementById('lobby-container');
         const gameUI = document.getElementById('game-ui');
 
         startBtn.addEventListener('click', () => {
+            isGameStarted = true;
             lobby.style.opacity = '0';
             setTimeout(() => {
                 lobby.style.display = 'none';
                 gameUI.style.display = 'block';
-                initGamePlay(); // شروع دنیای اصلی
+                initWorld();
+                createWeapon();
+                animateGame();
             }, 1500);
         });
 
-        // ۶. دنیای اصلی (جایگزین شده با اسکلت آماده برای اسلحه)
-        function initGamePlay() {
-            // تغییر رنگ پس‌زمینه به حالت جنگی (تاریک و سنگین)
-            scene.background = new THREE.Color(0x020202);
-            
-            // اضافه کردن نورهای قرمز/آبی در محیط جنگ
-            const battleLight = new THREE.DirectionalLight(0xffffff, 0.5);
-            battleLight.position.set(5, 5, 5);
-            scene.add(battleLight);
-
-            // در مرحله بعد، مدل اسلحه و کاراکتر را اینجا اضافه می‌کنیم
-            console.log("Battlefield Ready. Loading Legend Weapon...");
-            
-            // شروع رندرینگ جدید برای دنیای بازی
-            animateGame();
-        }
-
-        function animateGame() {
-            requestAnimationFrame(animateGame);
-            // اینجا انیمیشن‌های اسلحه و حرکت کاراکتر اضافه می‌شود
-            renderer.render(scene, camera);
-        }
+        animateLobby();
 
         window.addEventListener('resize', () => {
             camera.aspect = window.innerWidth / window.innerHeight;
