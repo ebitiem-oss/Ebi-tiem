@@ -1,273 +1,224 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="fa">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>نیورا - Nivra CS Style</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, orientation=landscape">
+    <title>Nivra - Step 2</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
-        body, html { width: 100%; height: 100%; overflow: hidden; background: #111; font-family: Tahoma, sans-serif; }
+        body { margin: 0; overflow: hidden; background: #000; touch-action: none; user-select: none; }
+        canvas { display: block; }
         
-        #canvas-container { width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: 1; }
-
-        /* منوی اصلی / لابی */
-        #menu-overlay {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 15, 20, 0.92); z-index: 10;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            color: #fff;
-        }
-        .menu-box {
-            background: rgba(30, 30, 45, 0.9); border: 2px solid #ffcc00;
-            padding: 20px 40px; border-radius: 12px; text-align: center;
-            box-shadow: 0 0 20px rgba(255, 204, 0, 0.4);
-        }
-        .menu-box h1 { font-size: 28px; margin-bottom: 15px; color: #ffcc00; letter-spacing: 2px; }
-        .btn {
-            background: linear-gradient(to bottom, #ffaa00, #cc8800); color: #000;
-            font-weight: bold; border: none; padding: 12px 30px; font-size: 16px;
-            border-radius: 6px; cursor: pointer; margin-top: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-        }
-        .btn:active { transform: scale(0.95); }
-
-        /* رابط کاربری داخل بازی (HUD) */
-        #hud {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 5; pointer-events: none; display: none;
-        }
-        .hud-top-bar {
-            position: absolute; top: 10px; left: 20px; right: 20px;
-            display: flex; justify-content: space-between; align-items: center;
-            color: #fff; font-size: 18px; font-weight: bold; text-shadow: 1px 1px 2px #000;
-        }
-        .hud-stat { background: rgba(0,0,0,0.5); padding: 5px 15px; border-radius: 6px; border: 1px solid #444; }
-
-        /* جوی‌استیک حرکت (چپ) */
-        #joystick-base {
-            position: absolute; bottom: 30px; left: 40px; width: 120px; height: 120px;
-            background: rgba(255, 255, 255, 0.1); border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%; pointer-events: auto; touch-action: none;
-        }
-        #joystick-knob {
-            position: absolute; top: 35px; left: 35px; width: 50px; height: 50px;
-            background: rgba(255, 204, 0, 0.7); border-radius: 50%;
-            pointer-events: none; transition: transform 0.05s linear;
+        /* جوی‌استیک حرکت در سمت چپ */
+        #joystick-container {
+            position: absolute;
+            bottom: 30px;
+            left: 30px;
+            width: 140px;
+            height: 140px;
+            z-index: 100;
         }
 
-        /* کنترل دوربین و شلیک (راست) */
-        #aim-zone {
-            position: absolute; bottom: 0; right: 0; width: 50%; height: 100%;
-            pointer-events: auto; touch-action: none;
+        /* ناحیه کنترل دوربین در سمت راست */
+        #touch-look-zone {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 50%;
+            height: 100%;
+            z-index: 90;
         }
+
+        /* دکمه شلیک در سمت راست */
         #fire-btn {
-            position: absolute; bottom: 40px; right: 40px; width: 80px; height: 80px;
-            background: rgba(220, 50, 50, 0.7); border: 3px solid #ff9999;
-            border-radius: 50%; pointer-events: auto; display: flex;
-            justify-content: center; align-items: center; color: white; font-weight: bold; font-size: 14px;
-            box-shadow: 0 0 10px rgba(220, 50, 50, 0.8);
+            position: absolute;
+            bottom: 40px;
+            right: 40px;
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 0, 0, 0.6);
+            border: 3px solid white;
+            border-radius: 50%;
+            z-index: 100;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
         }
 
-        /* مینی‌مپ (بالای راست) */
-        #minimap {
-            position: absolute; top: 60px; right: 20px; width: 100px; height: 100px;
-            background: rgba(0, 0, 0, 0.6); border: 2px solid #ffcc00; border-radius: 50%;
-            overflow: pointer; pointer-events: auto;
-        }
-        #minimap-player {
-            position: absolute; top: 46px; left: 46px; width: 8px; height: 8px;
-            background: #00ff00; border-radius: 50%;
-        }
-
-        /* نشانه‌گر وسط صفحه */
+        /* نشانه‌گر وسط صفحه (Crosshair) */
         #crosshair {
-            position: absolute; top: 50%; left: 50%; width: 10px; height: 10px;
-            transform: translate(-50%, -50%); pointer-events: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 24px;
+            z-index: 80;
+            pointer-events: none;
         }
-        #crosshair::before, #crosshair::after {
-            content: ''; position: absolute; background: rgba(0, 255, 0, 0.8);
+
+        /* هشدار چرخش گوشی */
+        #orientation-warning {
+            display: none;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.9); z-index: 9999;
+            color: white; text-align: center; justify-content: center; align-items: center;
         }
-        #crosshair::before { top: 4px; left: 0; width: 10px; height: 2px; }
-        #crosshair::after { top: 0; left: 4px; width: 2px; height: 10px; }
+        @media screen and (orientation: portrait) {
+            #orientation-warning { display: flex; flex-direction: column; }
+        }
     </style>
-    <!-- بارگذاری Three.js از CDN معتبر -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
 
-    <!-- منوی ورود به بازی -->
-    <div id="menu-overlay">
-        <div class="menu-box">
-            <h1>نیورا | NIVRA</h1>
-            <p style="color: #aaa; margin-bottom: 20px; font-size: 14px;">سبک کانتر استریک - آنلاین سه‌بعدی</p>
-            <button class="btn" onclick="startGame()">شروع بازی</button>
-        </div>
+    <div id="orientation-warning">
+        <div style="font-size: 50px;">🔄</div>
+        <p>لطفاً گوشی را افقی کنید</p>
     </div>
 
-    <!-- محیط سه‌بعدی بازی -->
-    <div id="canvas-container"></div>
+    <div id="joystick-container"></div>
+    <div id="touch-look-zone"></div>
+    <div id="fire-btn">شلیک</div>
+    <div id="crosshair">+</div>
 
-    <!-- رابط کاربری درون بازی -->
-    <div id="hud">
-        <div class="hud-top-bar">
-            <div class="hud-stat">امتیاز: <span id="score-val">0</span></div>
-            <div class="hud-stat">سلامتی: 100%</div>
-        </div>
-
-        <div id="minimap">
-            <div id="minimap-player"></div>
-        </div>
-
-        <div id="crosshair"></div>
-
-        <!-- جوی‌استیک حرکت -->
-        <div id="joystick-base">
-            <div id="joystick-knob"></div>
-        </div>
-
-        <!-- دکمه شلیک -->
-        <div id="fire-btn">شلیک</div>
-    </div>
-
-    <div id="aim-zone"></div>
+    <!-- کتابخانه‌ها -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/nipplejs/0.9.0/nipplejs.min.js"></script>
 
     <script>
-        let scene, camera, renderer, player;
-        let moveForward = false, moveBackward = false, moveLeft = false, moveRight = false;
-        let cameraAngleY = 0;
-        let isGameStarted = false;
+        // ۱. تنظیمات صحنه و دوربین
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x87ceeb);
 
-        function startGame() {
-            document.getElementById('menu-overlay').style.display = 'none';
-            document.getElementById('hud').style.display = 'block';
-            isGameStarted = true;
-            initThreeJS();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // ۲. نورپردازی
+        const light = new THREE.HemisphereLight(0xffffff, 0x444444, 1);
+        scene.add(light);
+
+        // ۳. زمین و چند مانع برای تست دید
+        const floorGeometry = new THREE.PlaneGeometry(100, 100);
+        const floorMaterial = new THREE.MeshPhongMaterial({ color: 0x333333 });
+        const floor = new THREE.Mesh(floorGeometry, floorMaterial);
+        floor.rotation.x = -Math.PI / 2;
+        scene.add(floor);
+
+        // ساخت چند باکس به عنوان مانع در محیط
+        for (let i = 0; i < 15; i++) {
+            const boxGeo = new THREE.BoxGeometry(2, 4, 2);
+            const boxMat = new THREE.MeshPhongMaterial({ color: Math.random() * 0xffffff });
+            const box = new THREE.Mesh(boxGeo, boxMat);
+            box.position.set((Math.random() - 0.5) * 40, 2, (Math.random() - 0.5) * 40);
+            scene.add(box);
         }
 
-        function initThreeJS() {
-            const container = document.getElementById('canvas-container');
-            
-            scene = new THREE.Scene();
-            scene.background = new THREE.Color(0x87ceeb); // آسمان روز
+        // ۴. ایجاد بازیکن و دوربین اول شخص
+        const playerGroup = new THREE.Group();
+        playerGroup.position.set(0, 0, 0);
+        scene.add(playerGroup);
 
-            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            
-            renderer = new THREE.WebGLRenderer({ antialias: true });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            container.appendChild(renderer.domElement);
+        camera.position.set(0, 1.8, 0);
+        playerGroup.add(camera);
 
-            // نورپردازی محیط
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
-            scene.add(ambientLight);
-            const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
-            dirLight.position.set(50, 100, 50);
-            scene.add(dirLight);
+        // متغیرهای چرخش دوربین (زاویه دید)
+        let pitch = 0; // بالا و پایین
+        let yaw = 0;   // چپ و راست
 
-            // زمین بازی
-            const floorGeo = new THREE.PlaneGeometry(200, 200);
-            const floorMat = new THREE.MeshLambertMaterial({ color: 0x557a46 });
-            const floor = new THREE.Mesh(floorGeo, floorMat);
-            floor.rotation.x = -Math.PI / 2;
-            scene.add(floor);
+        // ۵. جوی‌استیک حرکت (سمت چپ)
+        let moveForward = 0;
+        let moveRight = 0;
 
-            // چند مانع (جعبه) در محیط برای جذابیت
-            const boxGeo = new THREE.BoxGeometry(6, 6, 6);
-            const boxMat = new THREE.MeshLambertMaterial({ color: 0x8b5a2b });
-            for (let i = 0; i < 15; i++) {
-                const box = new THREE.Mesh(boxGeo, boxMat);
-                box.position.set((Math.random() - 0.5) * 120, 3, (Math.random() - 0.5) * 120);
-                scene.add(box);
-            }
+        const joystick = nipplejs.create({
+            zone: document.getElementById('joystick-container'),
+            mode: 'static',
+            position: { left: '70px', bottom: '70px' },
+            color: 'white'
+        });
 
-            // موقعیت اولیه بازیکن
-            camera.position.set(0, 3, 10);
+        joystick.on('move', (evt, data) => {
+            moveForward = data.vector.y;
+            moveRight = data.vector.x;
+        });
 
-            // کنترل لمسی جوی‌استیک حرکت
-            setupJoystick();
-            // کنترل چرخش دوربین با لمس سمت راست
-            setupAimZone();
+        joystick.on('end', () => {
+            moveForward = 0;
+            moveRight = 0;
+        });
 
-            animate();
-        }
+        // ۶. کنترل نگاه با لمس صفحه در سمت راست
+        const lookZone = document.getElementById('touch-look-zone');
+        let isTouchingLook = false;
+        let lastTouchX = 0;
+        let lastTouchY = 0;
 
-        function setupJoystick() {
-            const base = document.getElementById('joystick-base');
-            const knob = document.getElementById('joystick-knob');
-            let maxDist = 35;
+        lookZone.addEventListener('touchstart', (e) => {
+            isTouchingLook = true;
+            lastTouchX = e.touches[0].clientX;
+            lastTouchY = e.touches[0].clientY;
+        });
 
-            base.addEventListener('touchmove', (e) => {
-                const touch = e.targetTouches[0];
-                const rect = base.getBoundingClientRect();
-                let x = touch.clientX - (rect.left + rect.width / 2);
-                let y = touch.clientY - (rect.top + rect.height / 2);
-                
-                let dist = Math.sqrt(x * x + y * y);
-                if (dist > maxDist) {
-                    x = (x / dist) * maxDist;
-                    y = (y / dist) * maxDist;
-                }
-                knob.style.transform = `translate(${x}px, ${y}px)`;
+        lookZone.addEventListener('touchmove', (e) => {
+            if (!isTouchingLook) return;
+            const currentX = e.touches[0].clientX;
+            const currentY = e.touches[0].clientY;
 
-                moveForward = y < -10;
-                moveBackward = y > 10;
-                moveLeft = x < -10;
-                moveRight = x > 10;
-            });
+            const deltaX = currentX - lastTouchX;
+            const deltaY = currentY - lastTouchY;
 
-            base.addEventListener('touchend', () => {
-                knob.style.transform = `translate(0px, 0px)`;
-                moveForward = false;
-                moveBackward = false;
-                moveLeft = false;
-                moveRight = false;
-            });
-        }
+            yaw -= deltaX * 0.003;   // چرخش افقی کل بازیکن
+            pitch -= deltaY * 0.003; // چرخش عمودی دوربین
 
-        function setupAimZone() {
-            const aimZone = document.getElementById('aim-zone');
-            let lastX = 0;
+            // محدود کردن نگاه به بالا و پایین
+            pitch = Math.max(-Math.PI / 2.2, Math.min(Math.PI / 2.2, pitch));
 
-            aimZone.addEventListener('touchstart', (e) => {
-                lastX = e.touches[0].clientX;
-            });
+            lastTouchX = currentX;
+            lastTouchY = currentY;
+        });
 
-            aimZone.addEventListener('touchmove', (e) => {
-                let currentX = e.touches[0].clientX;
-                let deltaX = currentX - lastX;
-                cameraAngleY -= deltaX * 0.005;
-                lastX = currentX;
-            });
-        }
+        lookZone.addEventListener('touchend', () => {
+            isTouchingLook = false;
+        });
 
+        // دکمه شلیک
+        document.getElementById('fire-btn').addEventListener('touchstart', () => {
+            // فعلاً یک افکت ساده یا تغییر رنگ کراس‌هیر موقع شلیک
+            document.getElementById('crosshair').style.color = 'red';
+            setTimeout(() => {
+                document.getElementById('crosshair').style.color = 'rgba(255, 255, 255, 0.7)';
+            }, 100);
+        });
+
+        // ۷. حلقه اصلی بازی
         function animate() {
             requestAnimationFrame(animate);
 
-            if (isGameStarted) {
-                let speed = 0.15;
-                let dir = new THREE.Vector3();
-                camera.getWorldDirection(dir);
-                dir.y = 0;
-                dir.normalize();
+            // اعمال حرکت بازیکن
+            const speed = 0.15;
+            const dirF = moveForward * speed;
+            const dirR = moveRight * speed;
 
-                let sideDir = new THREE.Vector3(-dir.z, 0, dir.x);
+            playerGroup.translateZ(-dirF);
+            playerGroup.translateX(dirR);
 
-                if (moveForward) camera.position.addScaledVector(dir, speed);
-                if (moveBackward) camera.position.addScaledVector(dir, -speed);
-                if (moveLeft) camera.position.addScaledVector(sideDir, speed);
-                if (moveRight) camera.position.addScaledVector(sideDir, -speed);
-
-                camera.rotation.y = cameraAngleY;
-            }
+            // اعمال چرخش‌ها به دوربین و بازیکن
+            playerGroup.rotation.y = yaw;
+            camera.rotation.x = pitch;
 
             renderer.render(scene, camera);
         }
 
         window.addEventListener('resize', () => {
-            if (camera && renderer) {
-                camera.aspect = window.innerWidth / window.innerHeight;
-                camera.updateProjectionMatrix();
-                renderer.setSize(window.innerWidth, window.innerHeight);
-            }
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
         });
+
+        animate();
     </script>
 </body>
 </html>
