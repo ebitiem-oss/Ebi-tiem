@@ -3,26 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>نیورا - کالاف دیوتی آنلاین</title>
+    <title>نیورا - کالاف دیوتی موبایل</title>
     <link rel="stylesheet" href="style.css">
     <!-- کتابخانه گرافیک سه‌بعدی Three.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <!-- کتابخانه اتصال P2P و مکالمه صوتی رایگان PeerJS -->
-    <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
 </head>
 <body>
 
-    <!-- صفحه ورود به بازی -->
+    <!-- صفحه ورود -->
     <div id="login-screen" class="screen active">
         <div class="login-box">
-            <h2>⚔️ نیورا شوتر (کالاف دیوتی)</h2>
-            <p>وارد میدان نبرد آنلاین شوید</p>
-            <input type="text" id="login-id" placeholder="آیدی یا نام نمایشی خود را وارد کنید..." autocomplete="off">
-            <button id="btn-login" class="btn-primary">ورود به میدان نبرد</button>
+            <h2>⚔️ نیورا شوتر</h2>
+            <p>ورود به میدان نبرد آنلاین</p>
+            <input type="text" id="login-id" placeholder="نام یا آیدی سرباز..." autocomplete="off">
+            <button id="btn-login" class="btn-primary">ورود به بازی</button>
         </div>
     </div>
 
-    <!-- منوی اصلی انتخاب حالت بازی -->
+    <!-- منوی انتخاب حالت بازی -->
     <div id="menu-screen" class="screen">
         <div class="menu-container">
             <h1>NIVRA OPS</h1>
@@ -31,40 +29,35 @@
             <div class="mode-select">
                 <h3>انتخاب حالت نبرد</h3>
                 <button class="btn-mode" onclick="startGameMode('solo')">مبارزه تکی (Solo)</button>
-                <button class="btn-mode" onclick="startGameMode('4player')">نبرد ۴ نفره (Squad 4P)</button>
-                <button class="btn-mode" onclick="startGameMode('8player')">جنگ تمام‌عیار ۸ نفره (War 8P)</button>
+                <button class="btn-mode" onclick="startGameMode('4player')">نبرد ۴ نفره (Squad)</button>
+                <button class="btn-mode" onclick="startGameMode('8player')">جنگ ۸ نفره (War)</button>
             </div>
         </div>
     </div>
 
-    <!-- صفحه اصلی محیط بازی سه‌بعدی -->
+    <!-- صفحه اصلی بازی (عمودی) -->
     <div id="game-screen" class="screen">
-        <!-- بوم گرافیکی سه بعدی -->
+        <!-- بوم گرافیکی Three.js -->
         <div id="canvas-container"></div>
 
-        <!-- رابط کاربری درون بازی (HUD) -->
-        <div class="game-hud">
-            <div class="hud-top">
-                <span id="room-info">حالت: تکی</span>
-                <span id="player-score">امتیاز: ۰</span>
+        <!-- رابط کاربری بالا (مایک کوچک و مینی‌مپ) -->
+        <div class="hud-top-bar">
+            <button id="btn-mic-top" class="mic-icon-btn" onclick="toggleMic()">🎤</button>
+            <div class="mini-map">
+                <div id="player-dot"></div>
+            </div>
+            <span id="room-info-badge">تکی</span>
+        </div>
+
+        <!-- کنترل‌های لمسی موبایل (در حالت عمودی) -->
+        <div class="mobile-hud-portrait">
+            <!-- جو استیک حرکتی (سمت چپ) -->
+            <div id="move-joystick" class="joystick-base">
+                <div id="move-stick" class="joystick-knob"></div>
             </div>
 
-            <!-- پنل مکالمه صوتی (مایک) -->
-            <div class="voice-chat-panel">
-                <button id="btn-mic" class="mic-btn" onclick="toggleMic()">🎤 قطع مایک</button>
-                <span id="mic-status">وضعیت صدا: خاموش</span>
-            </div>
-
-            <!-- کنترل‌های حرکتی روی موبایل -->
-            <div class="mobile-controls">
-                <div class="d-pad">
-                    <button class="control-btn" ontouchstart="movePlayer('forward')" ontouchend="stopPlayer()">⬆️</button>
-                    <div class="d-row">
-                        <button class="control-btn" ontouchstart="movePlayer('left')" ontouchend="stopPlayer()">⬅️</button>
-                        <button class="control-btn" ontouchstart="movePlayer('right')" ontouchend="stopPlayer()">➡️</button>
-                    </div>
-                    <button class="control-btn" ontouchstart="movePlayer('backward')" ontouchend="stopPlayer()">⬇️</button>
-                </div>
+            <!-- دکمه شلیک و چرخش (سمت راست) -->
+            <div id="fire-joystick" class="fire-area">
                 <button class="fire-btn" onclick="shootWeapon()">💥 شلیک</button>
             </div>
         </div>
