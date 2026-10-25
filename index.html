@@ -3,301 +3,272 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>نیورا | Nivra Counter-Strike Style</title>
-    <!-- Three.js CDN -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>نیورا - Nivra CS Style</title>
     <style>
-        * {
-            box-sizing: border-box;
-            user-select: none;
-            -webkit-user-select: none;
-            margin: 0;
-            padding: 0;
-            font-family: Tahoma, sans-serif;
-        }
-        body, html {
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            background: #0b0f19;
+        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+        body, html { width: 100%; height: 100%; overflow: hidden; background: #111; font-family: Tahoma, sans-serif; }
+        
+        #canvas-container { width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: 1; }
+
+        /* منوی اصلی / لابی */
+        #menu-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 15, 20, 0.92); z-index: 10;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
             color: #fff;
         }
-        #app {
-            width: 100%;
-            height: 100%;
-            position: relative;
+        .menu-box {
+            background: rgba(30, 30, 45, 0.9); border: 2px solid #ffcc00;
+            padding: 20px 40px; border-radius: 12px; text-align: center;
+            box-shadow: 0 0 20px rgba(255, 204, 0, 0.4);
+        }
+        .menu-box h1 { font-size: 28px; margin-bottom: 15px; color: #ffcc00; letter-spacing: 2px; }
+        .btn {
+            background: linear-gradient(to bottom, #ffaa00, #cc8800); color: #000;
+            font-weight: bold; border: none; padding: 12px 30px; font-size: 16px;
+            border-radius: 6px; cursor: pointer; margin-top: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        .btn:active { transform: scale(0.95); }
+
+        /* رابط کاربری داخل بازی (HUD) */
+        #hud {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 5; pointer-events: none; display: none;
+        }
+        .hud-top-bar {
+            position: absolute; top: 10px; left: 20px; right: 20px;
+            display: flex; justify-content: space-between; align-items: center;
+            color: #fff; font-size: 18px; font-weight: bold; text-shadow: 1px 1px 2px #000;
+        }
+        .hud-stat { background: rgba(0,0,0,0.5); padding: 5px 15px; border-radius: 6px; border: 1px solid #444; }
+
+        /* جوی‌استیک حرکت (چپ) */
+        #joystick-base {
+            position: absolute; bottom: 30px; left: 40px; width: 120px; height: 120px;
+            background: rgba(255, 255, 255, 0.1); border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%; pointer-events: auto; touch-action: none;
+        }
+        #joystick-knob {
+            position: absolute; top: 35px; left: 35px; width: 50px; height: 50px;
+            background: rgba(255, 204, 0, 0.7); border-radius: 50%;
+            pointer-events: none; transition: transform 0.05s linear;
         }
 
-        /* --- LOBBY & MENU --- */
-        #main-menu {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #090d16 0%, #1e293b 50%, #090d16 100%);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            padding: 20px 35px;
-            z-index: 10;
+        /* کنترل دوربین و شلیک (راست) */
+        #aim-zone {
+            position: absolute; bottom: 0; right: 0; width: 50%; height: 100%;
+            pointer-events: auto; touch-action: none;
         }
-        .menu-header { display: flex; justify-content: space-between; align-items: center; }
-        .user-profile { display: flex; align-items: center; gap: 12px; background: rgba(15, 23, 42, 0.9); padding: 8px 18px; border-radius: 25px; border: 1px solid rgba(245, 158, 11, 0.4); box-shadow: 0 4px 15px rgba(0,0,0,0.6); }
-        .user-profile img { width: 38px; height: 38px; border-radius: 50%; border: 2px solid #f59e0b; object-fit: cover; }
-        
-        .menu-center { display: flex; flex-direction: column; align-items: center; justify-content: center; flex-grow: 1; }
-        .game-title-box { text-align: center; margin-bottom: 15px; }
-        .game-title-box h1 { font-size: 36px; color: #f59e0b; text-shadow: 0 0 20px rgba(245,158,11,0.6); letter-spacing: 3px; font-weight: 900; }
-        .game-title-box p { font-size: 13px; color: #94a3b8; margin-top: 5px; letter-spacing: 1px; }
-
-        .game-modes { display: flex; gap: 15px; margin-top: 15px; }
-        .mode-btn { background: rgba(30, 41, 59, 0.8); border: 2px solid #334155; padding: 10px 28px; border-radius: 8px; color: #94a3b8; font-weight: bold; cursor: pointer; transition: all 0.3s; font-size: 14px; }
-        .mode-btn.active { border-color: #f59e0b; color: #fff; background: rgba(245, 158, 11, 0.25); box-shadow: 0 0 15px rgba(245,158,11,0.3); }
-
-        .menu-footer { display: flex; justify-content: space-between; align-items: center; width: 100%; }
-        .start-btn { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: #fff; border: none; padding: 14px 65px; font-size: 20px; font-weight: bold; border-radius: 35px; cursor: pointer; box-shadow: 0 6px 25px rgba(245,158,11,0.5); text-transform: uppercase; letter-spacing: 2px; }
-        .start-btn:active { transform: scale(0.96); }
-
-        /* --- IN-GAME HUD (Landscape Counter-Strike Style) --- */
-        #game-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; display: none; }
-        #hud { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; pointer-events: none; display: none; padding: 15px 25px; flex-direction: column; justify-content: space-between; }
-        .interactive { pointer-events: auto; }
-
-        .hud-top { display: flex; justify-content: space-between; align-items: flex-start; }
-        .minimap { width: 110px; height: 110px; background: rgba(15, 23, 42, 0.75); border: 2px solid rgba(245, 158, 11, 0.5); border-radius: 50%; position: relative; overflow: hidden; box-shadow: 0 0 12px rgba(0,0,0,0.6); }
-        .player-dot { width: 8px; height: 8px; background: #22c55e; border-radius: 50%; position: absolute; top: 50px; left: 50px; box-shadow: 0 0 6px #22c55e; }
-
-        /* Counter-Strike Style Crosshair */
-        .crosshair { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 24px; height: 24px; pointer-events: none; }
-        .crosshair::before, .crosshair::after { content: ''; position: absolute; background: rgba(0, 255, 100, 0.9); box-shadow: 0 0 4px rgba(0,0,0,0.9); }
-        .crosshair::before { top: 11px; left: 0; width: 24px; height: 2px; }
-        .crosshair::after { top: 0; left: 11px; width: 2px; height: 24px; }
-
-        /* Weapon Model View at Bottom Center */
-        .weapon-view {
-            position: absolute;
-            bottom: 0;
-            left: 55%;
-            transform: translateX(-35%);
-            width: 220px;
-            height: 150px;
-            background: linear-gradient(135deg, #475569, #1e293b);
-            clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%);
-            pointer-events: none;
-            z-index: 3;
-            border-top: 4px solid #f59e0b;
-            box-shadow: 0 -10px 25px rgba(0,0,0,0.5);
+        #fire-btn {
+            position: absolute; bottom: 40px; right: 40px; width: 80px; height: 80px;
+            background: rgba(220, 50, 50, 0.7); border: 3px solid #ff9999;
+            border-radius: 50%; pointer-events: auto; display: flex;
+            justify-content: center; align-items: center; color: white; font-weight: bold; font-size: 14px;
+            box-shadow: 0 0 10px rgba(220, 50, 50, 0.8);
         }
 
-        .hud-bottom { display: flex; justify-content: space-between; align-items: flex-end; width: 100%; }
-        
-        /* Left Movement Joystick */
-        .joystick-zone { width: 130px; height: 130px; background: rgba(255,255,255,0.05); border: 2px solid rgba(255,255,255,0.2); border-radius: 50%; position: relative; touch-action: none; backdrop-filter: blur(2px); }
-        .joystick-knob { width: 55px; height: 55px; background: rgba(245, 158, 11, 0.6); border: 2px solid #f59e0b; border-radius: 50%; position: absolute; top: 35px; left: 35px; pointer-events: none; box-shadow: 0 0 12px rgba(245,158,11,0.6); }
+        /* مینی‌مپ (بالای راست) */
+        #minimap {
+            position: absolute; top: 60px; right: 20px; width: 100px; height: 100px;
+            background: rgba(0, 0, 0, 0.6); border: 2px solid #ffcc00; border-radius: 50%;
+            overflow: pointer; pointer-events: auto;
+        }
+        #minimap-player {
+            position: absolute; top: 46px; left: 46px; width: 8px; height: 8px;
+            background: #00ff00; border-radius: 50%;
+        }
 
-        /* Right Look & Fire Area */
-        .right-control-zone { display: flex; flex-direction: column; align-items: flex-end; gap: 12px; }
-        .fire-btn { width: 85px; height: 85px; background: radial-gradient(circle, #ef4444 0%, #b91c1c 100%); border: 3px solid #fca5a5; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; color: #fff; box-shadow: 0 0 20px rgba(239, 68, 68, 0.8); cursor: pointer; }
-        .ammo-box { background: rgba(15, 23, 42, 0.85); padding: 6px 16px; border-radius: 6px; font-size: 15px; font-weight: bold; border-right: 4px solid #f59e0b; letter-spacing: 1px; }
+        /* نشانه‌گر وسط صفحه */
+        #crosshair {
+            position: absolute; top: 50%; left: 50%; width: 10px; height: 10px;
+            transform: translate(-50%, -50%); pointer-events: none;
+        }
+        #crosshair::before, #crosshair::after {
+            content: ''; position: absolute; background: rgba(0, 255, 0, 0.8);
+        }
+        #crosshair::before { top: 4px; left: 0; width: 10px; height: 2px; }
+        #crosshair::after { top: 0; left: 4px; width: 2px; height: 10px; }
     </style>
+    <!-- بارگذاری Three.js از CDN معتبر -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
 
-    <div id="app">
-        <!-- MAIN MENU -->
-        <div id="main-menu">
-            <div class="menu-header">
-                <div class="user-profile">
-                    <img src="https://via.placeholder.com/40" alt="Avatar">
-                    <div style="font-size: 14px; font-weight: bold;">Ebitiem</div>
-                </div>
-                <div style="background:rgba(15, 23, 42, 0.9); padding:6px 16px; border-radius:20px; font-size:14px; border: 1px solid rgba(255,255,255,0.15);"><i class="fa-solid fa-coins" style="color:#f59e0b;"></i> ۱,۴۵۰</div>
-            </div>
-
-            <div class="menu-center">
-                <div class="game-title-box">
-                    <h1>NIVRA // نیورا</h1>
-                    <p>محیط نبرد تاکتیکی کانتر-استرایک آنلاین</p>
-                </div>
-
-                <div class="game-modes">
-                    <button class="mode-btn active" onclick="setMode(this)">تک‌نفره</button>
-                    <button class="mode-btn" onclick="setMode(this)">۲ نفره</button>
-                    <button class="mode-btn" onclick="setMode(this)">۴ نفره</button>
-                </div>
-            </div>
-
-            <div class="menu-footer">
-                <div style="font-size: 12px; color: #64748b;">نسخه موبایل افقی</div>
-                <button class="start-btn" onclick="startGame()">شروع بازی</button>
-                <div style="font-size: 12px; color: #64748b;"><i class="fa-solid fa-signal" style="color: #22c55e;"></i> پینگ: ۲۴ms</div>
-            </div>
-        </div>
-
-        <!-- 3D GAME CANVAS -->
-        <canvas id="game-canvas"></canvas>
-
-        <!-- WEAPON MODEL -->
-        <div class="weapon-view" id="weapon-view"></div>
-
-        <!-- IN-GAME HUD -->
-        <div id="hud">
-            <div class="hud-top">
-                <div style="background: rgba(15, 23, 42, 0.8); padding: 6px 14px; border-radius: 6px; font-size: 14px; border-left: 4px solid #22c55e; border: 1px solid rgba(255,255,255,0.1);">
-                    امتیاز: <span id="score">0</span>
-                </div>
-                <div class="minimap">
-                    <div class="player-dot" id="minimap-dot"></div>
-                </div>
-            </div>
-
-            <div class="crosshair"></div>
-
-            <div class="hud-bottom">
-                <!-- Left Movement Joystick -->
-                <div class="joystick-zone interactive" id="joystick">
-                    <div class="joystick-knob" id="joystick-knob"></div>
-                </div>
-
-                <!-- Right Aim Look & Fire Zone -->
-                <div class="right-control-zone interactive" id="look-zone">
-                    <div class="ammo-box">۳۰ / <span style="color: #f59e0b;">۹۰</span></div>
-                    <div class="fire-btn" id="fire-btn"><i class="fa-solid fa-crosshairs"></i></div>
-                </div>
-            </div>
+    <!-- منوی ورود به بازی -->
+    <div id="menu-overlay">
+        <div class="menu-box">
+            <h1>نیورا | NIVRA</h1>
+            <p style="color: #aaa; margin-bottom: 20px; font-size: 14px;">سبک کانتر استریک - آنلاین سه‌بعدی</p>
+            <button class="btn" onclick="startGame()">شروع بازی</button>
         </div>
     </div>
 
-    <script>
-        let scene, camera, renderer;
-        let moveForward = false, moveBackward = false;
-        let gameRunning = false;
-        let cameraAngleX = 0;
+    <!-- محیط سه‌بعدی بازی -->
+    <div id="canvas-container"></div>
 
-        function setMode(btn) {
-            document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-        }
+    <!-- رابط کاربری درون بازی -->
+    <div id="hud">
+        <div class="hud-top-bar">
+            <div class="hud-stat">امتیاز: <span id="score-val">0</span></div>
+            <div class="hud-stat">سلامتی: 100%</div>
+        </div>
+
+        <div id="minimap">
+            <div id="minimap-player"></div>
+        </div>
+
+        <div id="crosshair"></div>
+
+        <!-- جوی‌استیک حرکت -->
+        <div id="joystick-base">
+            <div id="joystick-knob"></div>
+        </div>
+
+        <!-- دکمه شلیک -->
+        <div id="fire-btn">شلیک</div>
+    </div>
+
+    <div id="aim-zone"></div>
+
+    <script>
+        let scene, camera, renderer, player;
+        let moveForward = false, moveBackward = false, moveLeft = false, moveRight = false;
+        let cameraAngleY = 0;
+        let isGameStarted = false;
 
         function startGame() {
-            document.getElementById('main-menu').style.display = 'none';
-            document.getElementById('game-canvas').style.display = 'block';
-            document.getElementById('hud').style.display = 'flex';
-            document.getElementById('weapon-view').style.display = 'block';
-            gameRunning = true;
+            document.getElementById('menu-overlay').style.display = 'none';
+            document.getElementById('hud').style.display = 'block';
+            isGameStarted = true;
             initThreeJS();
         }
 
         function initThreeJS() {
-            const canvas = document.getElementById('game-canvas');
+            const container = document.getElementById('canvas-container');
+            
             scene = new THREE.Scene();
-            scene.background = new THREE.Color(0x0f172a);
+            scene.background = new THREE.Color(0x87ceeb); // آسمان روز
 
             camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
+            
+            renderer = new THREE.WebGLRenderer({ antialias: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
+            container.appendChild(renderer.domElement);
 
-            // Lighting (Bright Daylight Counter-Strike Style)
-            scene.add(new THREE.AmbientLight(0xffffff, 0.7));
-            const dirLight = new THREE.DirectionalLight(0xffffff, 0.9);
-            dirLight.position.set(40, 60, 40);
+            // نورپردازی محیط
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+            scene.add(ambientLight);
+            const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            dirLight.position.set(50, 100, 50);
             scene.add(dirLight);
 
-            // Tactical Floor
-            const floor = new THREE.Mesh(
-                new THREE.PlaneGeometry(150, 150),
-                new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.8 })
-            );
+            // زمین بازی
+            const floorGeo = new THREE.PlaneGeometry(200, 200);
+            const floorMat = new THREE.MeshLambertMaterial({ color: 0x557a46 });
+            const floor = new THREE.Mesh(floorGeo, floorMat);
             floor.rotation.x = -Math.PI / 2;
             scene.add(floor);
 
-            // CS-style Walls and Boxes
-            const boxMat = new THREE.MeshStandardMaterial({ color: 0xd97706, roughness: 0.3 });
-            for (let i = 0; i < 35; i++) {
-                const box = new THREE.Mesh(new THREE.BoxGeometry(4, 6, 4), boxMat);
-                box.position.set((Math.random() - 0.5) * 100, 3, (Math.random() - 0.5) * 100);
+            // چند مانع (جعبه) در محیط برای جذابیت
+            const boxGeo = new THREE.BoxGeometry(6, 6, 6);
+            const boxMat = new THREE.MeshLambertMaterial({ color: 0x8b5a2b });
+            for (let i = 0; i < 15; i++) {
+                const box = new THREE.Mesh(boxGeo, boxMat);
+                box.position.set((Math.random() - 0.5) * 120, 3, (Math.random() - 0.5) * 120);
                 scene.add(box);
             }
 
-            camera.position.set(0, 2.5, 8);
+            // موقعیت اولیه بازیکن
+            camera.position.set(0, 3, 10);
 
-            function animate() {
-                if (!gameRunning) return;
-                requestAnimationFrame(animate);
+            // کنترل لمسی جوی‌استیک حرکت
+            setupJoystick();
+            // کنترل چرخش دوربین با لمس سمت راست
+            setupAimZone();
 
-                let speed = 0.12;
+            animate();
+        }
+
+        function setupJoystick() {
+            const base = document.getElementById('joystick-base');
+            const knob = document.getElementById('joystick-knob');
+            let maxDist = 35;
+
+            base.addEventListener('touchmove', (e) => {
+                const touch = e.targetTouches[0];
+                const rect = base.getBoundingClientRect();
+                let x = touch.clientX - (rect.left + rect.width / 2);
+                let y = touch.clientY - (rect.top + rect.height / 2);
+                
+                let dist = Math.sqrt(x * x + y * y);
+                if (dist > maxDist) {
+                    x = (x / dist) * maxDist;
+                    y = (y / dist) * maxDist;
+                }
+                knob.style.transform = `translate(${x}px, ${y}px)`;
+
+                moveForward = y < -10;
+                moveBackward = y > 10;
+                moveLeft = x < -10;
+                moveRight = x > 10;
+            });
+
+            base.addEventListener('touchend', () => {
+                knob.style.transform = `translate(0px, 0px)`;
+                moveForward = false;
+                moveBackward = false;
+                moveLeft = false;
+                moveRight = false;
+            });
+        }
+
+        function setupAimZone() {
+            const aimZone = document.getElementById('aim-zone');
+            let lastX = 0;
+
+            aimZone.addEventListener('touchstart', (e) => {
+                lastX = e.touches[0].clientX;
+            });
+
+            aimZone.addEventListener('touchmove', (e) => {
+                let currentX = e.touches[0].clientX;
+                let deltaX = currentX - lastX;
+                cameraAngleY -= deltaX * 0.005;
+                lastX = currentX;
+            });
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            if (isGameStarted) {
+                let speed = 0.15;
                 let dir = new THREE.Vector3();
                 camera.getWorldDirection(dir);
                 dir.y = 0;
                 dir.normalize();
 
+                let sideDir = new THREE.Vector3(-dir.z, 0, dir.x);
+
                 if (moveForward) camera.position.addScaledVector(dir, speed);
                 if (moveBackward) camera.position.addScaledVector(dir, -speed);
+                if (moveLeft) camera.position.addScaledVector(sideDir, speed);
+                if (moveRight) camera.position.addScaledVector(sideDir, -speed);
 
-                camera.rotation.y = cameraAngleX;
-
-                renderer.render(scene, camera);
+                camera.rotation.y = cameraAngleY;
             }
-            animate();
+
+            renderer.render(scene, camera);
         }
 
-        // Left Joystick Controls
-        const joystick = document.getElementById('joystick');
-        const knob = document.getElementById('joystick-knob');
-        let joystickActive = false;
-
-        joystick.addEventListener('touchstart', (e) => { joystickActive = true; });
-        window.addEventListener('touchmove', (e) => {
-            if (!joystickActive) return;
-            const touch = e.touches[0];
-            const rect = joystick.getBoundingClientRect();
-            let dx = touch.clientX - (rect.left + rect.width / 2);
-            let dy = touch.clientY - (rect.top + rect.height / 2);
-            const dist = Math.sqrt(dx * dx + dy * dy);
-            const maxDist = 40;
-
-            if (dist > maxDist) {
-                dx = (dx / dist) * maxDist;
-                dy = (dy / dist) * maxDist;
+        window.addEventListener('resize', () => {
+            if (camera && renderer) {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
             }
-            knob.style.transform = `translate(${dx}px, ${dy}px)`;
-
-            moveForward = dy < -10;
-            moveBackward = dy > 10;
-        });
-        window.addEventListener('touchend', () => {
-            joystickActive = false;
-            knob.style.transform = `translate(0px, 0px)`;
-            moveForward = moveBackward = false;
-        });
-
-        // Right Screen Drag (Aiming / Look Around)
-        let isLooking = false, lastTouchX = 0;
-        const lookZone = document.getElementById('look-zone');
-
-        lookZone.addEventListener('touchstart', (e) => {
-            isLooking = true;
-            lastTouchX = e.touches[0].clientX;
-        });
-
-        window.addEventListener('touchmove', (e) => {
-            if (!isLooking) return;
-            let currentX = e.touches[0].clientX;
-            let deltaX = currentX - lastTouchX;
-            lastTouchX = currentX;
-
-            cameraAngleX -= deltaX * 0.005;
-        });
-
-        window.addEventListener('touchend', () => { isLooking = false; });
-
-        // Fire Button
-        document.getElementById('fire-btn').addEventListener('click', () => {
-            let scoreElem = document.getElementById('score');
-            scoreElem.innerText = parseInt(scoreElem.innerText) + 10;
         });
     </script>
 </body>
 </html>
+
