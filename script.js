@@ -3,6 +3,11 @@ let moveForward = false, moveBackward = false, moveLeft = false, moveRight = fal
 let playerHealth = 100;
 let weaponModel;
 let micActive = false;
+let isShooting = false;
+
+// متغیرهای چرخش دوربین (Aiming / Look)
+let touchStartX = 0, touchStartY = 0;
+let cameraRotationY = 0, cameraRotationX = 0;
 
 // راه‌اندازی اولیه بازی
 init3DGame();
@@ -23,7 +28,7 @@ function init3DGame() {
     renderer.setPixelRatio(window.devicePixelRatio);
     document.getElementById('canvas-container').appendChild(renderer.domElement);
 
-    // ۳. نورپردازی محیطی و خورشید
+    // ۳. نورپردازی محیطی
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
     scene.add(ambientLight);
 
@@ -31,14 +36,14 @@ function init3DGame() {
     dirLight.position.set(10, 20, 10);
     scene.add(dirLight);
 
-    // ۴. ساخت محیط جنگی (زمین و موانع)
+    // ۴. ساخت محیط جنگی
     createBattlefield();
 
-    // ۵. اضافه کردن تفنگ دقیق و مجهز به دست بازیکن
+    // ۵. اضافه کردن تفنگ دقیق و مجهز
     addDetailedWeaponModel();
 
-    // ۶. تنظیم کنترل‌های لمسی جو استیک
-    setupJoystickControls();
+    // ۶. تنظیم کنترل‌های لمسی (جوی استیک چپ و لمس راست برای چرخش/شلیک)
+    setupControls();
 
     // تغییر سایز صفحه
     window.addEventListener('resize', onWindowResize);
@@ -52,16 +57,16 @@ function createBattlefield() {
     floor.rotation.x = -Math.PI / 2;
     scene.add(floor);
 
-    // دیوارهای موانع نظامی (باکس‌های مختلف)
+    // دیوارهای موانع نظامی
     const boxMat = new THREE.MeshStandardMaterial({ color: 0x4a5568, roughness: 0.5 });
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < 25; i++) {
         const size = Math.random() * 3 + 1.5;
         const boxGeo = new THREE.BoxGeometry(size, size, size);
         const box = new THREE.Mesh(boxGeo, boxMat);
         
-        box.position.x = (Math.random() - 0.5) * 60;
+        box.position.x = (Math.random() - 0.5) * 70;
         box.position.y = size / 2;
-        box.position.z = (Math.random() - 0.5) * 60;
+        box.position.z = (Math.random() - 0.5) * 70;
         scene.add(box);
     }
 }
@@ -69,40 +74,38 @@ function createBattlefield() {
 function addDetailedWeaponModel() {
     const weaponGroup = new THREE.Group();
 
-    // متریال‌های نظامی (بدنه تیره، خشاب فلزی، قنداق)
     const bodyMat = new THREE.MeshStandardMaterial({ color: 0x1c1c1c, metalness: 0.85, roughness: 0.25 });
     const metalMat = new THREE.MeshStandardMaterial({ color: 0x333333, metalness: 0.9, roughness: 0.2 });
     const gripMat = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.9 });
 
-    // ۱. بدنه اصلی تفنگ (Receiver)
+    // بدنه اصلی تفنگ
     const receiver = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.22, 0.8), bodyMat);
     receiver.position.set(0, 0, 0);
     weaponGroup.add(receiver);
 
-    // ۲. لوله تفنگ (Barrel)
+    // لوله تفنگ
     const barrel = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 0.7), metalMat);
     barrel.rotation.x = Math.PI / 2;
     barrel.position.set(0, 0.05, -0.65);
     weaponGroup.add(barrel);
 
-    // ۳. خشاب تفنگ (Magazine - مثل کالاف)
+    // خشاب
     const mag = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.35, 0.18), metalMat);
-    mag.rotation.x = -0.2; // زاویه دار مثل خشاب واقعی
+    mag.rotation.x = -0.2;
     mag.position.set(0, -0.22, -0.15);
     weaponGroup.add(mag);
 
-    // ۴. دسته تفنگ (Grip)
+    // دسته تفنگ
     const grip = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.28, 0.12), gripMat);
     grip.rotation.x = 0.3;
     grip.position.set(0, -0.2, 0.25);
     weaponGroup.add(grip);
 
-    // ۵. مگسک جلو (Sight)
+    // مگسک
     const sight = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.08, 0.04), metalMat);
     sight.position.set(0, 0.15, -0.4);
     weaponGroup.add(sight);
 
-    // قرار دادن تفنگ در پایین سمت راست دید دوربین (اول شخص)
     weaponGroup.position.set(0.32, -0.32, -0.55);
     camera.add(weaponGroup);
     scene.add(camera);
@@ -111,30 +114,24 @@ function addDetailedWeaponModel() {
 }
 
 function shootWeapon() {
-    // لرزش دوربین هنگام شلیک (Recoil)
-    camera.rotation.x += 0.035;
+    // لگد تفنگ و دوربین هنگام شلیک
+    cameraRotationX -= 0.02;
     
-    // انیمیشن کوچک عقب رفتن تفنگ هنگام شلیک
     if (weaponModel) {
-        weaponModel.position.z += 0.08;
+        weaponModel.position.z += 0.09;
         setTimeout(() => {
-            weaponModel.position.z -= 0.08;
-        }, 80);
+            weaponModel.position.z -= 0.09;
+        }, 70);
     }
-}
 
-function takeDamage(amount) {
-    playerHealth -= amount;
-    if (playerHealth < 0) playerHealth = 0;
-
-    document.getElementById('health-bar').style.width = playerHealth + "%";
-    document.getElementById('hp-val').innerText = playerHealth;
-
-    // افکت قرمز شدن صفحه
-    const flash = document.getElementById('damage-overlay');
-    flash.style.animation = 'none';
-    flash.offsetHeight; 
-    flash.style.animation = 'flash-animation 0.3s ease-out';
+    // ایجاد افکت فلش شلیک موقت روی صفحه
+    const flashOverlay = document.getElementById('damage-overlay');
+    flashOverlay.style.background = 'radial-gradient(circle, rgba(255,200,0,0.4) 0%, rgba(0,0,0,0) 70%)';
+    flashOverlay.style.opacity = '1';
+    setTimeout(() => {
+        flashOverlay.style.opacity = '0';
+        flashOverlay.style.background = 'rgba(255, 0, 0, 0.3)'; // بازگشت به حالت آسیب
+    }, 50);
 }
 
 function toggleMic() {
@@ -149,56 +146,113 @@ function toggleMic() {
     }
 }
 
-function setupJoystickControls() {
+function setupControls() {
+    // ۱. جوی‌استیک حرکت (سمت چپ صفحه)
     const joystickBase = document.getElementById('joystick-base');
     const joystickStick = document.getElementById('joystick-stick');
-    let isDragging = false;
-    let center = { x: 0, y: 0 };
+    let isDraggingJoystick = false;
+    let joystickCenter = { x: 0, y: 0 };
 
     joystickBase.addEventListener('touchstart', (e) => {
-        isDragging = true;
+        isDraggingJoystick = true;
         const rect = joystickBase.getBoundingClientRect();
-        center.x = rect.left + rect.width / 2;
-        center.y = rect.top + rect.height / 2;
+        joystickCenter.x = rect.left + rect.width / 2;
+        joystickCenter.y = rect.top + rect.height / 2;
+    });
+
+    // ۲. کنترل چرخش دوربین و شلیک (نیمه راست صفحه)
+    window.addEventListener('touchstart', (e) => {
+        const touch = e.touches[0];
+        if (touch.clientX > window.innerWidth / 2 && !isDraggingJoystick) {
+            touchStartX = touch.clientX;
+            touchStartY = touch.clientY;
+        }
     });
 
     window.addEventListener('touchmove', (e) => {
-        if (!isDragging) return;
         const touch = e.touches[0];
-        const dx = touch.clientX - center.x;
-        const dy = touch.clientY - center.y;
-        const distance = Math.min(40, Math.sqrt(dx * dx + dy * dy));
-        const angle = Math.atan2(dy, dx);
 
-        const x = Math.cos(angle) * distance;
-        const y = Math.sin(angle) * distance;
+        // حرکت جوی‌استیک
+        if (isDraggingJoystick) {
+            const dx = touch.clientX - joystickCenter.x;
+            const dy = touch.clientY - joystickCenter.y;
+            const distance = Math.min(40, Math.sqrt(dx * dx + dy * dy));
+            const angle = Math.atan2(dy, dx);
 
-        joystickStick.style.transform = `translate(${x}px, ${y}px)`;
+            const x = Math.cos(angle) * distance;
+            const y = Math.sin(angle) * distance;
 
-        moveForward = y < -10;
-        moveBackward = y > 10;
-        moveLeft = x < -10;
-        moveRight = x > 10;
+            joystickStick.style.transform = `translate(${x}px, ${y}px)`;
+
+            moveForward = y < -10;
+            moveBackward = y > 10;
+            moveLeft = x < -10;
+            moveRight = x > 10;
+        } 
+        // چرخش دوربین با لمس سمت راست
+        else if (touch.clientX > window.innerWidth / 2) {
+            const deltaX = touch.clientX - touchStartX;
+            const deltaY = touch.clientY - touchStartY;
+
+            cameraRotationY -= deltaX * 0.003;
+            cameraRotationX -= deltaY * 0.003;
+
+            // محدود کردن زاویه نگاه به بالا و پایین
+            cameraRotationX = Math.max(-Math.PI / 3, Math.min(Math.PI / 3, cameraRotationX));
+
+            touchStartX = touch.clientX;
+            touchStartY = touch.clientY;
+        }
     });
 
-    window.addEventListener('touchend', () => {
-        isDragging = false;
+    window.addEventListener('touchend', (e) => {
+        isDraggingJoystick = false;
         joystickStick.style.transform = `translate(0px, 0px)`;
         moveForward = moveBackward = moveLeft = moveRight = false;
     });
+
+    // دکمه شلیک اختصاصی
+    const fireBtn = document.getElementById('fire-btn');
+    if (fireBtn) {
+        fireBtn.addEventListener('touchstart', (e) => {
+            e.stopPropagation();
+            shootWeapon();
+        });
+    }
 }
 
 function animate() {
     requestAnimationFrame(animate);
 
-    // حرکت بازیکن در محیط
-    const speed = 0.08;
-    if (moveForward) camera.translateZ(-speed);
-    if (moveBackward) camera.translateZ(speed);
-    if (moveLeft) camera.translateX(-speed);
-    if (moveRight) camera.translateX(speed);
+    // اعمال چرخش دوربین
+    camera.rotation.y = cameraRotationY;
+    camera.rotation.x = cameraRotationX;
 
-    // انیمیشن تنفس و تکان خوردن طبیعی سلاح هنگام راه رفتن یا ایستادن
+    // حرکت بازیکن بر اساس جهت دوربین
+    const speed = 0.08;
+    const direction = new THREE.Vector3();
+    
+    if (moveForward) {
+        camera.getWorldDirection(direction);
+        camera.position.addScaledVector(direction, speed);
+    }
+    if (moveBackward) {
+        camera.getWorldDirection(direction);
+        camera.position.addScaledVector(direction, -speed);
+    }
+    if (moveLeft) {
+        const sideDir = new THREE.Vector3(-Math.sin(cameraRotationY), 0, -Math.cos(cameraRotationY));
+        camera.position.addScaledVector(sideDir, speed);
+    }
+    if (moveRight) {
+        const sideDir = new THREE.Vector3(Math.sin(cameraRotationY), 0, Math.cos(cameraRotationY));
+        camera.position.addScaledVector(sideDir, speed);
+    }
+
+    // ثابت نگه داشتن ارتفاع بازیکن روی زمین
+    camera.position.y = 1.6;
+
+    // انیمیشن تنفس و تکان سلاح
     if (weaponModel) {
         const time = Date.now() * 0.003;
         const isMoving = moveForward || moveBackward || moveLeft || moveRight;
@@ -219,4 +273,5 @@ function onWindowResize() {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
-            }
+                }
+        
