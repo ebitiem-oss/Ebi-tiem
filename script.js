@@ -3,14 +3,19 @@ let moveForward = false, moveBackward = false, moveLeft = false, moveRight = fal
 let playerHealth = 100;
 let weaponModel;
 let micActive = false;
-let isShooting = false;
 
-// متغیرهای چرخش دوربین (Aiming / Look)
+// متغیرهای چرخش دوربین و کنترل
 let touchStartX = 0, touchStartY = 0;
 let cameraRotationY = 0, cameraRotationX = 0;
 
+// متغیرهای بخش آنلاین (PeerJS)
+let peer, conn;
+let myPeerId = '';
+let remotePlayers = {}; // ذخیره بازیکنان دیگر
+
 // راه‌اندازی اولیه بازی
 init3DGame();
+initOnlineMultiplayer();
 animate();
 
 function init3DGame() {
@@ -28,7 +33,7 @@ function init3DGame() {
     renderer.setPixelRatio(window.devicePixelRatio);
     document.getElementById('canvas-container').appendChild(renderer.domElement);
 
-    // ۳. نورپردازی محیطی
+    // ۳. نورپردازی
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
     scene.add(ambientLight);
 
@@ -39,13 +44,12 @@ function init3DGame() {
     // ۴. ساخت محیط جنگی
     createBattlefield();
 
-    // ۵. اضافه کردن تفنگ دقیق و مجهز
+    // ۵. اضافه کردن تفنگ بازیکن
     addDetailedWeaponModel();
 
-    // ۶. تنظیم کنترل‌های لمسی (جوی استیک چپ و لمس راست برای چرخش/شلیک)
+    // ۶. تنظیم کنترل‌ها
     setupControls();
 
-    // تغییر سایز صفحه
     window.addEventListener('resize', onWindowResize);
 }
 
@@ -57,7 +61,7 @@ function createBattlefield() {
     floor.rotation.x = -Math.PI / 2;
     scene.add(floor);
 
-    // دیوارهای موانع نظامی
+    // موانع نظامی
     const boxMat = new THREE.MeshStandardMaterial({ color: 0x4a5568, roughness: 0.5 });
     for (let i = 0; i < 25; i++) {
         const size = Math.random() * 3 + 1.5;
@@ -73,35 +77,29 @@ function createBattlefield() {
 
 function addDetailedWeaponModel() {
     const weaponGroup = new THREE.Group();
-
     const bodyMat = new THREE.MeshStandardMaterial({ color: 0x1c1c1c, metalness: 0.85, roughness: 0.25 });
     const metalMat = new THREE.MeshStandardMaterial({ color: 0x333333, metalness: 0.9, roughness: 0.2 });
     const gripMat = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.9 });
 
-    // بدنه اصلی تفنگ
     const receiver = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.22, 0.8), bodyMat);
     receiver.position.set(0, 0, 0);
     weaponGroup.add(receiver);
 
-    // لوله تفنگ
     const barrel = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 0.7), metalMat);
     barrel.rotation.x = Math.PI / 2;
     barrel.position.set(0, 0.05, -0.65);
     weaponGroup.add(barrel);
 
-    // خشاب
     const mag = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.35, 0.18), metalMat);
     mag.rotation.x = -0.2;
     mag.position.set(0, -0.22, -0.15);
     weaponGroup.add(mag);
 
-    // دسته تفنگ
     const grip = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.28, 0.12), gripMat);
     grip.rotation.x = 0.3;
     grip.position.set(0, -0.2, 0.25);
     weaponGroup.add(grip);
 
-    // مگسک
     const sight = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.08, 0.04), metalMat);
     sight.position.set(0, 0.15, -0.4);
     weaponGroup.add(sight);
@@ -113,54 +111,96 @@ function addDetailedWeaponModel() {
     weaponModel = weaponGroup;
 }
 
-function shootWeapon() {
-    // لگد تفنگ و دوربین هنگام شلیک
-    cameraRotationX -= 0.02;
+// ================= نظام آنلاین (PeerJS) =================
+function initOnlineMultiplayer() {
+    // ایجاد سرور ابری رایگان Peer
+    peer = new Peer({
+        host: 'peerjs.com',
+        port: 443,
+        secure: true
+    });
+
+    peer.on('open', (id) => {
+        myPeerId = id;
+        console.log('Online ID:', myPeerId);
+        // اگر عنصر متنی برای نمایش کد اتاق داری، اینجا به‌روزرسانی کن
+        const roomIdElem = document.getElementById('room-id-display');
+        if (roomIdElem) roomIdElem.innerText = myPeerId;
+    });
+
+    // دریافت اتصال از بازیکنان دیگر
+    peer.on('connection', (incomingConn) => {
+        setupConnection(incomingConn);
+    });
+}
+
+// تابع برای اتصال به اتاق دوستت (با وارد کردن کد اتاقش)
+function connectToRoom(friendId) {
+    if (!friendId) return;
+    const outgoingConn = peer.connect(friendId);
+    setupConnection(outgoingConn);
+}
+
+function setupConnection(connection) {
+    conn = connection;
+    conn.on('open', () => {
+        console.log('Connected to player:', conn.peer);
+    });
+
+    conn.on('data', (data) => {
+        // دریافت موقعیت بازیکنان دیگر و نمایش در صحنه
+        updateRemotePlayer(data.id, data.x, data.y, data.z, data.rotY);
+    });
+}
+
+function updateRemotePlayer(id, x, y, z, rotY) {
+    if (!remotePlayers[id]) {
+        // ساخت مدل ساده برای بازیکن حریف
+        const playerGeo = new THREE.BoxGeometry(0.8, 1.8, 0.8);
+        const playerMat = new THREE.MeshStandardMaterial({ color: 0xff3333 }); // لباس قرمز برای دشمن/دوست
+        const mesh = new THREE.Mesh(playerGeo, playerMat);
+        scene.add(mesh);
+        remotePlayers[id] = mesh;
+    }
     
+    // به‌روزرسانی موقعیت حریف
+    remotePlayers[id].position.set(x, y, z);
+    remotePlayers[id].rotation.y = rotY;
+}
+// =======================================================
+
+function shootWeapon() {
+    cameraRotationX -= 0.02;
     if (weaponModel) {
         weaponModel.position.z += 0.09;
-        setTimeout(() => {
-            weaponModel.position.z -= 0.09;
-        }, 70);
+        setTimeout(() => { weaponModel.position.z -= 0.09; }, 70);
     }
-
-    // ایجاد افکت فلش شلیک موقت روی صفحه
-    const flashOverlay = document.getElementById('damage-overlay');
-    flashOverlay.style.background = 'radial-gradient(circle, rgba(255,200,0,0.4) 0%, rgba(0,0,0,0) 70%)';
-    flashOverlay.style.opacity = '1';
-    setTimeout(() => {
-        flashOverlay.style.opacity = '0';
-        flashOverlay.style.background = 'rgba(255, 0, 0, 0.3)'; // بازگشت به حالت آسیب
-    }, 50);
 }
 
 function toggleMic() {
     micActive = !micActive;
     const btn = document.getElementById('mic-btn');
-    if (micActive) {
-        btn.innerText = "🎙️ مایک: روشن";
-        btn.style.borderColor = "#00ff00";
-    } else {
-        btn.innerText = "🎙️ مایک: خاموش";
-        btn.style.borderColor = "#555";
+    if (btn) {
+        btn.innerText = micActive ? "🎙️ مایک: روشن" : "🎙️ مایک: خاموش";
+        btn.style.borderColor = micActive ? "#00ff00" : "#555";
     }
 }
 
 function setupControls() {
-    // ۱. جوی‌استیک حرکت (سمت چپ صفحه)
     const joystickBase = document.getElementById('joystick-base');
     const joystickStick = document.getElementById('joystick-stick');
     let isDraggingJoystick = false;
     let joystickCenter = { x: 0, y: 0 };
 
-    joystickBase.addEventListener('touchstart', (e) => {
-        isDraggingJoystick = true;
-        const rect = joystickBase.getBoundingClientRect();
-        joystickCenter.x = rect.left + rect.width / 2;
-        joystickCenter.y = rect.top + rect.height / 2;
-    });
+    if (joystickBase) {
+        joystickBase.addEventListener('touchstart', (e) => {
+            isDraggingJoystick = true;
+            const rect = joystickBase.getBoundingClientRect();
+            joystickCenter.x = rect.left + rect.width / 2;
+            joystickCenter.y = rect.top + rect.height / 2;
+        });
+    }
 
-    // ۲. کنترل چرخش دوربین و شلیک (نیمه راست صفحه)
     window.addEventListener('touchstart', (e) => {
         const touch = e.touches[0];
         if (touch.clientX > window.innerWidth / 2 && !isDraggingJoystick) {
@@ -172,7 +212,6 @@ function setupControls() {
     window.addEventListener('touchmove', (e) => {
         const touch = e.touches[0];
 
-        // حرکت جوی‌استیک
         if (isDraggingJoystick) {
             const dx = touch.clientX - joystickCenter.x;
             const dy = touch.clientY - joystickCenter.y;
@@ -189,15 +228,12 @@ function setupControls() {
             moveLeft = x < -10;
             moveRight = x > 10;
         } 
-        // چرخش دوربین با لمس سمت راست
         else if (touch.clientX > window.innerWidth / 2) {
             const deltaX = touch.clientX - touchStartX;
             const deltaY = touch.clientY - touchStartY;
 
             cameraRotationY -= deltaX * 0.003;
             cameraRotationX -= deltaY * 0.003;
-
-            // محدود کردن زاویه نگاه به بالا و پایین
             cameraRotationX = Math.max(-Math.PI / 3, Math.min(Math.PI / 3, cameraRotationX));
 
             touchStartX = touch.clientX;
@@ -205,13 +241,12 @@ function setupControls() {
         }
     });
 
-    window.addEventListener('touchend', (e) => {
+    window.addEventListener('touchend', () => {
         isDraggingJoystick = false;
-        joystickStick.style.transform = `translate(0px, 0px)`;
+        if (joystickStick) joystickStick.style.transform = `translate(0px, 0px)`;
         moveForward = moveBackward = moveLeft = moveRight = false;
     });
 
-    // دکمه شلیک اختصاصی
     const fireBtn = document.getElementById('fire-btn');
     if (fireBtn) {
         fireBtn.addEventListener('touchstart', (e) => {
@@ -221,14 +256,13 @@ function setupControls() {
     }
 }
 
+let lastNetworkSend = 0;
 function animate() {
     requestAnimationFrame(animate);
 
-    // اعمال چرخش دوربین
     camera.rotation.y = cameraRotationY;
     camera.rotation.x = cameraRotationX;
 
-    // حرکت بازیکن بر اساس جهت دوربین
     const speed = 0.08;
     const direction = new THREE.Vector3();
     
@@ -249,10 +283,21 @@ function animate() {
         camera.position.addScaledVector(sideDir, speed);
     }
 
-    // ثابت نگه داشتن ارتفاع بازیکن روی زمین
     camera.position.y = 1.6;
 
-    // انیمیشن تنفس و تکان سلاح
+    // ارسال موقعیت خودمان به بازیکن دیگر هر ۵۰ میلی‌ثانیه
+    if (conn && conn.open && Date.now() - lastNetworkSend > 50) {
+        conn.send({
+            id: myPeerId,
+            x: camera.position.x,
+            y: camera.position.y,
+            z: camera.position.z,
+            rotY: cameraRotationY
+        });
+        lastNetworkSend = Date.now();
+    }
+
+    // انیمیشن سلاح
     if (weaponModel) {
         const time = Date.now() * 0.003;
         const isMoving = moveForward || moveBackward || moveLeft || moveRight;
@@ -273,5 +318,5 @@ function onWindowResize() {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
-                }
-        
+        }
+    
