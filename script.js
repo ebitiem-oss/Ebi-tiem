@@ -11,6 +11,9 @@ let myPeerId = '';
 let remotePlayers = {}; 
 let bullets = [];
 
+let playerHP = 100;
+let playerScore = 0;
+
 init3DGame();
 initOnlineMultiplayer();
 animate();
@@ -124,6 +127,8 @@ function setupConnection(connection) {
             updateRemotePlayer(data.id, data.x, data.y, data.z, data.rotY, data.color);
         } else if (data.type === 'shoot') {
             triggerRemoteShootEffect(data.id);
+        } else if (data.type === 'hit' && data.targetId === myPeerId) {
+            applyDamage(15);
         }
     });
 }
@@ -144,15 +149,12 @@ function updateRemotePlayer(id, x, y, z, rotY, playerColor) {
 
 function shootWeapon() {
     if (weaponModel) {
-        // انیمیشن لگد تفنگ هنگام شلیک
         weaponModel.position.z += 0.08;
         setTimeout(() => { weaponModel.position.z -= 0.08; }, 60);
     }
 
-    // ایجاد گلوله واقعی در جهت نگاه دوربین
     createBullet();
 
-    // ارسال سیگنال شلیک به بازیکنان دیگر
     if (conn && conn.open) {
         conn.send({ type: 'shoot', id: myPeerId });
     }
@@ -168,7 +170,7 @@ function createBullet() {
     const direction = new THREE.Vector3();
     camera.getWorldDirection(direction);
     bullet.velocity = direction.multiplyScalar(1.2);
-    bullet.life = 100; // مسافت/مدت پرواز گلوله
+    bullet.life = 100;
 
     scene.add(bullet);
     bullets.push(bullet);
@@ -176,10 +178,30 @@ function createBullet() {
 
 function triggerRemoteShootEffect(id) {
     if (remotePlayers[id]) {
-        // افکت شلیک حریف
         const pMesh = remotePlayers[id].mesh;
         pMesh.scale.set(1, 1.1, 1);
         setTimeout(() => { pMesh.scale.set(1, 1, 1); }, 100);
+    }
+}
+
+function applyDamage(amount) {
+    playerHP -= amount;
+    const hpElem = document.getElementById('player-hp');
+    if (hpElem) hpElem.innerText = Math.max(0, playerHP);
+
+    const overlay = document.getElementById('damage-overlay');
+    if (overlay) {
+        overlay.style.backgroundColor = 'rgba(255, 0, 0, 0.4)';
+        setTimeout(() => {
+            overlay.style.backgroundColor = 'transparent';
+        }, 200);
+    }
+
+    if (playerHP <= 0) {
+        alert('باختی! مجدد تلاش کن.');
+        playerHP = 100;
+        if (hpElem) hpElem.innerText = playerHP;
+        camera.position.set(0, 1.6, 5);
     }
 }
 
@@ -291,12 +313,30 @@ function animate() {
 
     camera.position.y = 1.6;
 
-    // حرکت و به‌روزرسانی گلوله‌ها
     for (let i = bullets.length - 1; i >= 0; i--) {
         const b = bullets[i];
         b.position.add(b.velocity);
         b.life--;
-        if (b.life <= 0) {
+        
+        // بررسی برخورد گلوله با بازیکنان حریف
+        for (let id in remotePlayers) {
+            const pMesh = remotePlayers[id].mesh;
+            if (b.position.distanceTo(pMesh.position) < 1.0) {
+                // برخورد موفق!
+                playerScore += 10;
+                document.getElementById('player-score').innerText = playerScore;
+                
+                if (conn && conn.open) {
+                    conn.send({ type: 'hit', targetId: id });
+                }
+
+                scene.remove(b);
+                bullets.splice(i, 1);
+                break;
+            }
+        }
+
+        if (b && b.life <= 0) {
             scene.remove(b);
             bullets.splice(i, 1);
         }
@@ -350,5 +390,4 @@ function onWindowResize() {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
-    }
-                                      
+}
