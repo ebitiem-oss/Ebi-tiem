@@ -44,29 +44,29 @@
             z-index: 10;
         }
         .menu-header { display: flex; justify-content: space-between; align-items: center; }
-        .user-profile { display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.4); padding: 5px 12px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); }
+        .user-profile { display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.4); padding: 5px 15px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); }
         .user-profile img { width: 35px; height: 35px; border-radius: 50%; border: 2px solid #f59e0b; }
         .menu-center { display: flex; flex-direction: column; align-items: center; justify-content: center; flex-grow: 1; }
-        .hero-display { font-size: 80px; color: #f59e0b; text-shadow: 0 0 20px rgba(245,158,11,0.5); }
-        .game-modes { display: flex; gap: 10px; margin-top: 15px; }
-        .mode-btn { background: rgba(31, 41, 55, 0.8); border: 2px solid #374151; padding: 8px 16px; border-radius: 10px; color: #9ca3af; font-weight: bold; cursor: pointer; }
+        .hero-display { font-size: 60px; color: #f59e0b; text-shadow: 0 0 20px rgba(245,158,11,0.5); }
+        .game-modes { display: flex; gap: 15px; margin-top: 15px; }
+        .mode-btn { background: rgba(31, 41, 55, 0.8); border: 2px solid #374151; padding: 8px 20px; border-radius: 10px; color: #9ca3af; font-weight: bold; cursor: pointer; }
         .mode-btn.active { border-color: #f59e0b; color: #fff; background: rgba(245, 158, 11, 0.2); }
-        .menu-footer { display: flex; justify-content: space-between; align-items: center; }
-        .start-btn { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: #fff; border: none; padding: 12px 40px; font-size: 20px; font-weight: bold; border-radius: 30px; cursor: pointer; box-shadow: 0 5px 20px rgba(245,158,11,0.4); }
+        .menu-footer { display: flex; justify-content: center; align-items: center; }
+        .start-btn { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: #fff; border: none; padding: 12px 50px; font-size: 20px; font-weight: bold; border-radius: 30px; cursor: pointer; box-shadow: 0 5px 20px rgba(245,158,11,0.4); }
 
-        /* --- GAME HUD --- */
+        /* --- GAME HUD (Landscape) --- */
         #game-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; display: none; }
-        #hud { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; pointer-events: none; display: none; padding: 20px; flex-direction: column; justify-content: space-between; }
+        #hud { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; pointer-events: none; display: none; padding: 15px; flex-direction: column; justify-content: space-between; }
         .interactive { pointer-events: auto; }
 
         .hud-top { display: flex; justify-content: space-between; align-items: flex-start; }
-        .minimap { width: 90px; height: 90px; background: rgba(0, 0, 0, 0.6); border: 2px solid #374151; border-radius: 50%; position: relative; overflow: hidden; }
-        .player-dot { width: 8px; height: 8px; background: #22c55e; border-radius: 50%; position: absolute; top: 41px; left: 41px; }
+        .minimap { width: 110px; height: 110px; background: rgba(0, 0, 0, 0.6); border: 2px solid #374151; border-radius: 50%; position: relative; overflow: hidden; }
+        .player-dot { width: 8px; height: 8px; background: #22c55e; border-radius: 50%; position: absolute; top: 51px; left: 51px; }
 
-        .crosshair { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 20px; height: 20px; pointer-events: none; }
-        .crosshair::before, .crosshair::after { content: ''; position: absolute; background: rgba(255,255,255,0.8); }
-        .crosshair::before { top: 9px; left: 0; width: 20px; height: 2px; }
-        .crosshair::after { top: 0; left: 9px; width: 2px; height: 20px; }
+        .crosshair { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 24px; height: 24px; pointer-events: none; }
+        .crosshair::before, .crosshair::after { content: ''; position: absolute; background: rgba(255,255,255,0.9); }
+        .crosshair::before { top: 11px; left: 0; width: 24px; height: 2px; }
+        .crosshair::after { top: 0; left: 11px; width: 2px; height: 24px; }
 
         /* Weapon View at Bottom Center */
         .weapon-view {
@@ -74,8 +74,8 @@
             bottom: 0;
             left: 50%;
             transform: translateX(-35%);
-            width: 180px;
-            height: 150px;
+            width: 220px;
+            height: 160px;
             background: linear-gradient(135deg, #4b5563, #1f2937);
             clip-path: polygon(30% 0%, 70% 0%, 100% 100%, 0% 100%);
             pointer-events: none;
@@ -85,14 +85,14 @@
 
         .hud-bottom { display: flex; justify-content: space-between; align-items: flex-end; width: 100%; }
         
-        /* Left Joystick (Move) */
-        .joystick-zone { width: 120px; height: 120px; background: rgba(255,255,255,0.05); border: 2px solid rgba(255,255,255,0.1); border-radius: 50%; position: relative; touch-action: none; }
-        .joystick-knob { width: 50px; height: 50px; background: rgba(245, 158, 11, 0.6); border: 2px solid #f59e0b; border-radius: 50%; position: absolute; top: 35px; left: 35px; pointer-events: none; }
+        /* Left Joystick (Move - Forward, Backward, Left, Right) */
+        .joystick-zone { width: 130px; height: 130px; background: rgba(255,255,255,0.05); border: 2px solid rgba(255,255,255,0.1); border-radius: 50%; position: relative; touch-action: none; }
+        .joystick-knob { width: 55px; height: 55px; background: rgba(245, 158, 11, 0.6); border: 2px solid #f59e0b; border-radius: 50%; position: absolute; top: 37px; left: 37px; pointer-events: none; }
 
         /* Right Action Area (Fire & Aim Look) */
         .right-control-zone { display: flex; flex-direction: column; align-items: flex-end; gap: 15px; }
-        .fire-btn { width: 80px; height: 80px; background: radial-gradient(circle, #ef4444 0%, #b91c1c 100%); border: 3px solid #fca5a5; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; color: #fff; box-shadow: 0 0 15px rgba(239, 68, 68, 0.6); cursor: pointer; }
-        .ammo-box { background: rgba(0,0,0,0.6); padding: 5px 12px; border-radius: 8px; font-size: 16px; font-weight: bold; border-right: 4px solid #f59e0b; }
+        .fire-btn { width: 85px; height: 85px; background: radial-gradient(circle, #ef4444 0%, #b91c1c 100%); border: 3px solid #fca5a5; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; color: #fff; box-shadow: 0 0 15px rgba(239, 68, 68, 0.6); cursor: pointer; }
+        .ammo-box { background: rgba(0,0,0,0.6); padding: 6px 15px; border-radius: 8px; font-size: 16px; font-weight: bold; border-right: 4px solid #f59e0b; }
     </style>
 </head>
 <body>
@@ -103,24 +103,25 @@
             <div class="menu-header">
                 <div class="user-profile">
                     <img src="https://via.placeholder.com/40" alt="Avatar">
-                    <div style="font-size: 13px; font-weight: bold;">Ebitiem</div>
+                    <div style="font-size: 14px; font-weight: bold;">Ebitiem</div>
                 </div>
-                <div style="background:rgba(0,0,0,0.4); padding:5px 10px; border-radius:15px; font-size:13px;"><i class="fa-solid fa-coins" style="color:#f59e0b;"></i> 1,450</div>
+                <div style="background:rgba(0,0,0,0.4); padding:6px 14px; border-radius:15px; font-size:14px;"><i class="fa-solid fa-coins" style="color:#f59e0b;"></i> 1,450</div>
             </div>
 
             <div class="menu-center">
                 <div class="hero-display"><i class="fa-solid fa-gun"></i></div>
-                <div style="font-size: 24px; font-weight: bold; color: #f59e0b; margin-top: 10px;">نیورا | NIVRA</div>
-                <div style="font-size: 12px; color: #9ca3af; margin-top: 5px;">محیط نبرد سه‌بعدی عمودی</div>
+                <div style="font-size: 26px; font-weight: bold; color: #f59e0b; margin-top: 5px;">نیورا | NIVRA</div>
+                <div style="font-size: 13px; color: #9ca3af; margin-top: 5px;">محیط نبرد سه‌بعدی افقی</div>
 
                 <div class="game-modes">
                     <button class="mode-btn active">تک‌نفره</button>
                     <button class="mode-btn">۲ نفره</button>
                     <button class="mode-btn">۴ نفره</button>
+                    <button class="mode-btn">۸ نفره</button>
                 </div>
             </div>
 
-            <div class="menu-footer" style="justify-content: center;">
+            <div class="menu-footer">
                 <button class="start-btn" onclick="startGame()">شروع بازی</button>
             </div>
         </div>
@@ -134,7 +135,7 @@
         <!-- IN-GAME HUD -->
         <div id="hud">
             <div class="hud-top">
-                <div style="background: rgba(0,0,0,0.5); padding: 8px 12px; border-radius: 10px; font-size: 14px; border-left: 4px solid #22c55e;">
+                <div style="background: rgba(0,0,0,0.5); padding: 8px 15px; border-radius: 10px; font-size: 15px; border-left: 4px solid #22c55e;">
                     امتیاز: <span id="score">0</span>
                 </div>
                 <div class="minimap">
@@ -163,7 +164,7 @@
         let scene, camera, renderer;
         let moveForward = false, moveBackward = false, moveLeft = false, moveRight = false;
         let gameRunning = false;
-        let cameraAngleX = 0, cameraAngleY = 0;
+        let cameraAngleX = 0;
 
         function startGame() {
             document.getElementById('main-menu').style.display = 'none';
@@ -191,7 +192,7 @@
 
             // Floor
             const floor = new THREE.Mesh(
-                new THREE.PlaneGeometry(100, 100),
+                new THREE.PlaneGeometry(120, 120),
                 new THREE.MeshStandardMaterial({ color: 0x4b5563 })
             );
             floor.rotation.x = -Math.PI / 2;
@@ -199,9 +200,9 @@
 
             // Obstacles
             const boxMat = new THREE.MeshStandardMaterial({ color: 0xd97706 });
-            for (let i = 0; i < 20; i++) {
+            for (let i = 0; i < 25; i++) {
                 const box = new THREE.Mesh(new THREE.BoxGeometry(4, 4, 4), boxMat);
-                box.position.set((Math.random() - 0.5) * 60, 2, (Math.random() - 0.5) * 60);
+                box.position.set((Math.random() - 0.5) * 80, 2, (Math.random() - 0.5) * 80);
                 scene.add(box);
             }
 
@@ -212,7 +213,7 @@
                 requestAnimationFrame(animate);
 
                 // Movement logic based on left joystick
-                let speed = 0.1;
+                let speed = 0.12;
                 let dir = new THREE.Vector3();
                 camera.getWorldDirection(dir);
                 dir.y = 0;
@@ -221,8 +222,7 @@
                 if (moveForward) camera.position.addScaledVector(dir, speed);
                 if (moveBackward) camera.position.addScaledVector(dir, -speed);
 
-                // Apply camera rotation (Aim / Look around without moving position)
-                let rotMat = new THREE.Matrix4();
+                // Apply camera rotation
                 camera.rotation.y = cameraAngleX;
 
                 renderer.render(scene, camera);
@@ -243,7 +243,7 @@
             let dx = touch.clientX - (rect.left + rect.width / 2);
             let dy = touch.clientY - (rect.top + rect.height / 2);
             const dist = Math.sqrt(dx * dx + dy * dy);
-            const maxDist = 40;
+            const maxDist = 45;
 
             if (dist > maxDist) {
                 dx = (dx / dist) * maxDist;
@@ -251,8 +251,8 @@
             }
             knob.style.transform = `translate(${dx}px, ${dy}px)`;
 
-            moveForward = dy < -10;
-            moveBackward = dy > 10;
+            moveForward = dy < -12;
+            moveBackward = dy > 12;
         });
         window.addEventListener('touchend', () => {
             joystickActive = false;
@@ -260,7 +260,7 @@
             moveForward = moveBackward = false;
         });
 
-        // Right Screen Drag (Camera / Gun rotation around itself without position change)
+        // Right Screen Drag (Camera / Gun rotation around itself)
         let isLooking = false, lastTouchX = 0;
         const lookZone = document.getElementById('look-zone');
 
@@ -275,7 +275,7 @@
             let deltaX = currentX - lastTouchX;
             lastTouchX = currentX;
 
-            cameraAngleX -= deltaX * 0.005; // Rotate camera view left/right smoothly
+            cameraAngleX -= deltaX * 0.005;
         });
 
         window.addEventListener('touchend', () => { isLooking = false; });
