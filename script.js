@@ -24,18 +24,18 @@ function init3DGame() {
     document.getElementById('canvas-container').appendChild(renderer.domElement);
 
     // ۳. نورپردازی محیطی و خورشید
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
     scene.add(ambientLight);
 
-    const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    const dirLight = new THREE.DirectionalLight(0xffffff, 0.9);
     dirLight.position.set(10, 20, 10);
     scene.add(dirLight);
 
     // ۴. ساخت محیط جنگی (زمین و موانع)
     createBattlefield();
 
-    // ۵. اضافه کردن مدل تفنگ به دست بازیکن
-    addWeaponModel();
+    // ۵. اضافه کردن تفنگ دقیق و مجهز به دست بازیکن
+    addDetailedWeaponModel();
 
     // ۶. تنظیم کنترل‌های لمسی جو استیک
     setupJoystickControls();
@@ -53,9 +53,9 @@ function createBattlefield() {
     scene.add(floor);
 
     // دیوارهای موانع نظامی (باکس‌های مختلف)
-    const boxMat = new THREE.MeshStandardMaterial({ color: 0x4a5568 });
-    for (let i = 0; i < 15; i++) {
-        const size = Math.random() * 3 + 1;
+    const boxMat = new THREE.MeshStandardMaterial({ color: 0x4a5568, roughness: 0.5 });
+    for (let i = 0; i < 20; i++) {
+        const size = Math.random() * 3 + 1.5;
         const boxGeo = new THREE.BoxGeometry(size, size, size);
         const box = new THREE.Mesh(boxGeo, boxMat);
         
@@ -66,38 +66,61 @@ function createBattlefield() {
     }
 }
 
-function addWeaponModel() {
+function addDetailedWeaponModel() {
     const weaponGroup = new THREE.Group();
-    
-    // بدنه تفنگ
-    const gunBody = new THREE.Mesh(
-        new THREE.BoxGeometry(0.15, 0.25, 0.9),
-        new THREE.MeshStandardMaterial({ color: 0x222222, metalness: 0.8, roughness: 0.2 })
-    );
-    weaponGroup.add(gunBody);
 
-    // لوله تفنگ
-    const barrel = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.03, 0.03, 0.6),
-        new THREE.MeshStandardMaterial({ color: 0x111111 })
-    );
+    // متریال‌های نظامی (بدنه تیره، خشاب فلزی، قنداق)
+    const bodyMat = new THREE.MeshStandardMaterial({ color: 0x1c1c1c, metalness: 0.85, roughness: 0.25 });
+    const metalMat = new THREE.MeshStandardMaterial({ color: 0x333333, metalness: 0.9, roughness: 0.2 });
+    const gripMat = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.9 });
+
+    // ۱. بدنه اصلی تفنگ (Receiver)
+    const receiver = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.22, 0.8), bodyMat);
+    receiver.position.set(0, 0, 0);
+    weaponGroup.add(receiver);
+
+    // ۲. لوله تفنگ (Barrel)
+    const barrel = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 0.7), metalMat);
     barrel.rotation.x = Math.PI / 2;
-    barrel.position.set(0, 0.05, -0.6);
+    barrel.position.set(0, 0.05, -0.65);
     weaponGroup.add(barrel);
 
-    // جایگاه تفنگ روی دوربین (پایین سمت راست دید بازیکن)
-    weaponGroup.position.set(0.35, -0.35, -0.6);
+    // ۳. خشاب تفنگ (Magazine - مثل کالاف)
+    const mag = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.35, 0.18), metalMat);
+    mag.rotation.x = -0.2; // زاویه دار مثل خشاب واقعی
+    mag.position.set(0, -0.22, -0.15);
+    weaponGroup.add(mag);
+
+    // ۴. دسته تفنگ (Grip)
+    const grip = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.28, 0.12), gripMat);
+    grip.rotation.x = 0.3;
+    grip.position.set(0, -0.2, 0.25);
+    weaponGroup.add(grip);
+
+    // ۵. مگسک جلو (Sight)
+    const sight = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.08, 0.04), metalMat);
+    sight.position.set(0, 0.15, -0.4);
+    weaponGroup.add(sight);
+
+    // قرار دادن تفنگ در پایین سمت راست دید دوربین (اول شخص)
+    weaponGroup.position.set(0.32, -0.32, -0.55);
     camera.add(weaponGroup);
     scene.add(camera);
+    
     weaponModel = weaponGroup;
 }
 
 function shootWeapon() {
-    // افکت لرزش دوربین هنگام شلیک (Recoil)
-    camera.rotation.x += 0.03;
+    // لرزش دوربین هنگام شلیک (Recoil)
+    camera.rotation.x += 0.035;
     
-    // شبیه‌سازی ضربه خوردن تصادفی دشمن یا کم شدن خشاب
-    console.log("تیر شلیک شد!");
+    // انیمیشن کوچک عقب رفتن تفنگ هنگام شلیک
+    if (weaponModel) {
+        weaponModel.position.z += 0.08;
+        setTimeout(() => {
+            weaponModel.position.z -= 0.08;
+        }, 80);
+    }
 }
 
 function takeDamage(amount) {
@@ -152,7 +175,6 @@ function setupJoystickControls() {
 
         joystickStick.style.transform = `translate(${x}px, ${y}px)`;
 
-        // تعیین جهت حرکت بر اساس جو استیک
         moveForward = y < -10;
         moveBackward = y > 10;
         moveLeft = x < -10;
@@ -176,17 +198,17 @@ function animate() {
     if (moveLeft) camera.translateX(-speed);
     if (moveRight) camera.translateX(speed);
 
-    // انیمیشن تنفس و تکان خوردن طبیعی سلاح (Idle & Walking Motion)
+    // انیمیشن تنفس و تکان خوردن طبیعی سلاح هنگام راه رفتن یا ایستادن
     if (weaponModel) {
         const time = Date.now() * 0.003;
         const isMoving = moveForward || moveBackward || moveLeft || moveRight;
         
         if (isMoving) {
-            weaponModel.position.y = -0.35 + Math.sin(time * 5) * 0.02;
-            weaponModel.position.x = 0.35 + Math.cos(time * 2.5) * 0.02;
+            weaponModel.position.y = -0.32 + Math.sin(time * 6) * 0.025;
+            weaponModel.position.x = 0.32 + Math.cos(time * 3) * 0.025;
         } else {
-            weaponModel.position.y = -0.35 + Math.sin(time) * 0.005;
-            weaponModel.position.x = 0.35;
+            weaponModel.position.y = -0.32 + Math.sin(time) * 0.006;
+            weaponModel.position.x = 0.32;
         }
     }
 
@@ -197,5 +219,4 @@ function onWindowResize() {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
-    }
-    
+            }
