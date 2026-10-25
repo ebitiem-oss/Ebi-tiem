@@ -29,89 +29,97 @@
             position: relative;
         }
 
-        /* --- MENU --- */
+        /* --- COD STYLE MENU --- */
         #main-menu {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, #111827 0%, #1f2937 100%);
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            padding: 20px;
+            padding: 20px 30px;
             z-index: 10;
         }
         .menu-header { display: flex; justify-content: space-between; align-items: center; }
-        .user-profile { display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.4); padding: 5px 15px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); }
-        .user-profile img { width: 35px; height: 35px; border-radius: 50%; border: 2px solid #f59e0b; }
+        .user-profile { display: flex; align-items: center; gap: 12px; background: rgba(15, 23, 42, 0.8); padding: 8px 18px; border-radius: 25px; border: 1px solid rgba(245, 158, 11, 0.3); box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+        .user-profile img { width: 40px; height: 40px; border-radius: 50%; border: 2px solid #f59e0b; object-fit: cover; }
+        
         .menu-center { display: flex; flex-direction: column; align-items: center; justify-content: center; flex-grow: 1; }
-        .hero-display { font-size: 60px; color: #f59e0b; text-shadow: 0 0 20px rgba(245,158,11,0.5); }
-        .game-modes { display: flex; gap: 15px; margin-top: 15px; }
-        .mode-btn { background: rgba(31, 41, 55, 0.8); border: 2px solid #374151; padding: 8px 20px; border-radius: 10px; color: #9ca3af; font-weight: bold; cursor: pointer; }
-        .mode-btn.active { border-color: #f59e0b; color: #fff; background: rgba(245, 158, 11, 0.2); }
-        .menu-footer { display: flex; justify-content: center; align-items: center; }
-        .start-btn { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: #fff; border: none; padding: 12px 50px; font-size: 20px; font-weight: bold; border-radius: 30px; cursor: pointer; box-shadow: 0 5px 20px rgba(245,158,11,0.4); }
+        .game-title-box { text-align: center; margin-bottom: 20px; }
+        .game-title-box h1 { font-size: 38px; color: #f59e0b; text-shadow: 0 0 15px rgba(245,158,11,0.6); letter-spacing: 2px; }
+        .game-title-box p { font-size: 13px; color: #94a3b8; margin-top: 5px; }
 
-        /* --- GAME HUD (Landscape) --- */
+        .game-modes { display: flex; gap: 12px; margin-top: 15px; }
+        .mode-btn { background: rgba(30, 41, 59, 0.9); border: 2px solid #334155; padding: 10px 25px; border-radius: 8px; color: #94a3b8; font-weight: bold; cursor: pointer; transition: all 0.3s; }
+        .mode-btn.active { border-color: #f59e0b; color: #fff; background: rgba(245, 158, 11, 0.25); box-shadow: 0 0 15px rgba(245,158,11,0.3); }
+
+        .menu-footer { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+        .start-btn { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: #fff; border: none; padding: 14px 60px; font-size: 22px; font-weight: bold; border-radius: 35px; cursor: pointer; box-shadow: 0 6px 25px rgba(245,158,11,0.5); text-transform: uppercase; letter-spacing: 1px; }
+        .start-btn:active { transform: scale(0.96); }
+
+        /* --- GAME HUD (Landscape COD Style) --- */
         #game-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; display: none; }
-        #hud { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; pointer-events: none; display: none; padding: 15px; flex-direction: column; justify-content: space-between; }
+        #hud { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; pointer-events: none; display: none; padding: 20px; flex-direction: column; justify-content: space-between; }
         .interactive { pointer-events: auto; }
 
         .hud-top { display: flex; justify-content: space-between; align-items: flex-start; }
-        .minimap { width: 110px; height: 110px; background: rgba(0, 0, 0, 0.6); border: 2px solid #374151; border-radius: 50%; position: relative; overflow: hidden; }
-        .player-dot { width: 8px; height: 8px; background: #22c55e; border-radius: 50%; position: absolute; top: 51px; left: 51px; }
+        .minimap { width: 120px; height: 120px; background: rgba(15, 23, 42, 0.7); border: 2px solid rgba(245, 158, 11, 0.4); border-radius: 50%; position: relative; overflow: hidden; box-shadow: 0 0 10px rgba(0,0,0,0.5); }
+        .player-dot { width: 9px; height: 9px; background: #22c55e; border-radius: 50%; position: absolute; top: 55px; left: 55px; box-shadow: 0 0 5px #22c55e; }
 
-        .crosshair { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 24px; height: 24px; pointer-events: none; }
-        .crosshair::before, .crosshair::after { content: ''; position: absolute; background: rgba(255,255,255,0.9); }
-        .crosshair::before { top: 11px; left: 0; width: 24px; height: 2px; }
-        .crosshair::after { top: 0; left: 11px; width: 2px; height: 24px; }
+        .crosshair { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 28px; height: 28px; pointer-events: none; }
+        .crosshair::before, .crosshair::after { content: ''; position: absolute; background: rgba(255, 255, 255, 0.9); box-shadow: 0 0 3px rgba(0,0,0,0.8); }
+        .crosshair::before { top: 13px; left: 0; width: 28px; height: 2px; }
+        .crosshair::after { top: 0; left: 13px; width: 2px; height: 28px; }
 
-        /* Weapon View at Bottom Center */
+        /* Weapon View Model at Bottom Center */
         .weapon-view {
             position: absolute;
             bottom: 0;
             left: 50%;
-            transform: translateX(-35%);
-            width: 220px;
-            height: 160px;
-            background: linear-gradient(135deg, #4b5563, #1f2937);
-            clip-path: polygon(30% 0%, 70% 0%, 100% 100%, 0% 100%);
+            transform: translateX(-30%);
+            width: 240px;
+            height: 170px;
+            background: linear-gradient(135deg, #334155, #0f172a);
+            clip-path: polygon(25% 0%, 75% 0%, 100% 100%, 0% 100%);
             pointer-events: none;
             z-index: 3;
             border-top: 4px solid #f59e0b;
+            box-shadow: 0 -10px 20px rgba(0,0,0,0.4);
         }
 
         .hud-bottom { display: flex; justify-content: space-between; align-items: flex-end; width: 100%; }
         
         /* Left Joystick (Move) */
-        .joystick-zone { width: 130px; height: 130px; background: rgba(255,255,255,0.05); border: 2px solid rgba(255,255,255,0.1); border-radius: 50%; position: relative; touch-action: none; }
-        .joystick-knob { width: 55px; height: 55px; background: rgba(245, 158, 11, 0.6); border: 2px solid #f59e0b; border-radius: 50%; position: absolute; top: 37px; left: 37px; pointer-events: none; }
+        .joystick-zone { width: 140px; height: 140px; background: rgba(255,255,255,0.04); border: 2px solid rgba(255,255,255,0.15); border-radius: 50%; position: relative; touch-action: none; backdrop-filter: blur(2px); }
+        .joystick-knob { width: 60px; height: 60px; background: rgba(245, 158, 11, 0.5); border: 2px solid #f59e0b; border-radius: 50%; position: absolute; top: 38px; left: 38px; pointer-events: none; box-shadow: 0 0 10px rgba(245,158,11,0.5); }
 
         /* Right Action Area (Fire & Aim Look) */
         .right-control-zone { display: flex; flex-direction: column; align-items: flex-end; gap: 15px; }
-        .fire-btn { width: 85px; height: 85px; background: radial-gradient(circle, #ef4444 0%, #b91c1c 100%); border: 3px solid #fca5a5; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; color: #fff; box-shadow: 0 0 15px rgba(239, 68, 68, 0.6); cursor: pointer; }
-        .ammo-box { background: rgba(0,0,0,0.6); padding: 6px 15px; border-radius: 8px; font-size: 16px; font-weight: bold; border-right: 4px solid #f59e0b; }
+        .fire-btn { width: 90px; height: 90px; background: radial-gradient(circle, #ef4444 0%, #991b1b 100%); border: 3px solid #fca5a5; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; color: #fff; box-shadow: 0 0 20px rgba(239, 68, 68, 0.7); cursor: pointer; }
+        .ammo-box { background: rgba(15, 23, 42, 0.8); padding: 8px 18px; border-radius: 8px; font-size: 16px; font-weight: bold; border-right: 4px solid #f59e0b; letter-spacing: 1px; }
     </style>
 </head>
 <body>
 
     <div id="app">
-        <!-- MAIN MENU -->
+        <!-- MAIN MENU (COD Style) -->
         <div id="main-menu">
             <div class="menu-header">
                 <div class="user-profile">
                     <img src="https://via.placeholder.com/40" alt="Avatar">
                     <div style="font-size: 14px; font-weight: bold;">Ebitiem</div>
                 </div>
-                <div style="background:rgba(0,0,0,0.4); padding:6px 14px; border-radius:15px; font-size:14px;"><i class="fa-solid fa-coins" style="color:#f59e0b;"></i> 1,450</div>
+                <div style="background:rgba(15, 23, 42, 0.8); padding:6px 16px; border-radius:20px; font-size:14px; border: 1px solid rgba(255,255,255,0.1);"><i class="fa-solid fa-coins" style="color:#f59e0b;"></i> 1,450</div>
             </div>
 
             <div class="menu-center">
-                <div class="hero-display"><i class="fa-solid fa-gun"></i></div>
-                <div style="font-size: 26px; font-weight: bold; color: #f59e0b; margin-top: 5px;">نیورا | NIVRA</div>
-                <div style="font-size: 13px; color: #9ca3af; margin-top: 5px;">محیط نبرد سه‌بعدی افقی</div>
+                <div class="game-title-box">
+                    <h1>NIVRA // نیورا</h1>
+                    <p>محیط نبرد تاکتیکی سه‌بعدی آنلاین</p>
+                </div>
 
                 <div class="game-modes">
                     <button class="mode-btn active">تک‌نفره</button>
@@ -122,7 +130,9 @@
             </div>
 
             <div class="menu-footer">
-                <button class="start-btn" onclick="startGame()">شروع بازی</button>
+                <div style="font-size: 12px; color: #64748b;">نسخه آنلاین موبایل</div>
+                <button class="start-btn" onclick="startGame()">شروع نبرد</button>
+                <div style="font-size: 12px; color: #64748b;"><i class="fa-solid fa-signal" style="color: #22c55e;"></i> پینگ: ۲۸ms</div>
             </div>
         </div>
 
@@ -135,7 +145,7 @@
         <!-- IN-GAME HUD -->
         <div id="hud">
             <div class="hud-top">
-                <div style="background: rgba(0,0,0,0.5); padding: 8px 15px; border-radius: 10px; font-size: 15px; border-left: 4px solid #22c55e;">
+                <div style="background: rgba(15, 23, 42, 0.7); padding: 8px 16px; border-radius: 8px; font-size: 15px; border-left: 4px solid #22c55e; border: 1px solid rgba(255,255,255,0.1);">
                     امتیاز: <span id="score">0</span>
                 </div>
                 <div class="minimap">
@@ -178,35 +188,35 @@
         function initThreeJS() {
             const canvas = document.getElementById('game-canvas');
             scene = new THREE.Scene();
-            scene.background = new THREE.Color(0x87ceeb);
+            scene.background = new THREE.Color(0x0f172a);
 
             camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
             renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
 
             // Lighting
-            scene.add(new THREE.AmbientLight(0xffffff, 0.7));
-            const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
-            dirLight.position.set(20, 40, 20);
+            scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+            const dirLight = new THREE.DirectionalLight(0xffffff, 0.9);
+            dirLight.position.set(30, 50, 30);
             scene.add(dirLight);
 
             // Floor
             const floor = new THREE.Mesh(
-                new THREE.PlaneGeometry(120, 120),
-                new THREE.MeshStandardMaterial({ color: 0x4b5563 })
+                new THREE.PlaneGeometry(150, 150),
+                new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.8 })
             );
             floor.rotation.x = -Math.PI / 2;
             scene.add(floor);
 
-            // Obstacles
-            const boxMat = new THREE.MeshStandardMaterial({ color: 0xd97706 });
-            for (let i = 0; i < 25; i++) {
-                const box = new THREE.Mesh(new THREE.BoxGeometry(4, 4, 4), boxMat);
-                box.position.set((Math.random() - 0.5) * 80, 2, (Math.random() - 0.5) * 80);
+            // Obstacles / Tactical Boxes
+            const boxMat = new THREE.MeshStandardMaterial({ color: 0xd97706, roughness: 0.4 });
+            for (let i = 0; i < 30; i++) {
+                const box = new THREE.Mesh(new THREE.BoxGeometry(4, 5, 4), boxMat);
+                box.position.set((Math.random() - 0.5) * 90, 2.5, (Math.random() - 0.5) * 90);
                 scene.add(box);
             }
 
-            camera.position.set(0, 2, 5);
+            camera.position.set(0, 2.5, 6);
 
             function animate() {
                 if (!gameRunning) return;
