@@ -3,25 +3,27 @@
     margin: 0;
     padding: 0;
     font-family: Tahoma, sans-serif;
+    user-select: none;
 }
 
-body {
-    background-color: #0f172a;
-    color: #e2e8f0;
-    direction: rtl;
-    user-select: none; /* جلوگیری از انتخاب متن برای امنیت بیشتر */
-    -webkit-user-select: none;
-}
-
-/* جلوگیری از اسکرین‌شات و ضبط صفحه در برخی مرورگرها */
-body.no-screenshot {
-    -webkit-touch-callout: none;
+body, html {
+    width: 100%;
+    height: 100%;
+    background-color: #0b0e14;
+    color: #fff;
+    overflow: hidden;
 }
 
 .screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     display: none;
-    height: 100vh;
     flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 .screen.active {
@@ -29,246 +31,201 @@ body.no-screenshot {
 }
 
 /* صفحه ورود */
-.login-container {
-    margin: auto;
+.login-box {
+    background: #151b26;
+    padding: 30px;
+    border-radius: 12px;
+    border: 1px solid #1f293d;
+    text-align: center;
     width: 90%;
     max-width: 400px;
-    background: #1e293b;
-    padding: 25px;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    text-align: center;
 }
 
-.login-container input, .setting-item input {
-    padding: 12px;
-    border-radius: 8px;
-    border: 1px solid #334155;
-    background: #0f172a;
-    color: #fff;
-    font-size: 15px;
-}
-
-.login-container button, .setting-item button {
-    padding: 12px;
-    border-radius: 8px;
-    border: none;
-    background: #2481cc;
-    color: #fff;
-    font-size: 15px;
-    cursor: pointer;
-    font-weight: bold;
-}
-
-/* هدرها و تب‌ها */
-.header-bar {
-    background: #17212b;
-    padding: 15px;
-    text-align: center;
-    font-weight: bold;
-    font-size: 16px;
-    border-bottom: 1px solid #0f172a;
-}
-
-.tab-content {
-    flex: 1;
-    display: none;
-    flex-direction: column;
-    overflow-y: auto;
-    padding-bottom: 70px;
-    position: relative;
-}
-
-.tab-content.active {
-    display: flex;
-}
-
-.bottom-nav {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 60px;
-    background: #17212b;
-    display: flex;
-    border-top: 1px solid #0f172a;
-    z-index: 10;
-}
-
-.nav-item {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #829ab1;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: bold;
-}
-
-.nav-item.active {
-    color: #5288c1;
-    background: #1e293b;
-}
-
-/* دکمه شناور + در پیام‌رسان */
-.fab-btn {
-    position: fixed;
-    bottom: 75px;
-    left: 20px;
-    width: 55px;
-    height: 55px;
-    border-radius: 50%;
-    background: #2481cc;
-    color: #fff;
-    font-size: 28px;
-    border: none;
-    cursor: pointer;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-    z-index: 20;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-/* لیست PVها */
-.pv-list-container {
-    display: flex;
-    flex-direction: column;
-}
-
-.pv-item {
-    display: flex;
-    align-items: center;
-    padding: 12px 15px;
-    background: #17212b;
-    border-bottom: 1px solid #0f172a;
-    cursor: pointer;
-    gap: 12px;
-}
-
-.item-pic {
-    width: 45px;
-    height: 45px;
-    border-radius: 50%;
-    background: #2b5278;
-    flex-shrink: 0;
-}
-
-.item-info {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
-.item-name {
-    font-weight: bold;
-    font-size: 15px;
-    color: #fff;
-}
-
-.item-sub {
-    font-size: 13px;
-    color: #829ab1;
-}
-
-/* تنظیمات و پروفایل */
-.settings-body {
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-.profile-header-center {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+.login-box h2 {
+    color: #ffaa00;
     margin-bottom: 10px;
 }
 
-.profile-circle-pic {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    background: #2b5278;
-    cursor: pointer;
-    border: 2px solid #5288c1;
+.login-box p {
+    color: #8b9bb4;
+    margin-bottom: 20px;
+    font-size: 14px;
 }
 
-.setting-item {
-    background: #17212b;
-    padding: 15px;
-    border-radius: 8px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.sub-btn {
+.login-box input {
+    width: 100%;
     padding: 12px;
-    border-radius: 8px;
-    border: none;
-    background: #d14545;
+    background: #0b0e14;
+    border: 1px solid #2b374e;
     color: #fff;
-    font-weight: bold;
-    cursor: pointer;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    font-size: 16px;
     text-align: center;
 }
 
-/* صفحه چت PV */
-.chat-overlay {
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: #0f172a;
-    display: none;
-    flex-direction: column;
-    z-index: 100;
-}
-
-.room-header {
-    background: #17212b;
-    padding: 10px 15px;
-    display: flex;
-    align-items: center;
-    border-bottom: 1px solid #0f172a;
-}
-
-.chat-messages-area {
-    flex: 1;
-    overflow-y: auto;
-    padding: 15px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.room-footer {
-    background: #17212b;
-    padding: 10px;
-    display: flex;
-    gap: 10px;
-}
-
-.room-footer input {
-    flex: 1;
-    padding: 10px;
-    border-radius: 8px;
-    border: 1px solid #334155;
-    background: #0f172a;
-    color: #fff;
-}
-
-.room-footer button {
-    padding: 10px 15px;
-    border-radius: 8px;
+.btn-primary, .btn-mode {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(135deg, #ff8800, #ff5500);
     border: none;
-    background: #2481cc;
     color: #fff;
     font-weight: bold;
+    border-radius: 8px;
+    font-size: 16px;
     cursor: pointer;
+    box-shadow: 0 4px 15px rgba(255, 119, 0, 0.3);
+}
+
+/* منوی انتخاب حالت */
+.menu-container {
+    text-align: center;
+    width: 90%;
+    max-width: 450px;
+}
+
+.menu-container h1 {
+    font-size: 32px;
+    color: #ffaa00;
+    letter-spacing: 2px;
+    margin-bottom: 5px;
+}
+
+.menu-container p {
+    color: #8b9bb4;
+    margin-bottom: 30px;
+}
+
+.mode-select h3 {
+    margin-bottom: 15px;
+    color: #cbd5e1;
+}
+
+.btn-mode {
+    margin-bottom: 12px;
+    background: #1b2436;
+    border: 1px solid #2b374e;
+}
+
+.btn-mode:active {
+    background: #ff7700;
+}
+
+/* محیط بازی */
+#game-screen {
+    background: #000;
+}
+
+#canvas-container {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+
+.game-hud {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 15px;
+}
+
+.game-hud * {
+    pointer-events: auto;
+}
+
+.hud-top {
+    display: flex;
+    justify-content: space-between;
+    background: rgba(11, 14, 20, 0.8);
+    padding: 10px 15px;
+    border-radius: 8px;
+    border: 1px solid #1f293d;
+    font-weight: bold;
+}
+
+/* پنل صدا و مایک */
+.voice-chat-panel {
+    align-self: flex-end;
+    background: rgba(11, 14, 20, 0.9);
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid #1f293d;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.mic-btn {
+    background: #dc2626;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.mic-btn.active {
+    background: #16a34a;
+}
+
+#mic-status {
+    font-size: 12px;
+    color: #94a3b8;
+}
+
+/* کنترل‌های موبایل */
+.mobile-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 10px;
+}
+
+.d-pad {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.d-row {
+    display: flex;
+    gap: 40px;
+}
+
+.control-btn {
+    width: 55px;
+    height: 55px;
+    background: rgba(27, 36, 54, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    color: white;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.fire-btn {
+    width: 80px;
+    height: 80px;
+    background: #ff3300;
+    border: 3px solid #ffaa00;
+    border-range: 50%;
+    border-radius: 50%;
+    color: white;
+    font-weight: bold;
+    font-size: 16px;
+    box-shadow: 0 0 20px rgba(255, 51, 0, 0.6);
 }
