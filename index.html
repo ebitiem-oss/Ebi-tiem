@@ -1,18 +1,44 @@
-<!-- اضافه کردن این بخش‌ها داخل <div id="game-screen"> -->
-<div id="game-screen" class="screen">
-    <div id="canvas-container"></div>
-    <div id="damage-overlay" class="damage-flash"></div>
-    <div id="crosshair"></div>
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>نیورا - شوتر آنلاین (Nivra)</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- کتابخانه Three.js برای گرافیک سه‌بعدی -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
 
-    <!-- نوار سلامت پایین سمت چپ -->
-    <div class="hud-bottom-left">
-        <div class="health-container">
-            <div id="health-bar"></div>
+    <!-- صفحه بازی -->
+    <div id="game-screen" class="screen active">
+        <div id="canvas-container"></div>
+        <div id="damage-overlay" class="damage-flash"></div>
+        <div id="crosshair"></div>
+
+        <!-- نوار مایک و مینی‌مپ در بالای صفحه -->
+        <div class="hud-top-bar">
+            <button id="mic-btn" onclick="toggleMic()">🎙️ مایک: خاموش</button>
+            <div id="minimap">مینی‌مپ</div>
         </div>
-        <div class="health-text">HP: <span id="hp-val">100</span></div>
+
+        <!-- نوار سلامت پایین سمت چپ -->
+        <div class="hud-bottom-left">
+            <div class="health-container">
+                <div id="health-bar"></div>
+            </div>
+            <div class="health-text">HP: <span id="hp-val">100</span></div>
+        </div>
+
+        <!-- کنترل‌های لمسی (جو استیک و دکمه شلیک) -->
+        <div class="mobile-hud-portrait">
+            <div id="joystick-base">
+                <div id="joystick-stick"></div>
+            </div>
+            <button id="shoot-btn" onmousedown="shootWeapon()" ontouchstart="shootWeapon()">شلیک 🎯</button>
+        </div>
     </div>
 
-    <!-- سایر المان‌های قبلی (مایک، مینی‌مپ، جو استیک) اینجا بمانند -->
-    <div class="hud-top-bar">...</div>
-    <div class="mobile-hud-portrait">...</div>
-</div>
+    <script src="script.js"></script>
+</body>
+</html>
