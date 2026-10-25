@@ -2,8 +2,8 @@
 <html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NIVRA</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نیورا - بازی آنلاین</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -11,85 +11,104 @@
     <!-- صفحه ورود -->
     <div id="login-screen" class="screen active">
         <div class="login-container">
-            <h1 class="logo">NIVRA</h1>
-            <div class="input-group">
-                <input type="text" id="login-id" placeholder="آیدی">
-            </div>
-            <div class="input-group">
-                <input type="password" id="login-pass" placeholder="رمز عبور (۸ کاراکتر)">
-            </div>
-            <button id="btn-login" class="main-btn">ورود</button>
-            <div class="forgot-pass" id="btn-forgot">فراموشی رمز عبور؟</div>
+            <h2>ورود به نیورا</h2>
+            <input type="text" id="login-id" placeholder="آیدی کاربری">
+            <input type="password" id="login-pass" placeholder="رمز عبور (۸ کاراکتر)">
+            <button id="btn-login">ورود</button>
+            <button id="btn-forgot" style="background:none; color:#5288c1; border:none; margin-top:10px; cursor:pointer;">فراموشی رمز عبور؟</button>
         </div>
     </div>
 
-    <!-- صفحه اصلی (منوها) -->
+    <!-- صفحه اصلی اپلیکیشن -->
     <div id="main-screen" class="screen">
-        <div class="header"><span class="app-title">NIVRA</span></div>
         
-        <div class="content-area">
-            <!-- بخش بازی‌ها (لیست اتاق‌ها) -->
-            <div id="tab-games" class="tab-content active">
-                <div class="room-list" id="room-list">
-                    <!-- اتاق‌ها اینجا ساخته می‌شوند -->
-                </div>
-            </div>
-
-            <!-- بخش پیام‌رسان -->
-            <div id="tab-messenger" class="tab-content">
-                <div class="chat-list" id="chat-list">
-                    <p class="empty-msg">هیچ چتی وجود ندارد</p>
-                </div>
-            </div>
-
-            <!-- بخش تنظیمات و پروفایل -->
-            <div id="tab-settings" class="tab-content">
-                <div class="profile-section">
-                    <div class="profile-card">
-                        <div class="profile-pic-large" id="my-pic"></div>
-                        <h2 id="my-name">نام کاربری</h2>
-                        <p id="my-id">@id</p>
-                    </div>
-                    <div class="settings-actions">
-                        <button class="sec-btn" id="btn-edit-profile">ویرایش پروفایل</button>
-                        <button class="sec-btn sub-btn" id="btn-subscribe">خرید اشتراک</button>
-                    </div>
-                    <div class="extra-settings">
-                        <div class="toggle-item"><span>صدای بازی</span><input type="checkbox" checked></div>
-                        <div class="toggle-item"><span>دعوت از دوستان</span><input type="checkbox" checked></div>
-                    </div>
-                    <!-- دکمه مخفی سازنده -->
-                    <button class="admin-btn" id="btn-admin" style="display:none;">پنل مدیریت سازنده</button>
-                </div>
+        <!-- تب‌ها -->
+        <div class="tab-content active" id="tab-games">
+            <div class="header-bar">لیست اتاق‌ها (لابی)</div>
+            <div id="room-list" class="room-list-container">
+                <!-- اتاق‌ها به صورت پویا ساخته می‌شوند -->
             </div>
         </div>
 
-        <!-- بخش داخل اتاق (Overlay) -->
-        <div id="room-overlay" class="overlay">
-            <div class="room-container">
-                <div class="room-header">
-                    <button class="back-btn" id="close-room">←</button>
-                    <div class="host-info">
-                        <div class="small-pic"></div>
-                        <span id="room-host-name">میزبان</span>
-                    </div>
-                    <div class="menu-dots">⋮</div>
+        <div class="tab-content" id="tab-messenger">
+            <div class="header-bar">پیام‌رسان (چت خصوصی)</div>
+            <div style="padding: 20px; text-align: center; color: #829ab1;">چت خصوصی (PV) فعال است.</div>
+        </div>
+
+        <div class="tab-content" id="tab-settings">
+            <div class="header-bar">تنظیمات و پروفایل</div>
+            <div class="settings-body">
+                <div class="profile-box">
+                    <div class="item-pic" style="width:70px; height:70px; border-radius:50%; background:#2b5278; margin:0 auto 10px;"></div>
+                    <div id="my-name" style="font-weight:bold; font-size:18px;">نام کاربر</div>
+                    <div id="my-id" style="color:#829ab1; font-size:14px;">@id</div>
                 </div>
-                <div class="seats-list" id="seats-container">
-                    <!-- صندلی‌ها اینجا ساخته می‌شوند -->
+                
+                <div class="setting-item">
+                    <label>تغییر نام کاربری (فقط یک‌بار رایگان):</label>
+                    <input type="text" id="new-username-input" placeholder="نام جدید">
+                    <button id="btn-change-username">ثبت تغییر نام</button>
+                    <button id="btn-buy-subscription" style="display:none; background:#d14545; margin-top:5px;">خرید اشتراک (برای تغییرات بیشتر)</button>
                 </div>
-                <div class="room-controls">
-                    <input type="text" placeholder="پیام...">
-                    <button class="mic-btn">🎤</button>
+
+                <div class="small-toggles">
+                    <label><input type="checkbox" id="toggle-sound" checked> صدای بازی</label>
+                    <label><input type="checkbox" id="toggle-invite" checked> امکان دعوت</label>
                 </div>
+
+                <!-- دکمه مختص سازنده -->
+                <button id="btn-admin" style="display:none; background:#ff8c00; margin-top:20px;">پنل سازنده (ریست رمز کاربران)</button>
             </div>
         </div>
 
-        <!-- ناوبری پایین -->
+        <!-- منوی ناوبری پایین -->
         <div class="bottom-nav">
-            <div class="nav-item active" data-target="tab-games"><span>🎮</span><span>بازی‌ها</span></div>
-            <div class="nav-item" data-target="tab-messenger"><span>💬</span><span>پیام‌رسان</span></div>
-            <div class="nav-item" data-target="tab-settings"><span>⚙️</span><span>تنظیمات</span></div>
+            <div class="nav-item active" data-target="tab-games">بازی‌ها</div>
+            <div class="nav-item" data-target="tab-messenger">پیام‌رسان</div>
+            <div class="nav-item" data-target="tab-settings">تنظیمات</div>
+        </div>
+    </div>
+
+    <!-- پنجره داخل اتاق -->
+    <div id="room-overlay" class="room-overlay">
+        <div class="room-header">
+            <div style="display:flex; align-items:center; gap:10px;">
+                <div id="close-room" style="font-size:22px; cursor:pointer; padding:0 5px;">←</div>
+                <div class="item-pic" style="width:35px; height:35px; border-radius:50%; background:#2b5278;"></div>
+                <div>
+                    <div id="room-host-name" style="font-weight:bold; font-size:14px;">نام میزبان</div>
+                    <div style="font-size:11px; color:#829ab1;">اتاق آنلاین</div>
+                </div>
+            </div>
+            <div style="position:relative;">
+                <div id="room-menu-btn" style="font-size:20px; cursor:pointer; padding:0 10px;">⋮</div>
+                <!-- منوی سه‌نقطه بالایی -->
+                <div id="room-dropdown-menu" class="dropdown-menu" style="display:none;">
+                    <div id="menu-invite">دعوت دوستان</div>
+                    <div id="menu-attendees">لیست افراد داخل اتاق</div>
+                    <div id="menu-settings">تنظیمات اتاق (میزبان)</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="seats-container" class="seats-container">
+            <!-- صندلی‌ها و چت داخل اتاق -->
+        </div>
+
+        <div class="room-footer">
+            <input type="text" id="chat-input" placeholder="پیام خود را بنویسید...">
+            <button id="send-chat-btn">ارسال</button>
+        </div>
+    </div>
+
+    <!-- مودال تنظیمات میزبان -->
+    <div id="host-settings-modal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <h3>تنظیمات اتاق (مخصوص میزبان)</h3>
+            <label><input type="checkbox" id="lock-chat-toggle"> قفل کردن چت</label>
+            <label><input type="checkbox" id="lock-mic-toggle"> قفل کردن میکروفون</label>
+            <label><input type="checkbox" id="lock-room-toggle"> قفل کردن اتاق</label>
+            <button id="close-host-settings" style="margin-top:15px;">بستن</button>
         </div>
     </div>
 
