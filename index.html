@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>نیورا - Nivra Shooter</title>
-    <!-- استایل‌ها -->
     <link rel="stylesheet" href="style.css">
     <!-- کتابخانه سه‌بعدی Three.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -16,37 +15,36 @@
     <!-- کانتینر رندر بازی سه‌بعدی -->
     <div id="canvas-container"></div>
 
-    <!-- منوی اتصال آنلاین و اطلاعات اتاق در بالای صفحه -->
+    <!-- هود بالای صفحه: اطلاعات اتاق، میکروفون و مینی‌مپ -->
     <div id="top-hud">
-        <div id="room-info">کد شما: <span id="room-id-display">در حال اتصال...</span></div>
+        <div id="room-info">کد اتاق: <span id="room-id-display">اتصال...</span></div>
         <div class="hud-controls">
             <button id="mic-btn" onclick="toggleMic()">🎙️ مایک: خاموش</button>
-            <div id="minimap">رادار</div>
+            <div id="minimap-container">
+                <canvas id="minimap-canvas" width="70" height="70"></canvas>
+            </div>
         </div>
     </div>
 
     <!-- پنل اتصال به اتاق دوست -->
     <div id="room-connect-panel">
-        <input type="text" id="friend-id-input" placeholder="کد اتاق دوست را وارد کنید...">
-        <button onclick="connectToRoom(document.getElementById('friend-id-input').value)">اتصال به اتاق</button>
+        <input type="text" id="friend-id-input" placeholder="کد اتاق دوست...">
+        <button onclick="connectToRoom(document.getElementById('friend-id-input').value)">اتصال</button>
     </div>
 
     <!-- نشانگر وسط صفحه (Crosshair) -->
     <div id="crosshair">+</div>
 
-    <!-- افکت آسیب دیدن صفحه -->
+    <!-- افکت آسیب -->
     <div id="damage-overlay"></div>
 
-    <!-- کنترل‌های لمسی (مخصوص موبایل) -->
-    <!-- ۱. جوی‌استیک حرکت (سمت چپ) -->
+    <!-- کنترل‌های لمسی (چپ: جوی‌استیک حرکت | راست: دکمه شلیک و چرخش نگاه) -->
     <div id="joystick-base">
         <div id="joystick-stick"></div>
     </div>
 
-    <!-- ۲. دکمه شلیک (سمت راست) -->
     <button id="fire-btn">🎯 آتش</button>
 
-    <!-- فایل منطق بازی -->
     <script src="script.js"></script>
 </body>
 </html>
