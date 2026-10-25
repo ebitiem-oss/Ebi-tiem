@@ -12,41 +12,85 @@
 </head>
 <body>
 
-    <!-- کانتینر رندر بازی سه‌بعدی -->
-    <div id="canvas-container"></div>
-
-    <!-- هود بالای صفحه: اطلاعات اتاق، میکروفون، جان و مینی‌مپ -->
-    <div id="top-hud">
-        <div id="room-info">
-            کد اتاق: <span id="room-id-display">اتصال...</span><br>
-            ❤️ جان: <span id="player-hp">100</span> | 🎯 امتیاز: <span id="player-score">0</span>
-        </div>
-        <div class="hud-controls">
-            <button id="mic-btn" onclick="toggleMic()">🎙️ مایک: خاموش</button>
-            <div id="minimap-container">
-                <canvas id="minimap-canvas" width="70" height="70"></canvas>
+    <!-- ================= منوی اصلی (Lobby Menu) ================= -->
+    <div id="main-menu">
+        <!-- هود بالا -->
+        <div class="menu-top-bar">
+            <div class="profile-box">
+                <div class="avatar-badge">⭐</div>
+                <div class="player-name">69FiveSelen72</div>
+            </div>
+            <div class="currency-box">
+                <span>🪙 0</span>
+                <span>CP 0</span>
+            </div>
+            <div class="menu-top-icons">
+                <button>✉️</button>
+                <button>👥</button>
+                <button>⚙️ تنظیمات</button>
             </div>
         </div>
+
+        <!-- پنل‌های سمت چپ -->
+        <div class="menu-left-sidebar">
+            <div class="menu-card">Element 115 Draw</div>
+            <div class="menu-card">BATTLE PASS</div>
+            <div class="menu-card season-card">SEASON 4: WILD DOGS</div>
+            <div class="menu-card">Freestyle Lucky Box</div>
+        </div>
+
+        <!-- پنل‌های سمت راست (انتخاب مود بازی) -->
+        <div class="menu-right-sidebar">
+            <div class="mode-card locked">RANKED MATCH</div>
+            <div class="mode-card active-mode" onclick="startMatchmaking()">MULTIPLAYER</div>
+            <div class="mode-card locked">BATTLE ROYALE</div>
+        </div>
+
+        <!-- نوار پایین صفحه -->
+        <div class="menu-bottom-bar">
+            <button class="bottom-btn">🛒 STORE</button>
+            <button class="bottom-btn">🎒 LOADOUT</button>
+            <button class="bottom-btn">🛡️ CLAN</button>
+            <button class="bottom-btn">📊 LEADERBOARD</button>
+            <button class="bottom-btn">🔫 ARSENAL</button>
+            <button class="start-btn" onclick="startMatchmaking()">START MULTIPLAYER</button>
+        </div>
     </div>
 
-    <!-- پنل اتصال به اتاق دوست -->
-    <div id="room-connect-panel">
-        <input type="text" id="friend-id-input" placeholder="کد اتاق دوست...">
-        <button onclick="connectToRoom(document.getElementById('friend-id-input').value)">اتصال</button>
+    <!-- ================= محیط بازی سه‌بعدی (مخفی در ابتدا) ================= -->
+    <div id="game-container" style="display: none;">
+        <div id="canvas-container"></div>
+
+        <!-- هود داخل بازی -->
+        <div id="top-hud">
+            <div id="room-info">
+                کد اتاق: <span id="room-id-display">اتصال...</span><br>
+                ❤️ جان: <span id="player-hp">100</span> | 🎯 امتیاز: <span id="player-score">0</span>
+            </div>
+            <div class="hud-controls">
+                <button id="mic-btn" onclick="toggleMic()">🎙️ مایک: خاموش</button>
+                <div id="minimap-container">
+                    <canvas id="minimap-canvas" width="70" height="70"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- پنل اتصال به اتاق دوست -->
+        <div id="room-connect-panel">
+            <input type="text" id="friend-id-input" placeholder="کد اتاق دوست...">
+            <button onclick="connectToRoom(document.getElementById('friend-id-input').value)">اتصال</button>
+        </div>
+
+        <div id="crosshair">+</div>
+        <div id="damage-overlay"></div>
+
+        <div id="joystick-base">
+            <div id="joystick-stick"></div>
+        </div>
+
+        <button id="fire-btn">🎯 آتش</button>
+        <button id="back-to-menu-btn" onclick="returnToMenu()">🔙 خروج به منو</button>
     </div>
-
-    <!-- نشانگر وسط صفحه (Crosshair) -->
-    <div id="crosshair">+</div>
-
-    <!-- افکت آسیب -->
-    <div id="damage-overlay"></div>
-
-    <!-- کنترل‌های لمسی -->
-    <div id="joystick-base">
-        <div id="joystick-stick"></div>
-    </div>
-
-    <button id="fire-btn">🎯 آتش</button>
 
     <script src="script.js"></script>
 </body>
