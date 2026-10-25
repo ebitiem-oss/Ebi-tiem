@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, orientation=landscape">
-    <title>Nivra - Step 3</title>
+    <title>Nivra - Tactical CS</title>
     <style>
-        body { margin: 0; overflow: hidden; background: #000; touch-action: none; user-select: none; font-family: sans-serif; }
+        body { margin: 0; overflow: hidden; background: #0a0a0a; touch-action: none; user-select: none; font-family: sans-serif; }
         canvas { display: block; }
         
         /* جوی‌استیک حرکت در سمت چپ */
@@ -28,15 +28,15 @@
             z-index: 90;
         }
 
-        /* دکمه شلیک در سمت راست */
+        /* دکمه شلیک تاکتیکی در سمت راست */
         #fire-btn {
             position: absolute;
-            bottom: 40px;
-            right: 40px;
-            width: 80px;
-            height: 80px;
-            background: rgba(255, 0, 0, 0.6);
-            border: 3px solid white;
+            bottom: 35px;
+            right: 35px;
+            width: 85px;
+            height: 85px;
+            background: rgba(220, 20, 60, 0.7);
+            border: 3px solid rgba(255, 255, 255, 0.8);
             border-radius: 50%;
             z-index: 100;
             display: flex;
@@ -44,7 +44,8 @@
             align-items: center;
             color: white;
             font-weight: bold;
-            font-size: 16px;
+            font-size: 15px;
+            box-shadow: 0 0 15px rgba(220, 20, 60, 0.5);
         }
 
         /* نشانه‌گر وسط صفحه (Crosshair) */
@@ -53,13 +54,14 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 24px;
+            color: rgba(0, 255, 100, 0.8);
+            font-size: 22px;
             z-index: 80;
             pointer-events: none;
+            text-shadow: 0 0 5px rgba(0,255,100,0.8);
         }
 
-        /* پنل HUD (خون، تیر، امتیاز) بالای صفحه و پایین */
+        /* پنل HUD بالای صفحه */
         #hud-top {
             position: absolute;
             top: 15px;
@@ -67,31 +69,31 @@
             right: 20px;
             display: flex;
             justify-content: space-between;
-            color: white;
+            color: #f1f1f1;
             font-weight: bold;
-            font-size: 18px;
+            font-size: 16px;
             z-index: 100;
             pointer-events: none;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.9);
         }
 
         #hud-bottom-right {
             position: absolute;
-            bottom: 30px;
-            right: 140px;
-            color: white;
+            bottom: 35px;
+            right: 145px;
+            color: #00ff66;
             font-weight: bold;
-            font-size: 22px;
+            font-size: 20px;
             z-index: 100;
             pointer-events: none;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.9);
         }
 
         /* هشدار چرخش گوشی */
         #orientation-warning {
             display: none;
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.9); z-index: 9999;
+            background: rgba(0, 0, 0, 0.95); z-index: 9999;
             color: white; text-align: center; justify-content: center; align-items: center;
         }
         @media screen and (orientation: portrait) {
@@ -106,11 +108,11 @@
         <p>لطفاً گوشی را افقی کنید</p>
     </div>
 
-    <!-- HUD عناصر بازی -->
+    <!-- HUD بازی -->
     <div id="hud-top">
         <div>❤️ HP: <span id="hp-val">100</span></div>
-        <div>🏆 NIVRA CS</div>
-        <div>💰 $800</div>
+        <div>⚡ NIVRA CS TACTICAL</div>
+        <div>💰 $1600</div>
     </div>
     <div id="hud-bottom-right">
         30 / <span id="ammo-val">90</span>
@@ -118,7 +120,7 @@
 
     <div id="joystick-container"></div>
     <div id="touch-look-zone"></div>
-    <div id="fire-btn">شلیک</div>
+    <div id="fire-btn">FIRE</div>
     <div id="crosshair">+</div>
 
     <!-- کتابخانه‌ها -->
@@ -126,31 +128,37 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/nipplejs/0.9.0/nipplejs.min.js"></script>
 
     <script>
-        // ۱. تنظیمات صحنه و دوربین
+        // ۱. تنظیمات صحنه و دوربین (فضای تاکتیکی تیره و جنگی)
         const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x87ceeb);
+        scene.background = new THREE.Color(0x11161d); // آسمان تیره و مه‌آلود
+        scene.fog = new THREE.FogExp2(0x11161d, 0.025);
 
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(renderer.domElement);
 
-        // ۲. نورپردازی
-        const light = new THREE.HemisphereLight(0xffffff, 0x444444, 1);
-        scene.add(light);
+        // ۲. نورپردازی حرفه‌ای
+        const ambientLight = new THREE.AmbientLight(0x404040, 1.5);
+        scene.add(ambientLight);
 
-        // ۳. زمین و موانع
-        const floorGeometry = new THREE.PlaneGeometry(100, 100);
-        const floorMaterial = new THREE.MeshPhongMaterial({ color: 0x333333 });
+        const dirLight = new THREE.DirectionalLight(0xffffff, 1);
+        dirLight.position.set(20, 40, 20);
+        scene.add(dirLight);
+
+        // ۳. زمین و موانع بتنی شبیه مپ‌های کانتر
+        const floorGeometry = new THREE.PlaneGeometry(120, 120);
+        const floorMaterial = new THREE.MeshStandardMaterial({ color: 0x22262a, roughness: 0.8 });
         const floor = new THREE.Mesh(floorGeometry, floorMaterial);
         floor.rotation.x = -Math.PI / 2;
         scene.add(floor);
 
-        for (let i = 0; i < 15; i++) {
-            const boxGeo = new THREE.BoxGeometry(2, 4, 2);
-            const boxMat = new THREE.MeshPhongMaterial({ color: Math.random() * 0xffffff });
+        // ساخت موانع بتنی (Boxes)
+        for (let i = 0; i < 20; i++) {
+            const boxGeo = new THREE.BoxGeometry(3, 5, 3);
+            const boxMat = new THREE.MeshStandardMaterial({ color: 0x4a525d, roughness: 0.5 });
             const box = new THREE.Mesh(boxGeo, boxMat);
-            box.position.set((Math.random() - 0.5) * 40, 2, (Math.random() - 0.5) * 40);
+            box.position.set((Math.random() - 0.5) * 50, 2.5, (Math.random() - 0.5) * 50);
             scene.add(box);
         }
 
@@ -162,22 +170,36 @@
         camera.position.set(0, 1.8, 0);
         playerGroup.add(camera);
 
-        // اضافه کردن اسلحه به دوربین (دید اول شخص)
+        // --- طراحی اسلحه پیشرفته در دید اول شخص ---
         const gunGroup = new THREE.Group();
-        // بدنه اصلی اسلحه
-        const gunBodyGeo = new THREE.BoxGeometry(0.15, 0.15, 0.8);
-        const gunMat = new THREE.MeshPhongMaterial({ color: 0x222222 });
-        const gunBody = new THREE.Mesh(gunBodyGeo, gunMat);
-        gunBody.position.set(0.3, -0.25, -0.5);
+        
+        // بدنه اصلی تفنگ (مات و فلزی)
+        const bodyMat = new THREE.MeshStandardMaterial({ color: 0x1b1b1b, metalness: 0.8, roughness: 0.2 });
+        const gunBody = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.16, 0.9), bodyMat);
+        gunBody.position.set(0.25, -0.25, -0.5);
         gunGroup.add(gunBody);
 
-        // لوله اسلحه
-        const barrelGeo = new THREE.CylinderGeometry(0.04, 0.04, 0.4);
-        const barrelMat = new THREE.MeshPhongMaterial({ color: 0x111111 });
-        const barrel = new THREE.Mesh(barrelGeo, barrelMat);
+        // خشاب تفنگ
+        const magMat = new THREE.MeshStandardMaterial({ color: 0x333333, metalness: 0.5 });
+        const mag = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.25, 0.15), magMat);
+        mag.position.set(0.25, -0.38, -0.4);
+        mag.rotation.x = 0.2;
+        gunGroup.add(mag);
+
+        // لوله تفنگ
+        const barrelMat = new THREE.MeshStandardMaterial({ color: 0x0a0a0a, metalness: 0.9 });
+        const barrel = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.5), barrelMat);
         barrel.rotation.x = Math.PI / 2;
-        barrel.position.set(0.3, -0.23, -0.85);
+        barrel.position.set(0.25, -0.22, -0.95);
         gunGroup.add(barrel);
+
+        // --- افکت آتش شلیک (Muzzle Flash) ---
+        const flashGeo = new THREE.ConeGeometry(0.1, 0.4, 6);
+        const flashMat = new THREE.MeshBasicMaterial({ color: 0xffaa00, transparent: true, opacity: 0 });
+        const muzzleFlash = new THREE.Mesh(flashGeo, flashMat);
+        muzzleFlash.rotation.x = -Math.PI / 2;
+        muzzleFlash.position.set(0.25, -0.22, -1.25);
+        gunGroup.add(muzzleFlash);
 
         camera.add(gunGroup);
 
@@ -237,19 +259,31 @@
             isTouchingLook = false;
         });
 
-        // شلیک و کم شدن تعداد تیر
+        // شلیک پیشرفته + نمایش آتش و لگد اسلحه
         let ammo = 30;
         document.getElementById('fire-btn').addEventListener('touchstart', () => {
             if (ammo > 0) {
                 ammo--;
-                document.getElementById('ammo-val').textContent = ammo * 3; // عدد خشاب کلی
-                // لگد کوچک اسلحه هنگام شلیک
-                gunGroup.position.z += 0.05;
-                setTimeout(() => { gunGroup.position.z -= 0.05; }, 50);
+                document.getElementById('ammo-val').textContent = ammo * 3;
+                
+                // لگد اسلحه به عقب
+                gunGroup.position.z += 0.08;
+                gunGroup.rotation.x += 0.05;
+                setTimeout(() => { 
+                    gunGroup.position.z -= 0.08; 
+                    gunGroup.rotation.x -= 0.05;
+                }, 60);
+
+                // روشن شدن شعله آتش (Muzzle Flash)
+                muzzleFlash.material.opacity = 0.9;
+                muzzleFlash.scale.set(Math.random() * 0.5 + 0.8, Math.random() * 0.5 + 0.8, 1);
+                setTimeout(() => {
+                    muzzleFlash.material.opacity = 0;
+                }, 70);
             }
             document.getElementById('crosshair').style.color = 'red';
             setTimeout(() => {
-                document.getElementById('crosshair').style.color = 'rgba(255, 255, 255, 0.7)';
+                document.getElementById('crosshair').style.color = 'rgba(0, 255, 100, 0.8)';
             }, 100);
         });
 
@@ -277,3 +311,4 @@
     </script>
 </body>
 </html>
+
