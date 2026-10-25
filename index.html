@@ -5,81 +5,78 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, orientation=landscape">
     <title>Nivra | Legend Edition</title>
     <style>
-        body { margin: 0; overflow: hidden; background: #000; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { margin: 0; overflow: hidden; background: #000; font-family: 'Segoe UI', sans-serif; }
         canvas { display: block; }
 
-        /* استایل لابی اصلی */
+        /* --- استایل لابی --- */
         #lobby-container {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
             display: flex; flex-direction: column;
-            justify-content: flex-end; align-items: center;
+            justify-content: center; align-items: center;
             z-index: 1000;
-            background: radial-gradient(circle, rgba(0,0,0,0) 0%, rgba(0,0,0,0.8) 100%);
-            transition: opacity 1s ease-out;
+            background: radial-gradient(circle, rgba(0,0,0,0) 0%, rgba(0,0,0,0.9) 100%);
+            transition: opacity 1.5s ease-in-out;
         }
 
-        /* تیتر بازی با استایل افسانه‌ای */
         #game-title {
-            position: absolute;
-            top: 20%;
-            color: white;
-            font-size: 60px;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 10px;
-            text-shadow: 0 0 20px rgba(0, 150, 255, 0.8), 0 0 40px rgba(0, 150, 255, 0.4);
-            animation: titleGlow 3s infinite alternate;
+            font-size: 70px; font-weight: bold; color: white;
+            letter-spacing: 15px; text-shadow: 0 0 30px rgba(0, 150, 255, 0.8);
+            margin-bottom: 50px;
         }
 
-        @keyframes titleGlow {
-            from { text-shadow: 0 0 20px rgba(0, 150, 255, 0.8); }
-            to { text-shadow: 0 0 40px rgba(255, 0, 50, 0.8), 0 0 60px rgba(255, 0, 50, 0.4); }
-        }
-
-        /* دکمه شروع حرفه‌ای */
         #start-btn {
-            margin-bottom: 80px;
-            padding: 20px 80px;
-            font-size: 28px;
-            font-weight: bold;
-            color: white;
-            background: rgba(255, 255, 255, 0.1);
-            border: 2px solid rgba(255, 255, 255, 0.5);
-            border-radius: 50px;
-            cursor: pointer;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            z-index: 1001;
+            padding: 15px 60px; font-size: 24px; font-weight: bold;
+            color: white; background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            border-radius: 5px; cursor: pointer;
+            backdrop-filter: blur(10px); transition: 0.3s;
+            letter-spacing: 4px;
         }
+        #start-btn:hover { background: rgba(0, 150, 255, 0.3); border-color: #0096ff; }
 
-        #start-btn:active {
-            transform: scale(0.9);
-            background: rgba(0, 150, 255, 0.4);
-            border-color: #0096ff;
-        }
-
-        /* لایه مخفی برای بازی */
+        /* --- استایل HUD (رابط کاربری داخل بازی) --- */
         #game-ui {
-            display: none;
+            display: none; /* در ابتدا مخفی است */
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none;
+            z-index: 500;
+            pointer-events: none; /* اجازه کلیک به لایه‌های زیرین داده شود */
         }
 
-        /* هشدار چرخش گوشی */
+        /* پروفایل کاربر در بالا سمت راست */
+        #player-profile {
+            position: absolute;
+            top: 20px; right: 20px;
+            display: flex; align-items: center;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 10px 20px;
+            border-radius: 8px;
+            border-left: 4px solid #0096ff;
+            color: white;
+            pointer-events: auto; /* پروفایل قابل کلیک باشد */
+        }
+
+        #player-name {
+            font-size: 22px; font-weight: bold;
+            letter-spacing: 2px; text-transform: uppercase;
+            margin-left: 15px;
+            text-shadow: 0 0 10px rgba(255,255,255,0.5);
+        }
+
+        .profile-icon {
+            width: 40px; height: 40px;
+            background: linear-gradient(45deg, #0096ff, #ff0032);
+            border-radius: 50%;
+        }
+
+        /* هشدار چرخش */
         #orientation-warning {
-            display: none;
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; z-index: 9999;
-            color: white; text-align: center; justify-content: center; align-items: center;
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 9999; color: white; text-align: center; 
+            justify-content: center; align-items: center;
         }
-        @media screen and (orientation: portrait) {
-            #orientation-warning { display: flex; flex-direction: column; }
-        }
+        @media screen and (orientation: portrait) { #orientation-warning { display: flex; flex-direction: column; } }
     </style>
 </head>
 <body>
@@ -89,121 +86,104 @@
         <p>لطفاً گوشی را در حالت افقی نگه دارید</p>
     </div>
 
-    <!-- بخش لابی سینمایی -->
+    <!-- لابی -->
     <div id="lobby-container">
         <h1 id="game-title">NIVRA</h1>
         <button id="start-btn">START MISSION</button>
     </div>
 
-    <!-- بخش رابط کاربری بازی (بعد از شروع) -->
+    <!-- UI بازی (پروفایل و دکمه‌ها) -->
     <div id="game-ui">
-        <!-- اینجا کدهای HUD قبلی را قرار می‌دهیم -->
+        <div id="player-profile">
+            <div class="profile-icon"></div>
+            <div id="player-name">W A S T I D</div>
+        </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
     <script>
-        // ۱. تنظیمات پایه صحنه
+        // ۱. تنظیمات موتور گرافیکی
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(renderer.domElement);
 
-        // ۲. ساخت سیستم ذرات (آتش آبی و قرمز برای لابی)
+        // ۲. ساخت ذرات لابی (Particle System)
         const particlesGeometry = new THREE.BufferGeometry();
-        const count = 500;
-        const positions = new Float32Array(count * 3);
-        const colors = new Float32Array(count * 3);
+        const count = 400;
+        const posArray = new Float32Array(count * 3);
+        const colorArray = new Float32Array(count * 3);
 
-        for (let i = 0; i < count * 3; i++) {
-            positions[i] = (Math.random() - 0.5) * 20;
-            colors[i] = Math.random();
+        for(let i=0; i<count * 3; i++) {
+            posArray[i] = (Math.random() - 0.5) * 15;
+            colorArray[i] = Math.random();
         }
-
-        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-        particlesGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-
+        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+        particlesGeometry.setAttribute('color', new THREE.BufferAttribute(colorArray, 3));
+        
         const particlesMaterial = new THREE.PointsMaterial({
-            size: 0.1,
+            size: 0.05,
             vertexColors: true,
             transparent: true,
-            opacity: 0.8,
             blending: THREE.AdditiveBlending
         });
+        const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+        scene.add(particlesMesh);
 
-        const particles = new THREE.Points(particlesGeometry, particlesMaterial);
-        scene.add(particles);
-
-        // ۳. نورپردازی محیط لابی
-        const ambientLight = new THREE.AmbientLight(0x404040, 2); 
-        scene.add(ambientLight);
-
-        const pointLight = new THREE.PointLight(0x0096ff, 2, 10);
-        pointLight.position.set(0, 2, 0);
-        scene.add(pointLight);
+        // ۳. نورپردازی
+        const light = new THREE.PointLight(0x0096ff, 2, 50);
+        light.position.set(0, 2, 2);
+        scene.add(light);
+        scene.add(new THREE.AmbientLight(0x404040));
 
         camera.position.z = 5;
 
-        // ۴. انیمیشن ذرات (حرکت آتش و انرژی)
-        function animateParticles() {
-            const positions = particlesGeometry.attributes.position.array;
-            const colors = particlesGeometry.attributes.color.array;
-
-            for (let i = 0; i < count; i++) {
-                const i3 = i * 3;
-                // حرکت آرام به سمت بالا (مثل دود یا شعله)
-                positions[i3 + 1] += 0.01; 
-                
-                // اگر ذره از صفحه خارج شد، برگردان به پایین
-                if (positions[i3 + 1] > 5) {
-                    positions[i3 + 1] = -5;
-                }
-
-                // تغییر رنگ بین آبی و قرمز (افکت آتش)
-                const time = Date.now() * 0.001;
-                colors[i3] = Math.sin(time + i) * 0.5 + 0.5; // Red channel
-                colors[i3 + 1] = Math.cos(time + i) * 0.5;   // Green
-                colors[i3 + 2] = 1.0;                         // Blue (Blue dominant)
-            }
-            particlesGeometry.attributes.position.needsUpdate = true;
-            particlesGeometry.attributes.color.needsUpdate = true;
-        }
-
-        function animate() {
-            requestAnimationFrame(animate);
-            animateParticles();
-            
-            // چرخش بسیار آرام دوربین برای حس سینمایی
-            camera.rotation.y += 0.001;
-            camera.rotation.x = Math.sin(Date.now() * 0.0005) * 0.1;
-
+        // ۴. انیمیشن لابی
+        function animateLobby() {
+            requestAnimationFrame(animateLobby);
+            particlesMesh.rotation.y += 0.001;
+            particlesMesh.rotation.x += 0.0005;
             renderer.render(scene, camera);
         }
-        animate();
+        animateLobby();
 
-        // ۵. منطق شروع بازی
+        // ۵. ورود به دنیای بازی
         const startBtn = document.getElementById('start-btn');
         const lobby = document.getElementById('lobby-container');
         const gameUI = document.getElementById('game-ui');
 
         startBtn.addEventListener('click', () => {
-            // افکت محو شدن لابی
             lobby.style.opacity = '0';
             setTimeout(() => {
                 lobby.style.display = 'none';
                 gameUI.style.display = 'block';
-                initGameWorld(); // فراخوانی دنیای اصلی بازی
-            }, 1000);
+                initGamePlay(); // شروع دنیای اصلی
+            }, 1500);
         });
 
-        // تابع جایگزین برای دنیای اصلی (باید با کدهای مرحله قبل ادغام شود)
-        function initGameWorld() {
-            console.log("Entering the Battlefield...");
-            // اینجا باید کدهای حرکت و اسلحه که قبلا نوشتیم قرار بگیرد
-            // فعلاً برای تست فقط رنگ پس‌زمینه عوض می‌شود
-            scene.background = new THREE.Color(0x05080c);
-            document.body.style.background = "#05080c";
+        // ۶. دنیای اصلی (جایگزین شده با اسکلت آماده برای اسلحه)
+        function initGamePlay() {
+            // تغییر رنگ پس‌زمینه به حالت جنگی (تاریک و سنگین)
+            scene.background = new THREE.Color(0x020202);
+            
+            // اضافه کردن نورهای قرمز/آبی در محیط جنگ
+            const battleLight = new THREE.DirectionalLight(0xffffff, 0.5);
+            battleLight.position.set(5, 5, 5);
+            scene.add(battleLight);
+
+            // در مرحله بعد، مدل اسلحه و کاراکتر را اینجا اضافه می‌کنیم
+            console.log("Battlefield Ready. Loading Legend Weapon...");
+            
+            // شروع رندرینگ جدید برای دنیای بازی
+            animateGame();
+        }
+
+        function animateGame() {
+            requestAnimationFrame(animateGame);
+            // اینجا انیمیشن‌های اسلحه و حرکت کاراکتر اضافه می‌شود
+            renderer.render(scene, camera);
         }
 
         window.addEventListener('resize', () => {
