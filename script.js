@@ -151,3 +151,42 @@ window.onload = () => {
         startApp();
     }
 };
+function getUserData() {
+    const saved = localStorage.getItem('nivra_user');
+    return saved ? JSON.parse(saved) : { id: "user_" + Math.floor(Math.random()*1000), name: "کاربر نیورا", hasChangedName: false, pass: "123456" };
+}
+
+function saveUserData(user) {
+    localStorage.setItem('nivra_user', JSON.stringify(user));
+}
+
+// دکمه ورود
+document.getElementById('btn-login').onclick = () => {
+    const idInput = document.getElementById('login-id').value.trim();
+    const passInput = document.getElementById('login-pass').value.trim();
+    
+    // بررسی اینکه فیلدها خالی نباشند
+    if (!idInput) {
+        alert("لطفاً آیدی کاربری خود را وارد کنید.");
+        return;
+    }
+
+    let user = getUserData();
+
+    // اگر کاربر قبلاً وارد شده، همان آیدی و نامش را نگه دار
+    if (user.pass && passInput === user.pass) {
+        // ورود مجدد
+    } else {
+        // کاربر جدید: ذخیره آیدی، نام و رمز
+        user.id = idInput;
+        user.name = idInput; // اگر نامی نداشت
+        user.pass = passInput || "123456";
+        saveUserData(user);
+    }
+
+    startApp();
+    // بعد از ورود، تنظیمات را با اطلاعات جدید به‌روز کن
+    document.getElementById('my-name-display').innerText = user.name;
+    document.getElementById('my-id-display').innerText = "@" + user.id;
+    alert("خوش آمدید! ورود موفقیت‌آمیز بود.");
+};
