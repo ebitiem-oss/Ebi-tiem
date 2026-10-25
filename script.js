@@ -11,7 +11,7 @@ let cameraRotationY = 0, cameraRotationX = 0;
 // متغیرهای بخش آنلاین (PeerJS)
 let peer, conn;
 let myPeerId = '';
-let remotePlayers = {}; // ذخیره بازیکنان دیگر
+let remotePlayers = {}; 
 
 // راه‌اندازی اولیه بازی
 init3DGame();
@@ -19,7 +19,6 @@ initOnlineMultiplayer();
 animate();
 
 function init3DGame() {
-    // ۱. ساخت صحنه و دوربین
     scene = new THREE.Scene();
     scene.background = new THREE.Color(0x1a1a2e);
     scene.fog = new THREE.FogExp2(0x1a1a2e, 0.05);
@@ -27,13 +26,11 @@ function init3DGame() {
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.set(0, 1.6, 5);
 
-    // ۲. رندرر
     renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(window.devicePixelRatio);
     document.getElementById('canvas-container').appendChild(renderer.domElement);
 
-    // ۳. نورپردازی
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
     scene.add(ambientLight);
 
@@ -41,27 +38,20 @@ function init3DGame() {
     dirLight.position.set(10, 20, 10);
     scene.add(dirLight);
 
-    // ۴. ساخت محیط جنگی
     createBattlefield();
-
-    // ۵. اضافه کردن تفنگ بازیکن
     addDetailedWeaponModel();
-
-    // ۶. تنظیم کنترل‌ها
     setupControls();
 
     window.addEventListener('resize', onWindowResize);
 }
 
 function createBattlefield() {
-    // زمین بازی
     const floorGeo = new THREE.PlaneGeometry(100, 100);
     const floorMat = new THREE.MeshStandardMaterial({ color: 0x2b2b2b, roughness: 0.8 });
     const floor = new THREE.Mesh(floorGeo, floorMat);
     floor.rotation.x = -Math.PI / 2;
     scene.add(floor);
 
-    // موانع نظامی
     const boxMat = new THREE.MeshStandardMaterial({ color: 0x4a5568, roughness: 0.5 });
     for (let i = 0; i < 25; i++) {
         const size = Math.random() * 3 + 1.5;
@@ -111,9 +101,7 @@ function addDetailedWeaponModel() {
     weaponModel = weaponGroup;
 }
 
-// ================= نظام آنلاین (PeerJS) =================
 function initOnlineMultiplayer() {
-    // ایجاد سرور ابری رایگان Peer
     peer = new Peer({
         host: 'peerjs.com',
         port: 443,
@@ -122,19 +110,15 @@ function initOnlineMultiplayer() {
 
     peer.on('open', (id) => {
         myPeerId = id;
-        console.log('Online ID:', myPeerId);
-        // اگر عنصر متنی برای نمایش کد اتاق داری، اینجا به‌روزرسانی کن
         const roomIdElem = document.getElementById('room-id-display');
         if (roomIdElem) roomIdElem.innerText = myPeerId;
     });
 
-    // دریافت اتصال از بازیکنان دیگر
     peer.on('connection', (incomingConn) => {
         setupConnection(incomingConn);
     });
 }
 
-// تابع برای اتصال به اتاق دوستت (با وارد کردن کد اتاقش)
 function connectToRoom(friendId) {
     if (!friendId) return;
     const outgoingConn = peer.connect(friendId);
@@ -148,26 +132,21 @@ function setupConnection(connection) {
     });
 
     conn.on('data', (data) => {
-        // دریافت موقعیت بازیکنان دیگر و نمایش در صحنه
         updateRemotePlayer(data.id, data.x, data.y, data.z, data.rotY);
     });
 }
 
 function updateRemotePlayer(id, x, y, z, rotY) {
     if (!remotePlayers[id]) {
-        // ساخت مدل ساده برای بازیکن حریف
         const playerGeo = new THREE.BoxGeometry(0.8, 1.8, 0.8);
-        const playerMat = new THREE.MeshStandardMaterial({ color: 0xff3333 }); // لباس قرمز برای دشمن/دوست
+        const playerMat = new THREE.MeshStandardMaterial({ color: 0xff3333 });
         const mesh = new THREE.Mesh(playerGeo, playerMat);
         scene.add(mesh);
         remotePlayers[id] = mesh;
     }
-    
-    // به‌روزرسانی موقعیت حریف
     remotePlayers[id].position.set(x, y, z);
     remotePlayers[id].rotation.y = rotY;
 }
-// =======================================================
 
 function shootWeapon() {
     cameraRotationX -= 0.02;
@@ -285,7 +264,6 @@ function animate() {
 
     camera.position.y = 1.6;
 
-    // ارسال موقعیت خودمان به بازیکن دیگر هر ۵۰ میلی‌ثانیه
     if (conn && conn.open && Date.now() - lastNetworkSend > 50) {
         conn.send({
             id: myPeerId,
@@ -297,7 +275,6 @@ function animate() {
         lastNetworkSend = Date.now();
     }
 
-    // انیمیشن سلاح
     if (weaponModel) {
         const time = Date.now() * 0.003;
         const isMoving = moveForward || moveBackward || moveLeft || moveRight;
@@ -318,5 +295,5 @@ function onWindowResize() {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
-        }
-    
+                                      }
+        
