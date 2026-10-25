@@ -1,4 +1,78 @@
-/* اضافه کردن به فایل قبلی */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+body, html {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: #111;
+    font-family: Tahoma, sans-serif;
+    color: #fff;
+}
+
+.screen {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    display: none;
+}
+
+.screen.active {
+    display: block;
+}
+
+#canvas-container {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+
+/* نوار بالای صفحه (مایک و مینی‌مپ) */
+.hud-top-bar {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    right: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 10;
+    pointer-events: none;
+}
+
+#mic-btn {
+    background: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    border: 1px solid #555;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    pointer-events: auto;
+    cursor: pointer;
+}
+
+#minimap {
+    width: 80px;
+    height: 80px;
+    background: rgba(0, 0, 0, 0.5);
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    color: #aaa;
+}
 
 /* نشانگر وسط صفحه (Crosshair) */
 #crosshair {
@@ -19,20 +93,21 @@
 #crosshair::before { width: 2px; height: 100%; left: 9px; }
 #crosshair::after { height: 2px; width: 100%; top: 9px; }
 
-/* نوار سلامت (Health Bar) مشابه کالاف */
+/* نوار سلامت (Health Bar) */
 .hud-bottom-left {
     position: absolute;
     bottom: 30px;
-    left: 30px;
+    left: 20px;
     z-index: 10;
+    pointer-events: none;
 }
 
 .health-container {
-    width: 200px;
-    height: 15px;
-    background: rgba(0, 0, 0, 0.5);
+    width: 180px;
+    height: 14px;
+    background: rgba(0, 0, 0, 0.6);
     border: 2px solid #fff;
-    border-radius: 5px;
+    border-radius: 4px;
     overflow: hidden;
 }
 
@@ -44,9 +119,9 @@
 }
 
 .health-text {
-    font-size: 14px;
+    font-size: 12px;
     font-weight: bold;
-    margin-top: 5px;
+    margin-top: 4px;
     text-shadow: 1px 1px 2px #000;
 }
 
@@ -67,4 +142,55 @@
     0% { opacity: 0; }
     50% { opacity: 1; }
     100% { opacity: 0; }
+}
+
+/* کنترل‌های موبایل (جو استیک و شلیک) */
+.mobile-hud-portrait {
+    position: absolute;
+    bottom: 30px;
+    right: 20px;
+    left: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 10;
+    pointer-events: none;
+}
+
+#joystick-base {
+    width: 110px;
+    height: 110px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    position: relative;
+    pointer-events: auto;
+}
+
+#joystick-stick {
+    width: 50px;
+    height: 50px;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+    position: absolute;
+    top: 30px;
+    left: 30px;
+}
+
+#shoot-btn {
+    width: 90px;
+    height: 90px;
+    background: rgba(255, 50, 50, 0.8);
+    border: 3px solid #fff;
+    border-radius: 50%;
+    color: #fff;
+    font-weight: bold;
+    font-size: 16px;
+    pointer-events: auto;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+}
+#shoot-btn:active {
+    transform: scale(0.95);
+    background: rgba(200, 30, 30, 1);
 }
