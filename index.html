@@ -15,9 +15,12 @@
     <!-- کانتینر رندر بازی سه‌بعدی -->
     <div id="canvas-container"></div>
 
-    <!-- هود بالای صفحه: اطلاعات اتاق، میکروفون و مینی‌مپ -->
+    <!-- هود بالای صفحه: اطلاعات اتاق، میکروفون، جان و مینی‌مپ -->
     <div id="top-hud">
-        <div id="room-info">کد اتاق: <span id="room-id-display">اتصال...</span></div>
+        <div id="room-info">
+            کد اتاق: <span id="room-id-display">اتصال...</span><br>
+            ❤️ جان: <span id="player-hp">100</span> | 🎯 امتیاز: <span id="player-score">0</span>
+        </div>
         <div class="hud-controls">
             <button id="mic-btn" onclick="toggleMic()">🎙️ مایک: خاموش</button>
             <div id="minimap-container">
