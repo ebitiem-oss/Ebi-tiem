@@ -3,42 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>نیورا - شوتر آنلاین (Nivra)</title>
+    <title>نیورا - Nivra Shooter</title>
+    <!-- استایل‌ها -->
     <link rel="stylesheet" href="style.css">
-    <!-- کتابخانه Three.js برای گرافیک سه‌بعدی -->
+    <!-- کتابخانه سه‌بعدی Three.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- کتابخانه آنلاین PeerJS -->
+    <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
 </head>
 <body>
 
-    <!-- صفحه بازی -->
-    <div id="game-screen" class="screen active">
-        <div id="canvas-container"></div>
-        <div id="damage-overlay" class="damage-flash"></div>
-        <div id="crosshair"></div>
+    <!-- کانتینر رندر بازی سه‌بعدی -->
+    <div id="canvas-container"></div>
 
-        <!-- نوار مایک و مینی‌مپ در بالای صفحه -->
-        <div class="hud-top-bar">
+    <!-- منوی اتصال آنلاین و اطلاعات اتاق در بالای صفحه -->
+    <div id="top-hud">
+        <div id="room-info">کد شما: <span id="room-id-display">در حال اتصال...</span></div>
+        <div class="hud-controls">
             <button id="mic-btn" onclick="toggleMic()">🎙️ مایک: خاموش</button>
-            <div id="minimap">مینی‌مپ</div>
-        </div>
-
-        <!-- نوار سلامت پایین سمت چپ -->
-        <div class="hud-bottom-left">
-            <div class="health-container">
-                <div id="health-bar"></div>
-            </div>
-            <div class="health-text">HP: <span id="hp-val">100</span></div>
-        </div>
-
-        <!-- کنترل‌های لمسی (جو استیک و دکمه شلیک) -->
-        <div class="mobile-hud-portrait">
-            <div id="joystick-base">
-                <div id="joystick-stick"></div>
-            </div>
-            <button id="shoot-btn" onmousedown="shootWeapon()" ontouchstart="shootWeapon()">شلیک 🎯</button>
+            <div id="minimap">رادار</div>
         </div>
     </div>
 
+    <!-- پنل اتصال به اتاق دوست -->
+    <div id="room-connect-panel">
+        <input type="text" id="friend-id-input" placeholder="کد اتاق دوست را وارد کنید...">
+        <button onclick="connectToRoom(document.getElementById('friend-id-input').value)">اتصال به اتاق</button>
+    </div>
+
+    <!-- نشانگر وسط صفحه (Crosshair) -->
+    <div id="crosshair">+</div>
+
+    <!-- افکت آسیب دیدن صفحه -->
+    <div id="damage-overlay"></div>
+
+    <!-- کنترل‌های لمسی (مخصوص موبایل) -->
+    <!-- ۱. جوی‌استیک حرکت (سمت چپ) -->
+    <div id="joystick-base">
+        <div id="joystick-stick"></div>
+    </div>
+
+    <!-- ۲. دکمه شلیک (سمت راست) -->
+    <button id="fire-btn">🎯 آتش</button>
+
+    <!-- فایل منطق بازی -->
     <script src="script.js"></script>
 </body>
 </html>
