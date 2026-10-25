@@ -1,27 +1,24 @@
 let scene, camera, renderer;
 let moveForward = false, moveBackward = false, moveLeft = false, moveRight = false;
-let playerHealth = 100;
 let weaponModel;
 let micActive = false;
 
-// متغیرهای چرخش دوربین و کنترل
 let touchStartX = 0, touchStartY = 0;
 let cameraRotationY = 0, cameraRotationX = 0;
 
-// متغیرهای بخش آنلاین (PeerJS)
 let peer, conn;
 let myPeerId = '';
 let remotePlayers = {}; 
 
-// راه‌اندازی اولیه بازی
 init3DGame();
 initOnlineMultiplayer();
 animate();
 
 function init3DGame() {
     scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x1a1a2e);
-    scene.fog = new THREE.FogExp2(0x1a1a2e, 0.05);
+    // آسمان آبی روشن و روزانه
+    scene.background = new THREE.Color(0x87CEEB);
+    scene.fog = new THREE.FogExp2(0x87CEEB, 0.025);
 
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.set(0, 1.6, 5);
@@ -31,70 +28,67 @@ function init3DGame() {
     renderer.setPixelRatio(window.devicePixelRatio);
     document.getElementById('canvas-container').appendChild(renderer.domElement);
 
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+    // نورپردازی کامل روزانه (خورشید روشن)
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.9);
     scene.add(ambientLight);
 
-    const dirLight = new THREE.DirectionalLight(0xffffff, 0.9);
-    dirLight.position.set(10, 20, 10);
+    const dirLight = new THREE.DirectionalLight(0xffffff, 1.2);
+    dirLight.position.set(20, 40, 20);
     scene.add(dirLight);
 
-    createBattlefield();
+    createDaylightBattlefield();
     addDetailedWeaponModel();
     setupControls();
 
     window.addEventListener('resize', onWindowResize);
 }
 
-function createBattlefield() {
-    const floorGeo = new THREE.PlaneGeometry(100, 100);
-    const floorMat = new THREE.MeshStandardMaterial({ color: 0x2b2b2b, roughness: 0.8 });
+function createDaylightBattlefield() {
+    // زمین چمن یا خاکی روشن
+    const floorGeo = new THREE.PlaneGeometry(120, 120);
+    const floorMat = new THREE.MeshStandardMaterial({ color: 0x557a46, roughness: 0.9 });
     const floor = new THREE.Mesh(floorGeo, floorMat);
     floor.rotation.x = -Math.PI / 2;
     scene.add(floor);
 
-    const boxMat = new THREE.MeshStandardMaterial({ color: 0x4a5568, roughness: 0.5 });
-    for (let i = 0; i < 25; i++) {
+    // موانع سه‌بعدی در روز
+    const boxMat = new THREE.MeshStandardMaterial({ color: 0x8b5a2b, roughness: 0.6 });
+    for (let i = 0; i < 30; i++) {
         const size = Math.random() * 3 + 1.5;
         const boxGeo = new THREE.BoxGeometry(size, size, size);
         const box = new THREE.Mesh(boxGeo, boxMat);
         
-        box.position.x = (Math.random() - 0.5) * 70;
+        box.position.x = (Math.random() - 0.5) * 80;
         box.position.y = size / 2;
-        box.position.z = (Math.random() - 0.5) * 70;
+        box.position.z = (Math.random() - 0.5) * 80;
         scene.add(box);
     }
 }
 
 function addDetailedWeaponModel() {
     const weaponGroup = new THREE.Group();
-    const bodyMat = new THREE.MeshStandardMaterial({ color: 0x1c1c1c, metalness: 0.85, roughness: 0.25 });
-    const metalMat = new THREE.MeshStandardMaterial({ color: 0x333333, metalness: 0.9, roughness: 0.2 });
-    const gripMat = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.9 });
+    const bodyMat = new THREE.MeshStandardMaterial({ color: 0x2b2b2b, metalness: 0.8, roughness: 0.3 });
+    const metalMat = new THREE.MeshStandardMaterial({ color: 0x444444, metalness: 0.9, roughness: 0.2 });
+    const woodMat = new THREE.MeshStandardMaterial({ color: 0x8b5a2b, roughness: 0.7 });
 
-    const receiver = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.22, 0.8), bodyMat);
-    receiver.position.set(0, 0, 0);
+    const receiver = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.2, 0.75), bodyMat);
     weaponGroup.add(receiver);
 
-    const barrel = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 0.7), metalMat);
+    const barrel = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 0.65), metalMat);
     barrel.rotation.x = Math.PI / 2;
-    barrel.position.set(0, 0.05, -0.65);
+    barrel.position.set(0, 0.04, -0.6);
     weaponGroup.add(barrel);
 
-    const mag = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.35, 0.18), metalMat);
+    const mag = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.3, 0.16), metalMat);
     mag.rotation.x = -0.2;
-    mag.position.set(0, -0.22, -0.15);
+    mag.position.set(0, -0.2, -0.1);
     weaponGroup.add(mag);
 
-    const grip = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.28, 0.12), gripMat);
-    grip.rotation.x = 0.3;
-    grip.position.set(0, -0.2, 0.25);
-    weaponGroup.add(grip);
+    const stock = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.18, 0.4), woodMat);
+    stock.position.set(0, -0.05, 0.45);
+    weaponGroup.add(stock);
 
-    const sight = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.08, 0.04), metalMat);
-    sight.position.set(0, 0.15, -0.4);
-    weaponGroup.add(sight);
-
-    weaponGroup.position.set(0.32, -0.32, -0.55);
+    weaponGroup.position.set(0.3, -0.3, -0.5);
     camera.add(weaponGroup);
     scene.add(camera);
     
@@ -102,16 +96,12 @@ function addDetailedWeaponModel() {
 }
 
 function initOnlineMultiplayer() {
-    peer = new Peer({
-        host: 'peerjs.com',
-        port: 443,
-        secure: true
-    });
+    peer = new Peer({ host: 'peerjs.com', port: 443, secure: true });
 
     peer.on('open', (id) => {
         myPeerId = id;
-        const roomIdElem = document.getElementById('room-id-display');
-        if (roomIdElem) roomIdElem.innerText = myPeerId;
+        const elem = document.getElementById('room-id-display');
+        if (elem) elem.innerText = myPeerId;
     });
 
     peer.on('connection', (incomingConn) => {
@@ -127,32 +117,31 @@ function connectToRoom(friendId) {
 
 function setupConnection(connection) {
     conn = connection;
-    conn.on('open', () => {
-        console.log('Connected to player:', conn.peer);
-    });
-
+    conn.on('open', () => console.log('متصل شد به:', conn.peer));
     conn.on('data', (data) => {
-        updateRemotePlayer(data.id, data.x, data.y, data.z, data.rotY);
+        updateRemotePlayer(data.id, data.x, data.y, data.z, data.rotY, data.color);
     });
 }
 
-function updateRemotePlayer(id, x, y, z, rotY) {
+function updateRemotePlayer(id, x, y, z, rotY, playerColor) {
     if (!remotePlayers[id]) {
         const playerGeo = new THREE.BoxGeometry(0.8, 1.8, 0.8);
-        const playerMat = new THREE.MeshStandardMaterial({ color: 0xff3333 });
+        // رنگ‌های تیمی رفقا (قرمز، زرد، سبز)
+        const colors = [0xff3333, 0xffcc00, 0x33cc33];
+        const assignedColor = playerColor || colors[Object.keys(remotePlayers).length % colors.length];
+        const playerMat = new THREE.MeshStandardMaterial({ color: assignedColor });
         const mesh = new THREE.Mesh(playerGeo, playerMat);
         scene.add(mesh);
-        remotePlayers[id] = mesh;
+        remotePlayers[id] = { mesh: mesh, color: assignedColor };
     }
-    remotePlayers[id].position.set(x, y, z);
-    remotePlayers[id].rotation.y = rotY;
+    remotePlayers[id].mesh.position.set(x, y, z);
+    remotePlayers[id].mesh.rotation.y = rotY;
 }
 
 function shootWeapon() {
-    cameraRotationX -= 0.02;
     if (weaponModel) {
-        weaponModel.position.z += 0.09;
-        setTimeout(() => { weaponModel.position.z -= 0.09; }, 70);
+        weaponModel.position.z += 0.06;
+        setTimeout(() => { weaponModel.position.z -= 0.06; }, 60);
     }
 }
 
@@ -194,7 +183,7 @@ function setupControls() {
         if (isDraggingJoystick) {
             const dx = touch.clientX - joystickCenter.x;
             const dy = touch.clientY - joystickCenter.y;
-            const distance = Math.min(40, Math.sqrt(dx * dx + dy * dy));
+            const distance = Math.min(35, Math.sqrt(dx * dx + dy * dy));
             const angle = Math.atan2(dy, dx);
 
             const x = Math.cos(angle) * distance;
@@ -202,10 +191,10 @@ function setupControls() {
 
             joystickStick.style.transform = `translate(${x}px, ${y}px)`;
 
-            moveForward = y < -10;
-            moveBackward = y > 10;
-            moveLeft = x < -10;
-            moveRight = x > 10;
+            moveForward = y < -8;
+            moveBackward = y > 8;
+            moveLeft = x < -8;
+            moveRight = x > 8;
         } 
         else if (touch.clientX > window.innerWidth / 2) {
             const deltaX = touch.clientX - touchStartX;
@@ -242,7 +231,7 @@ function animate() {
     camera.rotation.y = cameraRotationY;
     camera.rotation.x = cameraRotationX;
 
-    const speed = 0.08;
+    const speed = 0.07;
     const direction = new THREE.Vector3();
     
     if (moveForward) {
@@ -270,25 +259,46 @@ function animate() {
             x: camera.position.x,
             y: camera.position.y,
             z: camera.position.z,
-            rotY: cameraRotationY
+            rotY: cameraRotationY,
+            color: 0xffcc00
         });
         lastNetworkSend = Date.now();
     }
 
-    if (weaponModel) {
-        const time = Date.now() * 0.003;
-        const isMoving = moveForward || moveBackward || moveLeft || moveRight;
-        
-        if (isMoving) {
-            weaponModel.position.y = -0.32 + Math.sin(time * 6) * 0.025;
-            weaponModel.position.x = 0.32 + Math.cos(time * 3) * 0.025;
-        } else {
-            weaponModel.position.y = -0.32 + Math.sin(time) * 0.006;
-            weaponModel.position.x = 0.32;
-        }
-    }
+    // رندر مینی‌مپ ساده
+    drawMinimap();
 
     renderer.render(scene, camera);
+}
+
+function drawMinimap() {
+    const canvas = document.getElementById('minimap-canvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, 70, 70);
+
+    // پس‌زمینه رادار
+    ctx.fillStyle = 'rgba(0, 40, 0, 0.7)';
+    ctx.fillRect(0, 0, 70, 70);
+
+    // نقطه مرکز (خود بازیکن)
+    ctx.fillStyle = '#00ff00';
+    ctx.beginPath();
+    ctx.arc(35, 35, 3, 0, Math.PI * 2);
+    ctx.fill();
+
+    // نقطه‌های رفقا روی مینی‌مپ
+    for (let id in remotePlayers) {
+        const p = remotePlayers[id].mesh.position;
+        const rx = 35 + (p.x - camera.position.x);
+        const rz = 35 + (p.z - camera.position.z);
+        if (rx >= 0 && rx <= 70 && rz >= 0 && rz <= 70) {
+            ctx.fillStyle = remotePlayers[id].color || '#ff3333';
+            ctx.beginPath();
+            ctx.arc(rx, rz, 2.5, 0, Math.PI * 2);
+            ctx.fill();
+        }
+    }
 }
 
 function onWindowResize() {
@@ -296,4 +306,3 @@ function onWindowResize() {
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
                                       }
-        
