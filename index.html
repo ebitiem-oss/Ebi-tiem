@@ -85,7 +85,7 @@
 
         .hud-bottom { display: flex; justify-content: space-between; align-items: flex-end; width: 100%; }
         
-        /* Left Joystick (Move - Forward, Backward, Left, Right) */
+        /* Left Joystick (Move) */
         .joystick-zone { width: 130px; height: 130px; background: rgba(255,255,255,0.05); border: 2px solid rgba(255,255,255,0.1); border-radius: 50%; position: relative; touch-action: none; }
         .joystick-knob { width: 55px; height: 55px; background: rgba(245, 158, 11, 0.6); border: 2px solid #f59e0b; border-radius: 50%; position: absolute; top: 37px; left: 37px; pointer-events: none; }
 
@@ -162,7 +162,7 @@
 
     <script>
         let scene, camera, renderer;
-        let moveForward = false, moveBackward = false, moveLeft = false, moveRight = false;
+        let moveForward = false, moveBackward = false;
         let gameRunning = false;
         let cameraAngleX = 0;
 
@@ -212,7 +212,6 @@
                 if (!gameRunning) return;
                 requestAnimationFrame(animate);
 
-                // Movement logic based on left joystick
                 let speed = 0.12;
                 let dir = new THREE.Vector3();
                 camera.getWorldDirection(dir);
@@ -222,7 +221,6 @@
                 if (moveForward) camera.position.addScaledVector(dir, speed);
                 if (moveBackward) camera.position.addScaledVector(dir, -speed);
 
-                // Apply camera rotation
                 camera.rotation.y = cameraAngleX;
 
                 renderer.render(scene, camera);
@@ -230,7 +228,7 @@
             animate();
         }
 
-        // Left Joystick (Movement - Forward, Backward, Left, Right)
+        // Left Joystick (Movement)
         const joystick = document.getElementById('joystick');
         const knob = document.getElementById('joystick-knob');
         let joystickActive = false;
@@ -260,7 +258,7 @@
             moveForward = moveBackward = false;
         });
 
-        // Right Screen Drag (Camera / Gun rotation around itself)
+        // Right Screen Drag (Camera Look)
         let isLooking = false, lastTouchX = 0;
         const lookZone = document.getElementById('look-zone');
 
