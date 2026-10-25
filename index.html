@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, orientation=landscape">
-    <title>Nivra - Step 2</title>
+    <title>Nivra - Step 3</title>
     <style>
-        body { margin: 0; overflow: hidden; background: #000; touch-action: none; user-select: none; }
+        body { margin: 0; overflow: hidden; background: #000; touch-action: none; user-select: none; font-family: sans-serif; }
         canvas { display: block; }
         
         /* جوی‌استیک حرکت در سمت چپ */
@@ -59,6 +59,34 @@
             pointer-events: none;
         }
 
+        /* پنل HUD (خون، تیر، امتیاز) بالای صفحه و پایین */
+        #hud-top {
+            position: absolute;
+            top: 15px;
+            left: 20px;
+            right: 20px;
+            display: flex;
+            justify-content: space-between;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+            z-index: 100;
+            pointer-events: none;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+        }
+
+        #hud-bottom-right {
+            position: absolute;
+            bottom: 30px;
+            right: 140px;
+            color: white;
+            font-weight: bold;
+            font-size: 22px;
+            z-index: 100;
+            pointer-events: none;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+        }
+
         /* هشدار چرخش گوشی */
         #orientation-warning {
             display: none;
@@ -76,6 +104,16 @@
     <div id="orientation-warning">
         <div style="font-size: 50px;">🔄</div>
         <p>لطفاً گوشی را افقی کنید</p>
+    </div>
+
+    <!-- HUD عناصر بازی -->
+    <div id="hud-top">
+        <div>❤️ HP: <span id="hp-val">100</span></div>
+        <div>🏆 NIVRA CS</div>
+        <div>💰 $800</div>
+    </div>
+    <div id="hud-bottom-right">
+        30 / <span id="ammo-val">90</span>
     </div>
 
     <div id="joystick-container"></div>
@@ -101,14 +139,13 @@
         const light = new THREE.HemisphereLight(0xffffff, 0x444444, 1);
         scene.add(light);
 
-        // ۳. زمین و چند مانع برای تست دید
+        // ۳. زمین و موانع
         const floorGeometry = new THREE.PlaneGeometry(100, 100);
         const floorMaterial = new THREE.MeshPhongMaterial({ color: 0x333333 });
         const floor = new THREE.Mesh(floorGeometry, floorMaterial);
         floor.rotation.x = -Math.PI / 2;
         scene.add(floor);
 
-        // ساخت چند باکس به عنوان مانع در محیط
         for (let i = 0; i < 15; i++) {
             const boxGeo = new THREE.BoxGeometry(2, 4, 2);
             const boxMat = new THREE.MeshPhongMaterial({ color: Math.random() * 0xffffff });
@@ -117,7 +154,7 @@
             scene.add(box);
         }
 
-        // ۴. ایجاد بازیکن و دوربین اول شخص
+        // ۴. ایجاد گروه بازیکن و دوربین اول شخص
         const playerGroup = new THREE.Group();
         playerGroup.position.set(0, 0, 0);
         scene.add(playerGroup);
@@ -125,11 +162,29 @@
         camera.position.set(0, 1.8, 0);
         playerGroup.add(camera);
 
-        // متغیرهای چرخش دوربین (زاویه دید)
-        let pitch = 0; // بالا و پایین
-        let yaw = 0;   // چپ و راست
+        // اضافه کردن اسلحه به دوربین (دید اول شخص)
+        const gunGroup = new THREE.Group();
+        // بدنه اصلی اسلحه
+        const gunBodyGeo = new THREE.BoxGeometry(0.15, 0.15, 0.8);
+        const gunMat = new THREE.MeshPhongMaterial({ color: 0x222222 });
+        const gunBody = new THREE.Mesh(gunBodyGeo, gunMat);
+        gunBody.position.set(0.3, -0.25, -0.5);
+        gunGroup.add(gunBody);
 
-        // ۵. جوی‌استیک حرکت (سمت چپ)
+        // لوله اسلحه
+        const barrelGeo = new THREE.CylinderGeometry(0.04, 0.04, 0.4);
+        const barrelMat = new THREE.MeshPhongMaterial({ color: 0x111111 });
+        const barrel = new THREE.Mesh(barrelGeo, barrelMat);
+        barrel.rotation.x = Math.PI / 2;
+        barrel.position.set(0.3, -0.23, -0.85);
+        gunGroup.add(barrel);
+
+        camera.add(gunGroup);
+
+        let pitch = 0;
+        let yaw = 0;
+
+        // ۵. جوی‌استیک حرکت
         let moveForward = 0;
         let moveRight = 0;
 
@@ -150,7 +205,7 @@
             moveRight = 0;
         });
 
-        // ۶. کنترل نگاه با لمس صفحه در سمت راست
+        // ۶. کنترل نگاه با لمس صفحه
         const lookZone = document.getElementById('touch-look-zone');
         let isTouchingLook = false;
         let lastTouchX = 0;
@@ -170,10 +225,8 @@
             const deltaX = currentX - lastTouchX;
             const deltaY = currentY - lastTouchY;
 
-            yaw -= deltaX * 0.003;   // چرخش افقی کل بازیکن
-            pitch -= deltaY * 0.003; // چرخش عمودی دوربین
-
-            // محدود کردن نگاه به بالا و پایین
+            yaw -= deltaX * 0.003;
+            pitch -= deltaY * 0.003;
             pitch = Math.max(-Math.PI / 2.2, Math.min(Math.PI / 2.2, pitch));
 
             lastTouchX = currentX;
@@ -184,9 +237,16 @@
             isTouchingLook = false;
         });
 
-        // دکمه شلیک
+        // شلیک و کم شدن تعداد تیر
+        let ammo = 30;
         document.getElementById('fire-btn').addEventListener('touchstart', () => {
-            // فعلاً یک افکت ساده یا تغییر رنگ کراس‌هیر موقع شلیک
+            if (ammo > 0) {
+                ammo--;
+                document.getElementById('ammo-val').textContent = ammo * 3; // عدد خشاب کلی
+                // لگد کوچک اسلحه هنگام شلیک
+                gunGroup.position.z += 0.05;
+                setTimeout(() => { gunGroup.position.z -= 0.05; }, 50);
+            }
             document.getElementById('crosshair').style.color = 'red';
             setTimeout(() => {
                 document.getElementById('crosshair').style.color = 'rgba(255, 255, 255, 0.7)';
@@ -197,15 +257,10 @@
         function animate() {
             requestAnimationFrame(animate);
 
-            // اعمال حرکت بازیکن
             const speed = 0.15;
-            const dirF = moveForward * speed;
-            const dirR = moveRight * speed;
+            playerGroup.translateZ(-moveForward * speed);
+            playerGroup.translateX(moveRight * speed);
 
-            playerGroup.translateZ(-dirF);
-            playerGroup.translateX(dirR);
-
-            // اعمال چرخش‌ها به دوربین و بازیکن
             playerGroup.rotation.y = yaw;
             camera.rotation.x = pitch;
 
@@ -222,4 +277,3 @@
     </script>
 </body>
 </html>
-
