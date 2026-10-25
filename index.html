@@ -3,18 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, orientation=landscape">
-    <title>Nivra - Tactical CS</title>
+    <title>Nivra - Classic Tactical CS</title>
     <style>
-        body { margin: 0; overflow: hidden; background: #0a0a0a; touch-action: none; user-select: none; font-family: sans-serif; }
+        body { margin: 0; overflow: hidden; background: #05080c; touch-action: none; user-select: none; font-family: 'Courier New', Courier, monospace; }
         canvas { display: block; }
         
         /* جوی‌استیک حرکت در سمت چپ */
         #joystick-container {
             position: absolute;
-            bottom: 30px;
-            left: 30px;
-            width: 140px;
-            height: 140px;
+            bottom: 25px;
+            left: 25px;
+            width: 150px;
+            height: 150px;
             z-index: 100;
         }
 
@@ -23,20 +23,20 @@
             position: absolute;
             top: 0;
             right: 0;
-            width: 50%;
+            width: 55%;
             height: 100%;
             z-index: 90;
         }
 
-        /* دکمه شلیک تاکتیکی در سمت راست */
+        /* دکمه شلیک کلاسیک و حرفه‌ای در سمت راست */
         #fire-btn {
             position: absolute;
-            bottom: 35px;
+            bottom: 30px;
             right: 35px;
-            width: 85px;
-            height: 85px;
-            background: rgba(220, 20, 60, 0.7);
-            border: 3px solid rgba(255, 255, 255, 0.8);
+            width: 90px;
+            height: 90px;
+            background: rgba(180, 40, 40, 0.65);
+            border: 3px solid rgba(255, 255, 255, 0.9);
             border-radius: 50%;
             z-index: 100;
             display: flex;
@@ -44,56 +44,82 @@
             align-items: center;
             color: white;
             font-weight: bold;
-            font-size: 15px;
-            box-shadow: 0 0 15px rgba(220, 20, 60, 0.5);
+            font-size: 16px;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.6), inset 0 0 10px rgba(255, 255, 255, 0.5);
         }
 
-        /* نشانه‌گر وسط صفحه (Crosshair) */
+        /* نشانه‌گر کلاسیک سبز کانتر */
         #crosshair {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            color: rgba(0, 255, 100, 0.8);
-            font-size: 22px;
+            color: #00ff55;
+            font-size: 20px;
             z-index: 80;
             pointer-events: none;
-            text-shadow: 0 0 5px rgba(0,255,100,0.8);
+            text-shadow: 0 0 4px #000;
         }
 
-        /* پنل HUD بالای صفحه */
+        /* پنل HUD کلاسیک بالای صفحه */
         #hud-top {
             position: absolute;
-            top: 15px;
-            left: 20px;
-            right: 20px;
+            top: 10px;
+            left: 15px;
+            right: 15px;
             display: flex;
             justify-content: space-between;
-            color: #f1f1f1;
+            color: #e0e0e0;
             font-weight: bold;
-            font-size: 16px;
+            font-size: 15px;
             z-index: 100;
             pointer-events: none;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.9);
+            text-shadow: 2px 2px 2px #000;
         }
 
+        /* پنل خشاب و تیر پایین صفحه */
         #hud-bottom-right {
             position: absolute;
-            bottom: 35px;
-            right: 145px;
-            color: #00ff66;
+            bottom: 30px;
+            right: 150px;
+            color: #f39c12;
             font-weight: bold;
-            font-size: 20px;
+            font-size: 24px;
             z-index: 100;
             pointer-events: none;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.9);
+            text-shadow: 2px 2px 4px #000;
+        }
+
+        /* مینی‌مپ دایره‌ای بالا سمت راست */
+        #minimap {
+            position: absolute;
+            top: 50px;
+            right: 20px;
+            width: 110px;
+            height: 110px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            border-radius: 50%;
+            z-index: 100;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        #minimap-player {
+            position: absolute;
+            top: 50px;
+            left: 50px;
+            width: 8px;
+            height: 8px;
+            background: #00ff55;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
         }
 
         /* هشدار چرخش گوشی */
         #orientation-warning {
             display: none;
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.95); z-index: 9999;
+            background: #000; z-index: 9999;
             color: white; text-align: center; justify-content: center; align-items: center;
         }
         @media screen and (orientation: portrait) {
@@ -105,15 +131,20 @@
 
     <div id="orientation-warning">
         <div style="font-size: 50px;">🔄</div>
-        <p>لطفاً گوشی را افقی کنید</p>
+        <p>لطفاً گوشی را در حالت افقی نگه دارید</p>
     </div>
 
-    <!-- HUD بازی -->
+    <!-- HUD کلاسیک بازی -->
     <div id="hud-top">
-        <div>❤️ HP: <span id="hp-val">100</span></div>
-        <div>⚡ NIVRA CS TACTICAL</div>
+        <div>❤️ HP: <span id="hp-val">100</span> | ARMOR: <span id="armor-val">100</span></div>
+        <div>[ NIVRA : CLASSIC CS ]</div>
         <div>💰 $1600</div>
     </div>
+    
+    <div id="minimap">
+        <div id="minimap-player"></div>
+    </div>
+
     <div id="hud-bottom-right">
         30 / <span id="ammo-val">90</span>
     </div>
@@ -128,41 +159,43 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/nipplejs/0.9.0/nipplejs.min.js"></script>
 
     <script>
-        // ۱. تنظیمات صحنه و دوربین (فضای تاکتیکی تیره و جنگی)
+        // ۱. تنظیمات گرافیکی محیط کلاسیک
         const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x11161d); // آسمان تیره و مه‌آلود
-        scene.fog = new THREE.FogExp2(0x11161d, 0.025);
+        scene.background = new THREE.Color(0x0c1017);
+        scene.fog = new THREE.FogExp2(0x0c1017, 0.02);
 
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(renderer.domElement);
 
-        // ۲. نورپردازی حرفه‌ای
-        const ambientLight = new THREE.AmbientLight(0x404040, 1.5);
+        // نورپردازی تاکتیکی
+        const ambientLight = new THREE.AmbientLight(0x505560, 1.2);
         scene.add(ambientLight);
 
-        const dirLight = new THREE.DirectionalLight(0xffffff, 1);
-        dirLight.position.set(20, 40, 20);
+        const dirLight = new THREE.DirectionalLight(0xffffff, 1.2);
+        dirLight.position.set(30, 50, 30);
         scene.add(dirLight);
 
-        // ۳. زمین و موانع بتنی شبیه مپ‌های کانتر
-        const floorGeometry = new THREE.PlaneGeometry(120, 120);
-        const floorMaterial = new THREE.MeshStandardMaterial({ color: 0x22262a, roughness: 0.8 });
-        const floor = new THREE.Mesh(floorGeometry, floorMaterial);
+        // زمین بتنی تیره با جزئیات کلاسیک
+        const floorGeo = new THREE.PlaneGeometry(150, 150);
+        const floorMat = new THREE.MeshStandardMaterial({ color: 0x1f242b, roughness: 0.9 });
+        const floor = new THREE.Mesh(floorGeo, floorMat);
         floor.rotation.x = -Math.PI / 2;
         scene.add(floor);
 
-        // ساخت موانع بتنی (Boxes)
-        for (let i = 0; i < 20; i++) {
-            const boxGeo = new THREE.BoxGeometry(3, 5, 3);
-            const boxMat = new THREE.MeshStandardMaterial({ color: 0x4a525d, roughness: 0.5 });
+        // موانع و جعبه‌های استراتژیک مپ کانتر
+        for (let i = 0; i < 25; i++) {
+            const sizeW = Math.random() * 2 + 2;
+            const sizeH = Math.random() * 4 + 2;
+            const boxGeo = new THREE.BoxGeometry(sizeW, sizeH, sizeW);
+            const boxMat = new THREE.MeshStandardMaterial({ color: 0x3d444f, roughness: 0.6, metalness: 0.2 });
             const box = new THREE.Mesh(boxGeo, boxMat);
-            box.position.set((Math.random() - 0.5) * 50, 2.5, (Math.random() - 0.5) * 50);
+            box.position.set((Math.random() - 0.5) * 60, sizeH / 2, (Math.random() - 0.5) * 60);
             scene.add(box);
         }
 
-        // ۴. ایجاد گروه بازیکن و دوربین اول شخص
+        // ۲. ساختار بازیکن و دوربین
         const playerGroup = new THREE.Group();
         playerGroup.position.set(0, 0, 0);
         scene.add(playerGroup);
@@ -170,35 +203,42 @@
         camera.position.set(0, 1.8, 0);
         playerGroup.add(camera);
 
-        // --- طراحی اسلحه پیشرفته در دید اول شخص ---
+        // --- اسلحه کلاسیک حرفه‌ای (ساختار چندبخشی فلزی) ---
         const gunGroup = new THREE.Group();
-        
-        // بدنه اصلی تفنگ (مات و فلزی)
-        const bodyMat = new THREE.MeshStandardMaterial({ color: 0x1b1b1b, metalness: 0.8, roughness: 0.2 });
-        const gunBody = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.16, 0.9), bodyMat);
-        gunBody.position.set(0.25, -0.25, -0.5);
-        gunGroup.add(gunBody);
 
-        // خشاب تفنگ
-        const magMat = new THREE.MeshStandardMaterial({ color: 0x333333, metalness: 0.5 });
-        const mag = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.25, 0.15), magMat);
-        mag.position.set(0.25, -0.38, -0.4);
-        mag.rotation.x = 0.2;
-        gunGroup.add(mag);
+        const metalMat = new THREE.MeshStandardMaterial({ color: 0x1a1a1a, metalness: 0.9, roughness: 0.3 });
+        const darkMetalMat = new THREE.MeshStandardMaterial({ color: 0x111111, metalness: 0.95, roughness: 0.2 });
+        const woodMat = new THREE.MeshStandardMaterial({ color: 0x4a2e18, roughness: 0.5 });
 
-        // لوله تفنگ
-        const barrelMat = new THREE.MeshStandardMaterial({ color: 0x0a0a0a, metalness: 0.9 });
-        const barrel = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.5), barrelMat);
+        // بدنه اصلی تفنگ
+        const body = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.16, 0.8), metalMat);
+        body.position.set(0.28, -0.24, -0.45);
+        gunGroup.add(body);
+
+        // لوله بلند تفنگ
+        const barrel = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 0.5), darkMetalMat);
         barrel.rotation.x = Math.PI / 2;
-        barrel.position.set(0.25, -0.22, -0.95);
+        barrel.position.set(0.28, -0.20, -0.85);
         gunGroup.add(barrel);
 
-        // --- افکت آتش شلیک (Muzzle Flash) ---
-        const flashGeo = new THREE.ConeGeometry(0.1, 0.4, 6);
-        const flashMat = new THREE.MeshBasicMaterial({ color: 0xffaa00, transparent: true, opacity: 0 });
+        // خشاب مایل کلاسیک
+        const mag = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.28, 0.14), darkMetalMat);
+        mag.position.set(0.28, -0.38, -0.38);
+        mag.rotation.x = 0.25;
+        gunGroup.add(mag);
+
+        // قنداق یا دسته تفنگ
+        const grip = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.22, 0.12), woodMat);
+        grip.position.set(0.28, -0.38, -0.15);
+        grip.rotation.x = -0.3;
+        gunGroup.add(grip);
+
+        // --- افکت آتش حرفه‌ای (Muzzle Flash + Sparks) ---
+        const flashGeo = new THREE.ConeGeometry(0.12, 0.5, 6);
+        const flashMat = new THREE.MeshBasicMaterial({ color: 0xffcc00, transparent: true, opacity: 0 });
         const muzzleFlash = new THREE.Mesh(flashGeo, flashMat);
         muzzleFlash.rotation.x = -Math.PI / 2;
-        muzzleFlash.position.set(0.25, -0.22, -1.25);
+        muzzleFlash.position.set(0.28, -0.20, -1.15);
         gunGroup.add(muzzleFlash);
 
         camera.add(gunGroup);
@@ -206,14 +246,14 @@
         let pitch = 0;
         let yaw = 0;
 
-        // ۵. جوی‌استیک حرکت
+        // ۳. جوی‌استیک حرکت
         let moveForward = 0;
         let moveRight = 0;
 
         const joystick = nipplejs.create({
             zone: document.getElementById('joystick-container'),
             mode: 'static',
-            position: { left: '70px', bottom: '70px' },
+            position: { left: '75px', bottom: '75px' },
             color: 'white'
         });
 
@@ -227,7 +267,7 @@
             moveRight = 0;
         });
 
-        // ۶. کنترل نگاه با لمس صفحه
+        // ۴. سیستم چرخش دوربین با لمس
         const lookZone = document.getElementById('touch-look-zone');
         let isTouchingLook = false;
         let lastTouchX = 0;
@@ -259,44 +299,48 @@
             isTouchingLook = false;
         });
 
-        // شلیک پیشرفته + نمایش آتش و لگد اسلحه
+        // ۵. شلیک با افکت نورانی و لگد کلاسیک اسلحه
         let ammo = 30;
         document.getElementById('fire-btn').addEventListener('touchstart', () => {
             if (ammo > 0) {
                 ammo--;
                 document.getElementById('ammo-val').textContent = ammo * 3;
                 
-                // لگد اسلحه به عقب
-                gunGroup.position.z += 0.08;
-                gunGroup.rotation.x += 0.05;
+                // لگد اسلحه به عقب و بالا
+                gunGroup.position.z += 0.1;
+                gunGroup.rotation.x += 0.08;
                 setTimeout(() => { 
-                    gunGroup.position.z -= 0.08; 
-                    gunGroup.rotation.x -= 0.05;
-                }, 60);
+                    gunGroup.position.z -= 0.1; 
+                    gunGroup.rotation.x -= 0.08;
+                }, 70);
 
-                // روشن شدن شعله آتش (Muzzle Flash)
-                muzzleFlash.material.opacity = 0.9;
-                muzzleFlash.scale.set(Math.random() * 0.5 + 0.8, Math.random() * 0.5 + 0.8, 1);
+                // روشن شدن انفجار سر لوله (Flash)
+                muzzleFlash.material.opacity = 1;
+                muzzleFlash.scale.set(Math.random() * 0.6 + 0.8, Math.random() * 0.6 + 0.8, 1);
                 setTimeout(() => {
                     muzzleFlash.material.opacity = 0;
-                }, 70);
+                }, 60);
             }
             document.getElementById('crosshair').style.color = 'red';
             setTimeout(() => {
-                document.getElementById('crosshair').style.color = 'rgba(0, 255, 100, 0.8)';
+                document.getElementById('crosshair').style.color = '#00ff55';
             }, 100);
         });
 
-        // ۷. حلقه اصلی بازی
+        // ۶. حلقه اصلی رندر و آپدیت مینی‌مپ
         function animate() {
             requestAnimationFrame(animate);
 
-            const speed = 0.15;
+            const speed = 0.16;
             playerGroup.translateZ(-moveForward * speed);
             playerGroup.translateX(moveRight * speed);
 
             playerGroup.rotation.y = yaw;
             camera.rotation.x = pitch;
+
+            // به‌روزرسانی نقطه‌گر بازیکن در مینی‌مپ
+            const minimapPlayer = document.getElementById('minimap-player');
+            minimapPlayer.style.transform = `translate(-50%, -50%) translate(${playerGroup.position.x * 1.2}px, ${playerGroup.position.z * 1.2}px)`;
 
             renderer.render(scene, camera);
         }
@@ -311,4 +355,4 @@
     </script>
 </body>
 </html>
- 
+
