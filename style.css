@@ -9,6 +9,13 @@ body {
     background-color: #0f172a;
     color: #e2e8f0;
     direction: rtl;
+    user-select: none; /* جلوگیری از انتخاب متن برای امنیت بیشتر */
+    -webkit-user-select: none;
+}
+
+/* جلوگیری از اسکرین‌شات و ضبط صفحه در برخی مرورگرها */
+body.no-screenshot {
+    -webkit-touch-callout: none;
 }
 
 .screen {
@@ -36,22 +43,22 @@ body {
     text-align: center;
 }
 
-.login-container input {
+.login-container input, .setting-item input {
     padding: 12px;
     border-radius: 8px;
     border: 1px solid #334155;
     background: #0f172a;
     color: #fff;
-    font-size: 16px;
+    font-size: 15px;
 }
 
-.login-container button {
+.login-container button, .setting-item button {
     padding: 12px;
     border-radius: 8px;
     border: none;
     background: #2481cc;
     color: #fff;
-    font-size: 16px;
+    font-size: 15px;
     cursor: pointer;
     font-weight: bold;
 }
@@ -71,7 +78,8 @@ body {
     display: none;
     flex-direction: column;
     overflow-y: auto;
-    padding-bottom: 60px;
+    padding-bottom: 70px;
+    position: relative;
 }
 
 .tab-content.active {
@@ -106,13 +114,33 @@ body {
     background: #1e293b;
 }
 
-/* لیست اتاق‌ها (استایل تلگرام) */
-.room-list-container {
+/* دکمه شناور + در پیام‌رسان */
+.fab-btn {
+    position: fixed;
+    bottom: 75px;
+    left: 20px;
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    background: #2481cc;
+    color: #fff;
+    font-size: 28px;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* لیست PVها */
+.pv-list-container {
     display: flex;
     flex-direction: column;
 }
 
-.room-item {
+.pv-item {
     display: flex;
     align-items: center;
     padding: 12px 15px;
@@ -120,10 +148,6 @@ body {
     border-bottom: 1px solid #0f172a;
     cursor: pointer;
     gap: 12px;
-}
-
-.room-item:active {
-    background: #202b36;
 }
 
 .item-pic {
@@ -152,31 +176,54 @@ body {
     color: #829ab1;
 }
 
-/* نشانگر صندلی‌ها (۱۰ نقطه) */
-.dots-indicator {
+/* تنظیمات و پروفایل */
+.settings-body {
+    padding: 20px;
     display: flex;
-    gap: 4px;
-    margin-top: 4px;
+    flex-direction: column;
+    gap: 15px;
 }
 
-.dot {
-    width: 8px;
-    height: 8px;
+.profile-header-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.profile-circle-pic {
+    width: 80px;
+    height: 80px;
     border-radius: 50%;
-    background: #4e5d6c;
+    background: #2b5278;
+    cursor: pointer;
+    border: 2px solid #5288c1;
 }
 
-.dot.active {
-    background: #2ecc71;
+.setting-item {
+    background: #17212b;
+    padding: 15px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 
-/* پنجره اتاق */
-.room-overlay {
+.sub-btn {
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    background: #d14545;
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
+    text-align: center;
+}
+
+/* صفحه چت PV */
+.chat-overlay {
     position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    top: 0; left: 0; right: 0; bottom: 0;
     background: #0f172a;
     display: none;
     flex-direction: column;
@@ -188,17 +235,16 @@ body {
     padding: 10px 15px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
     border-bottom: 1px solid #0f172a;
 }
 
-.seats-container {
+.chat-messages-area {
     flex: 1;
     overflow-y: auto;
-    padding: 10px;
+    padding: 15px;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 10px;
 }
 
 .room-footer {
@@ -224,89 +270,5 @@ body {
     background: #2481cc;
     color: #fff;
     font-weight: bold;
-}
-
-/* منوی کشویی و مدال‌ها */
-.dropdown-menu {
-    position: absolute;
-    left: 10px;
-    top: 45px;
-    background: #17212b;
-    border: 1px solid #334155;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-    z-index: 200;
-    width: 200px;
-}
-
-.dropdown-menu div {
-    padding: 12px;
-    font-size: 14px;
     cursor: pointer;
-    border-bottom: 1px solid #202b36;
-}
-
-.dropdown-menu div:hover {
-    background: #202b36;
-}
-
-.modal {
-    position: fixed;
-    top:0; left:0; right:0; bottom:0;
-    background: rgba(0,0,0,0.7);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 300;
-}
-
-.modal-content {
-    background: #1e293b;
-    padding: 20px;
-    border-radius: 10px;
-    width: 85%;
-    max-width: 320px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.settings-body {
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-.setting-item {
-    background: #17212b;
-    padding: 15px;
-    border-radius: 8px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.setting-item input {
-    padding: 8px;
-    border-radius: 6px;
-    border: 1px solid #334155;
-    background: #0f172a;
-    color: #fff;
-}
-
-.setting-item button {
-    padding: 8px;
-    border-radius: 6px;
-    border: none;
-    background: #2481cc;
-    color: #fff;
-    cursor: pointer;
-}
-
-.small-toggles {
-    display: flex;
-    gap: 15px;
-    font-size: 13px;
-    color: #829ab1;
 }
