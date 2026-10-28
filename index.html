@@ -1,215 +1,128 @@
 <!DOCTYPE html>
-<html lang="fa">
+<html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, orientation=landscape">
-    <title>Nivra | Legend Edition</title>
-    <style>
-        body { margin: 0; overflow: hidden; background: #000; font-family: 'Segoe UI', sans-serif; }
-        canvas { display: block; }
-
-        /* --- استایل لابی --- */
-        #lobby-container {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            display: flex; flex-direction: column;
-            justify-content: center; align-items: center;
-            z-index: 1000;
-            background: radial-gradient(circle, rgba(0,0,0,0) 0%, rgba(0,0,0,0.9) 100%);
-            transition: opacity 1.5s ease-in-out;
-        }
-
-        #game-title {
-            font-size: 70px; font-weight: bold; color: white;
-            letter-spacing: 15px; text-shadow: 0 0 30px rgba(0, 150, 255, 0.8);
-            margin-bottom: 50px;
-        }
-
-        #start-btn {
-            padding: 15px 60px; font-size: 24px; font-weight: bold;
-            color: white; background: rgba(255, 255, 255, 0.1);
-            border: 2px solid rgba(255, 255, 255, 0.4);
-            border-radius: 5px; cursor: pointer;
-            backdrop-filter: blur(10px); transition: 0.3s;
-            letter-spacing: 4px;
-        }
-        #start-btn:hover { background: rgba(0, 150, 255, 0.3); border-color: #0096ff; }
-
-        /* --- استایل HUD --- */
-        #game-ui {
-            display: none;
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 500;
-            pointer-events: none;
-        }
-
-        #player-profile {
-            position: absolute;
-            top: 20px; right: 20px;
-            display: flex; align-items: center;
-            background: rgba(0, 0, 0, 0.6);
-            padding: 10px 20px;
-            border-radius: 8px;
-            border-left: 4px solid #0096ff;
-            color: white;
-            pointer-events: auto;
-        }
-
-        #player-name {
-            font-size: 22px; font-weight: bold;
-            letter-spacing: 2px; text-transform: uppercase;
-            margin-left: 15px;
-        }
-
-        .profile-icon {
-            width: 40px; height: 40px;
-            background: linear-gradient(45deg, #0096ff, #ff0032);
-            border-radius: 50%;
-        }
-
-        #orientation-warning {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; z-index: 9999; color: white; text-align: center; 
-            justify-content: center; align-items: center;
-        }
-        @media screen and (orientation: portrait) { #orientation-warning { display: flex; flex-direction: column; } }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>نیورا - Nivra</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
-
-    <div id="orientation-warning">
-        <div style="font-size: 50px;">🔄</div>
-        <p>لطفاً گوشی را در حالت افقی نگه دارید</p>
-    </div>
-
-    <div id="lobby-container">
-        <h1 id="game-title">NIVRA</h1>
-        <button id="start-btn">START MISSION</button>
-    </div>
-
-    <div id="game-ui">
-        <div id="player-profile">
-            <div class="profile-icon"></div>
-            <div id="player-name">W A S T I D</div>
+    <!-- هدر بالای صفحه: پروفایل، تنظیمات و کد دوستان -->
+    <div id="top-bar">
+        <div id="profile-btn" onclick="openProfile()">
+            <span>👤 سرباز نیورا</span>
+            <span id="user-tag">#NEV-7482</span>
+        </div>
+        <div class="top-actions">
+            <button onclick="openFriends()" class="icon-btn">👥 دوستان</button>
+            <button onclick="openSettings()" class="icon-btn">⚙️</button>
         </div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-
-    <script>
-        let isGameStarted = false;
-        let weaponGroup; // گروهی که اسلحه را نگه می‌دارد
-
-        // ۱. تنظیمات پایه
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ antialias: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.shadowMap.enabled = true; // فعال سازی سایه‌ها برای واقعی‌تر شدن
-        document.body.appendChild(renderer.domElement);
-
-        // ۲. لابی (ذرات)
-        const particlesGeometry = new THREE.BufferGeometry();
-        const count = 400;
-        const posArray = new Float32Array(count * 3);
-        for(let i=0; i<count * 3; i++) posArray[i] = (Math.random() - 0.5) * 15;
-        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-        const particlesMaterial = new THREE.PointsMaterial({ size: 0.05, color: 0x0096ff, transparent: true });
-        const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
-        scene.add(particlesMesh);
-
-        const light = new THREE.PointLight(0x0096ff, 2, 50);
-        light.position.set(0, 2, 2);
-        scene.add(light);
-        scene.add(new THREE.AmbientLight(0x404040));
-
-        camera.position.z = 5;
-
-        // ۳. ساخت محیط بازی (زمین و آسمان)
-        function initWorld() {
-            // زمین
-            const floorGeo = new THREE.PlaneGeometry(100, 100);
-            const floorMat = new THREE.MeshStandardMaterial({ color: 0x222222 });
-            const floor = new THREE.Mesh(floorGeo, floorMat);
-            floor.rotation.x = -Math.PI / 2;
-            floor.receiveShadow = true;
-            scene.add(floor);
-
-            // آسمان تاریک
-            scene.background = new THREE.Color(0x050505);
-        }
-
-        // ۴. ساخت اسلحه (Weapon Model)
-        function createWeapon() {
-            weaponGroup = new THREE.Group();
-
-            // بدنه اصلی اسلحه (یک استوانه متمایل)
-            const bodyGeo = new THREE.BoxGeometry(0.2, 0.2, 1);
-            const bodyMat = new THREE.MeshStandardMaterial({ color: 0x111111 });
-            const body = new THREE.Mesh(bodyGeo, bodyMat);
+    <!-- لابی اصلی بازی (استایل کال‌آف‌دیوتی / کانتر) -->
+    <div id="lobby-screen">
+        <div class="lobby-sidebar">
+            <h1 class="game-title">NIVRA</h1>
+            <p class="game-subtitle">تاکتیکی آنلاین</p>
             
-            // لوله اسلحه
-            const barrelGeo = new THREE.CylinderGeometry(0.05, 0.05, 0.8);
-            const barrelMat = new THREE.MeshStandardMaterial({ color: 0x000000 });
-            const barrel = new THREE.Mesh(barrelGeo, barrelMat);
-            barrel.rotation.x = Math.PI / 2;
-            barrel.position.z = -0.5;
+            <div class="menu-box">
+                <button class="menu-btn primary" onclick="startGame(1)">بازی تکی (Solo)</button>
+                <button class="menu-btn" onclick="startGame(2)">نبرد ۲ نفره</button>
+                <button class="menu-btn" onclick="startGame(4)">نبرد ۴ نفره</button>
+                <button class="menu-btn" onclick="startGame(8)">نبرد ۸ نفره</button>
+            </div>
+        </div>
 
-            weaponGroup.add(body);
-            weaponGroup.add(barrel);
+        <div class="lobby-center">
+            <!-- پیش‌نمایش اسلحه و لباس -->
+            <div class="loadout-preview">
+                <div class="preview-card" onclick="openWeapons()">
+                    <h3>اسلحه فعال</h3>
+                    <p id="selected-weapon">M4A1 تاکتیکی</p>
+                </div>
+                <div class="preview-card" onclick="openSkins()">
+                    <h3>لباس / اسکین</h3>
+                    <p id="selected-skin">استتار شبانه</p>
+                </div>
+            </div>
+        </div>
+    </div>
 
-            // قرار دادن اسلحه در جلوی دوربین
-            weaponGroup.position.set(0.4, -0.4, -0.8); 
-            camera.add(weaponGroup); // اسلحه فرزند دوربین می‌شود (با حرکت دوربین حرکت می‌کند)
-            scene.add(camera); 
-        }
+    <!-- محیط بازی و HUD -->
+    <div id="game-container" style="display: none;">
+        <div id="canvas-container"></div>
+        
+        <div id="hud">
+            <div class="hud-panel">سلامت: <span id="hp-val">100</span> | امتیاز: <span id="score-val">0</span></div>
+            <div class="hud-panel" id="minimap">مینی‌مپ</div>
+        </div>
 
-        // ۵. انیمیشن‌ها
-        function animateLobby() {
-            if (!isGameStarted) {
-                requestAnimationFrame(animateLobby);
-                particlesMesh.rotation.y += 0.001;
-                renderer.render(scene, camera);
-            }
-        }
+        <div id="joystick-container"></div>
+        <button id="fire-btn">شلیک</button>
+    </div>
 
-        function animateGame() {
-            requestAnimationFrame(animateGame);
-            
-            // انیمیشن شناور بودن بسیار ملایم اسلحه (حس تنفس کاراکتر)
-            if(weaponGroup) {
-                weaponGroup.position.y = -0.4 + Math.sin(Date.now() * 0.002) * 0.01;
-            }
+    <!-- مدال پروفایل و کد دوستان -->
+    <div id="profile-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h2>پروفایل سرباز</h2>
+            <p>کد اختصاصی شما: <strong id="my-tag-code" style="color: #38bdf8;">#NEV-7482</strong></p>
+            <label>تغییر نام: <input type="text" id="username-input" value="سرباز نیورا"></label>
+            <button onclick="closeProfile()" class="menu-btn">ذخیره</button>
+        </div>
+    </div>
 
-            renderer.render(scene, camera);
-        }
+    <!-- مدال لیست دوستان و افزودن -->
+    <div id="friends-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h2>مدیریت دوستان</h2>
+            <div class="add-friend-box">
+                <input type="text" id="friend-tag-input" placeholder="وارد کردن کد دوست (مثلاً #NEV-1234)">
+                <button onclick="addFriend()" class="menu-btn">افزودن</button>
+            </div>
+            <div id="friends-list">
+                <p style="color: #94a3b8; font-size: 13px;">هنوز دوستی اضافه نشده است.</p>
+            </div>
+            <button onclick="closeFriends()" class="menu-btn" style="background: #475569;">بستن</button>
+        </div>
+    </div>
 
-        // ۶. مدیریت شروع بازی
-        const startBtn = document.getElementById('start-btn');
-        const lobby = document.getElementById('lobby-container');
-        const gameUI = document.getElementById('game-ui');
+    <!-- مدال انتخاب اسلحه -->
+    <div id="weapons-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h2>انتخاب اسلحه</h2>
+            <div class="selection-grid">
+                <button class="sel-item active" onclick="selectWeapon('M4A1 تاکتیکی')">M4A1 تاکتیکی</button>
+                <button class="sel-item" onclick="selectWeapon('AK-47 آتشین')">AK-47 آتشین</button>
+                <button class="sel-item" onclick="selectWeapon('اسنایپر AWM')">اسنایپر AWM</button>
+            </div>
+            <button onclick="closeWeapons()" class="menu-btn">تایید</button>
+        </div>
+    </div>
 
-        startBtn.addEventListener('click', () => {
-            isGameStarted = true;
-            lobby.style.opacity = '0';
-            setTimeout(() => {
-                lobby.style.display = 'none';
-                gameUI.style.display = 'block';
-                initWorld();
-                createWeapon();
-                animateGame();
-            }, 1500);
-        });
+    <!-- مدال انتخاب لباس -->
+    <div id="skins-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h2>انتخاب لباس و اسکین</h2>
+            <div class="selection-grid">
+                <button class="sel-item active" onclick="selectSkin('استتار شبانه')">استتار شبانه</button>
+                <button class="sel-item" onclick="selectSkin('پوشش بیابانی')">پوشش بیابانی</button>
+                <button class="sel-item" onclick="selectSkin('لباس ویژه سایبر')">لباس ویژه سایبر</button>
+            </div>
+            <button onclick="closeSkins()" class="menu-btn">تایید</button>
+        </div>
+    </div>
 
-        animateLobby();
+    <!-- مدال تنظیمات -->
+    <div id="settings-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h2>تنظیمات</h2>
+            <label>صدا: <input type="range" min="0" max="100" value="80"></label>
+            <button onclick="closeSettings()" class="menu-btn">بازگشت</button>
+        </div>
+    </div>
 
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        });
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
-
