@@ -1,182 +1,267 @@
 * {
     box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: Tahoma, sans-serif;
     user-select: none;
+    -webkit-user-select: none;
+    touch-action: none;
 }
 
 body, html {
+    margin: 0;
+    padding: 0;
     width: 100%;
     height: 100%;
     overflow: hidden;
-    background-color: #0d0d0d;
+    background-color: #0f0f13;
+    font-family: Tahoma, sans-serif;
     color: #fff;
-}
-
-/* اجبار به نمایش افقی در حالت موبایل */
-@media screen and (orientation: portrait) {
-    body {
-        transform: rotate(90deg);
-        transform-origin: left top;
-        width: 100vh;
-        height: 100vw;
-        position: absolute;
-        top: 100%;
-        left: 0;
-    }
+    /* اجبار به حالت افقی برای موبایل */
+    transform: rotate(0deg);
 }
 
 .screen {
     position: absolute;
-    width: 100%;
-    height: 100%;
     top: 0;
     left: 0;
+    width: 100%;
+    height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding: 12px;
-    background: linear-gradient(135deg, #151515, #080808);
+    background: linear-gradient(135deg, #12121c 0%, #1e1e2f 100%);
 }
 
 .hidden {
     display: none !important;
 }
 
+/* نوار بالا */
 .top-bar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: rgba(20,20,20,0.8);
-    padding: 8px 15px;
-    border-radius: 6px;
-    border: 1px solid #333;
+    padding: 10px 20px;
+    background: rgba(0, 0, 0, 0.6);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.profile-box, .currency-box {
+.profile-badge {
     display: flex;
     align-items: center;
-    gap: 6px;
-    background: #1a1a1a;
-    padding: 5px 10px;
-    border-radius: 15px;
-    font-size: 13px;
-    font-weight: bold;
-    color: #ffcc00;
+    gap: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 14px;
 }
 
-.top-actions {
-    display: flex;
-    gap: 8px;
-}
-
-.icon-btn {
-    background: #222;
-    color: #fff;
-    border: 1px solid #444;
-    padding: 6px 10px;
-    border-radius: 5px;
-    cursor: pointer;
+.tag-code {
+    color: #00d2ff;
     font-size: 12px;
 }
 
-.center-content {
+.currency-badge {
+    background: rgba(255, 215, 0, 0.2);
+    color: #ffd700;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-weight: bold;
+}
+
+.icon-btn {
+    background: none;
+    border: none;
+    font-size: 22px;
+    cursor: pointer;
+}
+
+/* لابی */
+.lobby-content {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     flex: 1;
-    gap: 15px;
+    gap: 20px;
 }
 
 .game-title {
-    font-size: 28px;
-    color: #ff4500;
-    text-shadow: 0 0 8px rgba(255,69,0,0.5);
-    text-align: center;
+    font-size: 36px;
+    color: #ff3b30;
+    margin: 0;
+    text-shadow: 0 0 15px rgba(255, 59, 48, 0.5);
 }
 
 .game-subtitle {
-    font-size: 12px;
-    color: #aaa;
-    text-align: center;
-}
-
-.menu-buttons {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    width: 240px;
-}
-
-.sfg-btn {
-    background: #222;
-    color: white;
-    border: 2px solid #444;
-    padding: 10px;
-    border-radius: 5px;
+    color: #8e8e93;
+    margin: 5px 0 0 0;
     font-size: 14px;
-    font-weight: bold;
-    cursor: pointer;
     text-align: center;
-}
-
-.sfg-btn.primary {
-    background: #ff4500;
-    border-color: #ff6a33;
 }
 
 .mode-selector {
     display: flex;
-    justify-content: center;
     gap: 10px;
-    background: rgba(0,0,0,0.5);
-    padding: 8px;
-    border-radius: 6px;
 }
 
 .mode-btn {
-    background: #1b1b1b;
-    color: #aaa;
-    border: 1px solid #333;
-    padding: 6px 12px;
-    border-radius: 4px;
-    font-size: 12px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 8px;
     cursor: pointer;
 }
 
 .mode-btn.active {
-    background: #ff4500;
-    color: #fff;
-    border-color: #ff6a33;
+    background: #007aff;
+    border-color: #007aff;
 }
 
-.team-selection {
+.action-buttons {
     display: flex;
-    justify-content: center;
-    gap: 20px;
-    flex: 1;
-    align-items: center;
+    flex-direction: column;
+    gap: 10px;
+    width: 280px;
 }
 
-.team-card {
-    background: #1a1a1a;
-    padding: 20px;
-    border-radius: 8px;
-    text-align: center;
-    width: 220px;
+.btn-primary {
+    background: linear-gradient(135deg, #ff3b30, #ff9500);
+    border: none;
+    color: #white;
+    padding: 12px;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: bold;
     cursor: pointer;
-    border: 2px solid #444;
 }
 
-.team-card.terrorist { border-color: #ff3333; }
-.team-card.counter { border-color: #3388ff; }
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.15);
+    border: none;
+    color: #fff;
+    padding: 10px;
+    border-radius: 10px;
+    cursor: pointer;
+}
 
+/* صفحه بازی */
+#canvas-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.game-hud {
+    position: absolute;
+    top: 15px;
+    left: 20px;
+    right: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 10;
+    pointer-events: none;
+}
+
+.score-board {
+    background: rgba(0, 0, 0, 0.7);
+    padding: 8px 15px;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 16px;
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+.pause-btn {
+    background: rgba(0, 0, 0, 0.7);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: #fff;
+    font-size: 18px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    pointer-events: auto;
+    cursor: pointer;
+}
+
+/* کنترل‌های لمسی موبایل */
+.mobile-controls {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    right: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    z-index: 10;
+    pointer-events: none;
+}
+
+.joystick-area, .action-area {
+    pointer-events: auto;
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+}
+
+.dpad {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(255,255,255,0.05);
+    padding: 10px;
+    border-radius: 50%;
+}
+
+.d-row {
+    display: flex;
+    gap: 40px;
+}
+
+.d-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    color: #fff;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.action-btn {
+    background: rgba(0, 122, 255, 0.6);
+    border: 1px solid #007aff;
+    color: #fff;
+    padding: 12px 18px;
+    border-radius: 20px;
+    font-weight: bold;
+}
+
+.fire-btn {
+    background: linear-gradient(135deg, #ff3b30, #ffcc00);
+    border: 2px solid #fff;
+    color: #fff;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    font-weight: bold;
+    font-size: 16px;
+    box-shadow: 0 0 15px rgba(255, 59, 48, 0.7);
+}
+
+/* مدال‌ها */
 .modal {
     position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.85);
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -184,61 +269,44 @@ body, html {
 }
 
 .modal-content {
-    background: #161616;
-    padding: 15px;
-    border-radius: 8px;
-    width: 320px;
-    border: 1px solid #444;
+    background: #1e1e2f;
+    padding: 25px;
+    border-radius: 15px;
+    width: 350px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 15px;
+    border: 1px solid rgba(255,255,255,0.1);
 }
 
-.shop-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    max-height: 200px;
-    overflow-y: auto;
-}
-
-.shop-item {
-    background: #222;
-    padding: 8px;
-    border-radius: 4px;
-    cursor: pointer;
-    border: 1px solid #444;
-}
-
-#canvas-container {
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    z-index: 1;
-}
-
-.hud-top {
-    position: absolute;
-    top: 10px; left: 10px; right: 10px;
-    z-index: 10;
+.setting-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-.touch-controls {
-    position: absolute;
-    bottom: 15px; right: 15px;
-    z-index: 10;
+.shop-items {
     display: flex;
-    gap: 8px;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 200px;
+    overflow-y: auto;
 }
 
-.control-btn {
-    background: rgba(255, 69, 0, 0.8);
-    color: white;
-    border: 2px solid #fff;
-    padding: 12px 16px;
-    border-radius: 50%;
-    font-weight: bold;
-    font-size: 12px;
+.shop-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(255,255,255,0.05);
+    padding: 8px 12px;
+    border-radius: 8px;
+}
+
+.btn-danger {
+    background: #ff3b30;
+    border: none;
+    color: #fff;
+    padding: 10px;
+    border-radius: 10px;
+    cursor: pointer;
 }

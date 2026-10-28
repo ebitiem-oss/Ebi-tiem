@@ -3,99 +3,135 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>نیورا - Nivra SFG Edition</title>
+    <title>نیورا | Nivra Shooter</title>
     <link rel="stylesheet" href="style.css">
+    <!-- بارگذاری کتابخانه Three.js برای گرافیک سه‌بعدی -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
+
     <!-- لابی اصلی بازی -->
     <div id="lobby-screen" class="screen">
         <div class="top-bar">
-            <div class="profile-box" onclick="openProfile()">
-                <span id="player-tag">#NEV-7482</span>
+            <div class="profile-badge">
+                <span class="wolf-icon">🐺</span>
+                <span id="player-name">EbiTiem</span>
+                <span class="tag-code">#NEV-7482</span>
             </div>
-            <div class="currency-box">
-                <span id="player-coins">💰 5000</span>
-            </div>
-            <div class="top-actions">
-                <button class="icon-btn" onclick="openFriends()">👥 دوستان</button>
-                <button class="icon-btn" onclick="openSettings()">⚙️</button>
-            </div>
+            <div class="currency-badge" id="player-coins">💰 5000</div>
+            <button class="icon-btn" onclick="openSettings()">⚙️</button>
         </div>
 
-        <div class="center-content">
-            <div class="logo-area">
-                <h1 class="game-title">NIVRA : SFG 2</h1>
-                <p class="game-subtitle">عملیات ویژه تاکتیکی</p>
+        <div class="lobby-content">
+            <div class="logo-container">
+                <h1 class="game-title">NIVRA | نیورا</h1>
+                <p class="game-subtitle">بازی تاکتیکی آنلاین</p>
             </div>
 
-            <div class="menu-buttons">
-                <button class="sfg-btn primary" onclick="openTeamSelect()">🎮 شروع بازی آنلاین</button>
-                <button class="sfg-btn" onclick="openShop()">🛒 فروشگاه اسلحه و اسکین</button>
+            <div class="mode-selector">
+                <button class="mode-btn active" onclick="setMode('solo')">تک‌نفره (Solo)</button>
+                <button class="mode-btn" onclick="setMode('duo')">۲ نفره</button>
+                <button class="mode-btn" onclick="setMode('squad4')">۴ نفره</button>
+                <button class="mode-btn" onclick="setMode('squad8')">۸ نفره</button>
             </div>
-        </div>
 
-        <div class="mode-selector">
-            <button class="mode-btn active" onclick="setMode('solo')">تکی (Solo)</button>
-            <button class="mode-btn" onclick="setMode('2p')">نبرد ۲ نفره</button>
-            <button class="mode-btn" onclick="setMode('4p')">نبرد ۴ نفره</button>
-            <button class="mode-btn" onclick="setMode('8p')">نبرد ۸ نفره</button>
+            <div class="action-buttons">
+                <button class="btn-primary" onclick="openTeamSelect()">شروع بازی (Matchmaking)</button>
+                <button class="btn-secondary" onclick="openShop()">فروشگاه سلاح و اسکین</button>
+            </div>
         </div>
     </div>
 
-    <!-- صفحه انتخاب تیم -->
+    <!-- صفحه انتخاب تیم (Counter-Terrorist vs Terrorist) -->
     <div id="team-screen" class="screen hidden">
-        <h2>انتخاب تیم عملیاتی</h2>
-        <div class="team-selection">
-            <div class="team-card terrorist" onclick="startGame('T')">
-                <h3>تروریست‌ها (Terrorists)</h3>
-                <p>لباس سرخ / تهاجمی</p>
+        <div class="team-container">
+            <h2>انتخاب تیم</h2>
+            <div class="team-cards">
+                <div class="team-card ct" onclick="startGame('CT')">
+                    <h3>نیروهای ویژه (CT)</h3>
+                    <p>پاسبانان قانون و امنیت</p>
+                </div>
+                <div class="team-card t" onclick="startGame('T')">
+                    <h3>تروریست‌ها (T)</h3>
+                    <p>نیروی مهاجم و تهاجمی</p>
+                </div>
             </div>
-            <div class="team-card counter" onclick="startGame('CT')">
-                <h3>ضدتروریست (CT)</h3>
-                <p>لباس آبی / دفاعی</p>
-            </div>
+            <button class="btn-back" onclick="closeTeamSelect()">بازگشت</button>
         </div>
-        <button class="sfg-btn back" onclick="closeTeamSelect()">بازگشت به لابی</button>
     </div>
 
-    <!-- محیط بازی سه‌بعدی -->
+    <!-- صفحه بازی سه‌بعدی -->
     <div id="game-screen" class="screen hidden">
         <div id="canvas-container"></div>
         
-        <div class="hud-top">
+        <!-- هداپ (HUD) داخل بازی -->
+        <div class="game-hud">
             <div class="score-board">تیم T: 0 | تیم CT: 0</div>
-            <div class="timer">⏱️ 03:00</div>
-            <button class="sfg-btn small" onclick="openBuyMenu()">🛒 بای‌منو</button>
-            <button class="sfg-btn small red" onclick="exitGame()">خروج</button>
+            <button class="pause-btn" onclick="openSettings()">⚙️</button>
         </div>
 
-        <div class="touch-controls">
-            <button class="control-btn" onclick="playerShoot()">💥 شلیک</button>
-            <button class="control-btn" onclick="playerJump()">⬆️ پرش</button>
-            <button class="control-btn" onclick="playerReload()">🔄 خشاب</button>
+        <!-- کنترل‌های لمسی موبایل (جوی‌استیک و دکمه‌های شلیک) -->
+        <div class="mobile-controls">
+            <div class="joystick-area" id="joystick-zone">
+                <div class="dpad">
+                    <button class="d-btn" ontouchstart="moveForward=true" ontouchend="moveForward=false">⬆️</button>
+                    <div class="d-row">
+                        <button class="d-btn" ontouchstart="moveLeft=true" ontouchend="moveLeft=false">⬅️</button>
+                        <button class="d-btn" ontouchstart="moveRight=true" ontouchend="moveRight=false">➡️</button>
+                    </div>
+                    <button class="d-btn" ontouchstart="moveBackward=true" ontouchend="moveBackward=false">⬇️</button>
+                </div>
+            </div>
+
+            <div class="action-area">
+                <button class="action-btn" onclick="playerJump()">پرش 🦘</button>
+                <button class="action-btn" onclick="playerReload()">خشاب 🔄</button>
+                <!-- دکمه شلیک پیشرفته: تپ برای تک‌تیر، نگه داشتن برای رگبار -->
+                <button class="fire-btn" ontouchstart="startShooting()" ontouchend="stopShooting()" onmousedown="startShooting()" onmouseup="stopShooting()"> آتش 🔥</button>
+            </div>
         </div>
     </div>
 
-    <!-- مودال فروشگاه -->
+    <!-- مدال تنظیمات (صدا و چیدمان دکمه‌ها) -->
+    <div id="settings-modal" class="modal hidden">
+        <div class="modal-content">
+            <h2>⚙️ تنظیمات بازی</h2>
+            <div class="setting-item">
+                <label>صدای بازی (SFX):</label>
+                <input type="range" min="0" max="100" value="80" onchange="updateVolume(this.value)">
+            </div>
+            <div class="setting-item">
+                <label>حساسیت چرخش دوربین:</label>
+                <input type="range" min="1" max="10" value="5" onchange="updateSensitivity(this.value)">
+            </div>
+            <div class="setting-item">
+                <label>چیدمان دکمه‌ها (HUD Layout):</label>
+                <button class="btn-small" onclick="alert('حالت چیدمان آزاد فعال شد. دکمه‌ها را جابجا کنید.')">ویرایش چیدمان</button>
+            </div>
+            <button class="btn-primary" onclick="closeSettings()">ذخیره و بازگشت</button>
+            <button class="btn-danger" onclick="exitGame()">خروج از مسابقه</button>
+        </div>
+    </div>
+
+    <!-- فروشگاه اسلحه -->
     <div id="shop-modal" class="modal hidden">
         <div class="modal-content">
-            <h2>فروشگاه تجهیزات</h2>
-            <div class="shop-grid">
-                <div class="shop-item" onclick="buyItem('M4A1 تاکتیکی', 2500)">
-                    <h4>اسلحه M4A1 تاکتیکی</h4>
-                    <p>قیمت: ۲۵۰۰ 💰</p>
+            <h2>🛒 فروشگاه تجهیزات</h2>
+            <div class="shop-items">
+                <div class="shop-item">
+                    <span>M4A1 تاکتیکی</span>
+                    <button onclick="buyItem('M4A1 تاکتیکی', 1500)">خرید (1500 💰)</button>
                 </div>
-                <div class="shop-item" onclick="buyItem('AK-47 آتشین', 2700)">
-                    <h4>اسلحه AK-47 آتشین</h4>
-                    <p>قیمت: ۲۷۰۰ 💰</p>
+                <div class="shop-item">
+                    <span>AK-47 آتشین</span>
+                    <button onclick="buyItem('AK-47 آتشین', 2000)">خرید (2000 💰)</button>
                 </div>
-                <div class="shop-item" onclick="buyItem('اسنایپر AWM', 5000)">
-                    <h4>اسنایپر AWM</h4>
-                    <p>قیمت: ۵۰۰۰ 💰</p>
+                <div class="shop-item">
+                    <span>AWM اسنایپر</span>
+                    <button onclick="buyItem('AWM اسنایپر', 3500)">خرید (3500 💰)</button>
                 </div>
             </div>
-            <button class="sfg-btn" onclick="closeShop()">بستن</button>
+            <button class="btn-primary" onclick="closeShop()">بستن</button>
         </div>
     </div>
 
