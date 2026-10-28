@@ -8,63 +8,68 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
-    <!-- لابی اصلی بازی (سبک SFG2) -->
+    <!-- لابی اصلی بازی -->
     <div id="lobby-screen" class="screen">
         <div class="top-bar">
             <div class="profile-box" onclick="openProfile()">
-                <img src="https://api.iconify.design/lucide:user-shield.svg?color=white" class="icon">
                 <span id="player-tag">#NEV-7482</span>
             </div>
             <div class="currency-box">
                 <span id="player-coins">💰 5000</span>
             </div>
-            <button class="icon-btn" onclick="openSettings()">⚙️</button>
+            <div class="top-actions">
+                <button class="icon-btn" onclick="openFriends()">👥 دوستان</button>
+                <button class="icon-btn" onclick="openSettings()">⚙️</button>
+            </div>
         </div>
 
         <div class="center-content">
             <div class="logo-area">
                 <h1 class="game-title">NIVRA : SFG 2</h1>
-                <p class="game-subtitle">نسخه تاکتیکی عملیات ویژه</p>
+                <p class="game-subtitle">عملیات ویژه تاکتیکی</p>
             </div>
 
             <div class="menu-buttons">
-                <button class="sfg-btn primary" onclick="openTeamSelect()">🎮 شروع بازی (چندنفره)</button>
-                <button class="sfg-btn" onclick="openShop()">🛒 فروشگاه اسلحه و لباس</button>
-                <button class="sfg-btn" onclick="openFriends()">👥 دوستان و دعوت</button>
+                <button class="sfg-btn primary" onclick="openTeamSelect()">🎮 شروع بازی آنلاین</button>
+                <button class="sfg-btn" onclick="openShop()">🛒 فروشگاه اسلحه و اسکین</button>
             </div>
+        </div>
+
+        <div class="mode-selector">
+            <button class="mode-btn active" onclick="setMode('solo')">تکی (Solo)</button>
+            <button class="mode-btn" onclick="setMode('2p')">نبرد ۲ نفره</button>
+            <button class="mode-btn" onclick="setMode('4p')">نبرد ۴ نفره</button>
+            <button class="mode-btn" onclick="setMode('8p')">نبرد ۸ نفره</button>
         </div>
     </div>
 
     <!-- صفحه انتخاب تیم -->
     <div id="team-screen" class="screen hidden">
-        <h2>انتخاب تیم (Operation)</h2>
+        <h2>انتخاب تیم عملیاتی</h2>
         <div class="team-selection">
             <div class="team-card terrorist" onclick="startGame('T')">
                 <h3>تروریست‌ها (Terrorists)</h3>
-                <p>مجهز به تجهیزات تهاجمی</p>
+                <p>لباس سرخ / تهاجمی</p>
             </div>
             <div class="team-card counter" onclick="startGame('CT')">
-                <h3>ضدتروریست (Counter-Terrorists)</h3>
-                <p>نیروی ویژه حفاظتی</p>
+                <h3>ضدتروریست (CT)</h3>
+                <p>لباس آبی / دفاعی</p>
             </div>
         </div>
-        <button class="sfg-btn back" onclick="closeTeamSelect()">بازگشت</button>
+        <button class="sfg-btn back" onclick="closeTeamSelect()">بازگشت به لابی</button>
     </div>
 
-    <!-- محیط بازی سه‌بعدی و کنترل‌ها -->
+    <!-- محیط بازی سه‌بعدی -->
     <div id="game-screen" class="screen hidden">
         <div id="canvas-container"></div>
         
-        <!-- رابط کاربری درون بازی (HUD) -->
         <div class="hud-top">
-            <div class="score-board">T: 0 | CT: 0</div>
+            <div class="score-board">تیم T: 0 | تیم CT: 0</div>
             <div class="timer">⏱️ 03:00</div>
-            <button class="sfg-btn small" onclick="openBuyMenu()">🛒 خرید</button>
+            <button class="sfg-btn small" onclick="openBuyMenu()">🛒 بای‌منو</button>
             <button class="sfg-btn small red" onclick="exitGame()">خروج</button>
         </div>
 
-        <!-- کنترل‌های لمسی -->
-        <div id="joystick-zone"></div>
         <div class="touch-controls">
             <button class="control-btn" onclick="playerShoot()">💥 شلیک</button>
             <button class="control-btn" onclick="playerJump()">⬆️ پرش</button>
@@ -72,20 +77,20 @@
         </div>
     </div>
 
-    <!-- مودال فروشگاه اسلحه -->
+    <!-- مودال فروشگاه -->
     <div id="shop-modal" class="modal hidden">
         <div class="modal-content">
-            <h2>فروشگاه تجهیزات SFG2</h2>
+            <h2>فروشگاه تجهیزات</h2>
             <div class="shop-grid">
-                <div class="shop-item" onclick="buyItem('M4A1', 2500)">
-                    <h4>M4A1 تاکتیکی</h4>
+                <div class="shop-item" onclick="buyItem('M4A1 تاکتیکی', 2500)">
+                    <h4>اسلحه M4A1 تاکتیکی</h4>
                     <p>قیمت: ۲۵۰۰ 💰</p>
                 </div>
-                <div class="shop-item" onclick="buyItem('AK47', 2700)">
-                    <h4>AK-47 آتشین</h4>
+                <div class="shop-item" onclick="buyItem('AK-47 آتشین', 2700)">
+                    <h4>اسلحه AK-47 آتشین</h4>
                     <p>قیمت: ۲۷۰۰ 💰</p>
                 </div>
-                <div class="shop-item" onclick="buyItem('AWM', 5000)">
+                <div class="shop-item" onclick="buyItem('اسنایپر AWM', 5000)">
                     <h4>اسنایپر AWM</h4>
                     <p>قیمت: ۵۰۰۰ 💰</p>
                 </div>

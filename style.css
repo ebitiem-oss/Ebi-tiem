@@ -10,8 +10,21 @@ body, html {
     width: 100%;
     height: 100%;
     overflow: hidden;
-    background-color: #111;
+    background-color: #0d0d0d;
     color: #fff;
+}
+
+/* اجبار به نمایش افقی در حالت موبایل */
+@media screen and (orientation: portrait) {
+    body {
+        transform: rotate(90deg);
+        transform-origin: left top;
+        width: 100vh;
+        height: 100vw;
+        position: absolute;
+        top: 100%;
+        left: 0;
+    }
 }
 
 .screen {
@@ -23,8 +36,8 @@ body, html {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding: 15px;
-    background: linear-gradient(135deg, #1b1b1b, #090909);
+    padding: 12px;
+    background: linear-gradient(135deg, #151515, #080808);
 }
 
 .hidden {
@@ -35,21 +48,37 @@ body, html {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: rgba(0,0,0,0.6);
-    padding: 10px 15px;
-    border-radius: 8px;
+    background: rgba(20,20,20,0.8);
+    padding: 8px 15px;
+    border-radius: 6px;
     border: 1px solid #333;
 }
 
 .profile-box, .currency-box {
     display: flex;
     align-items: center;
-    gap: 8px;
-    background: #222;
-    padding: 6px 12px;
-    border-radius: 20px;
+    gap: 6px;
+    background: #1a1a1a;
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 13px;
     font-weight: bold;
     color: #ffcc00;
+}
+
+.top-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.icon-btn {
+    background: #222;
+    color: #fff;
+    border: 1px solid #444;
+    padding: 6px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 12px;
 }
 
 .center-content {
@@ -58,40 +87,38 @@ body, html {
     align-items: center;
     justify-content: center;
     flex: 1;
-    gap: 30px;
+    gap: 15px;
 }
 
 .game-title {
-    font-size: 36px;
+    font-size: 28px;
     color: #ff4500;
-    text-shadow: 0 0 10px rgba(255,69,0,0.5);
+    text-shadow: 0 0 8px rgba(255,69,0,0.5);
     text-align: center;
 }
 
 .game-subtitle {
-    font-size: 14px;
+    font-size: 12px;
     color: #aaa;
     text-align: center;
-    margin-top: 5px;
 }
 
 .menu-buttons {
     display: flex;
     flex-direction: column;
-    gap: 15px;
-    width: 280px;
+    gap: 10px;
+    width: 240px;
 }
 
 .sfg-btn {
-    background: #2c2c2c;
+    background: #222;
     color: white;
     border: 2px solid #444;
-    padding: 12px;
-    border-radius: 6px;
-    font-size: 16px;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 14px;
     font-weight: bold;
     cursor: pointer;
-    transition: 0.2s;
     text-align: center;
 }
 
@@ -100,8 +127,29 @@ body, html {
     border-color: #ff6a33;
 }
 
-.sfg-btn:active {
-    transform: scale(0.95);
+.mode-selector {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    background: rgba(0,0,0,0.5);
+    padding: 8px;
+    border-radius: 6px;
+}
+
+.mode-btn {
+    background: #1b1b1b;
+    color: #aaa;
+    border: 1px solid #333;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.mode-btn.active {
+    background: #ff4500;
+    color: #fff;
+    border-color: #ff6a33;
 }
 
 .team-selection {
@@ -113,11 +161,11 @@ body, html {
 }
 
 .team-card {
-    background: #222;
-    padding: 30px;
-    border-radius: 10px;
+    background: #1a1a1a;
+    padding: 20px;
+    border-radius: 8px;
     text-align: center;
-    width: 250px;
+    width: 220px;
     cursor: pointer;
     border: 2px solid #444;
 }
@@ -128,7 +176,7 @@ body, html {
 .modal {
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.8);
+    background: rgba(0,0,0,0.85);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -136,34 +184,30 @@ body, html {
 }
 
 .modal-content {
-    background: #1a1a1a;
-    padding: 20px;
-    border-radius: 10px;
-    width: 350px;
+    background: #161616;
+    padding: 15px;
+    border-radius: 8px;
+    width: 320px;
     border: 1px solid #444;
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 10px;
 }
 
 .shop-grid {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    max-height: 250px;
+    gap: 8px;
+    max-height: 200px;
     overflow-y: auto;
 }
 
 .shop-item {
-    background: #282828;
-    padding: 10px;
-    border-radius: 5px;
+    background: #222;
+    padding: 8px;
+    border-radius: 4px;
     cursor: pointer;
     border: 1px solid #444;
-}
-
-.shop-item:hover {
-    border-color: #ff4500;
 }
 
 #canvas-container {
@@ -179,23 +223,22 @@ body, html {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    pointer-events: auto;
 }
 
 .touch-controls {
     position: absolute;
-    bottom: 20px; right: 20px;
+    bottom: 15px; right: 15px;
     z-index: 10;
     display: flex;
-    gap: 10px;
+    gap: 8px;
 }
 
 .control-btn {
-    background: rgba(255, 69, 0, 0.7);
+    background: rgba(255, 69, 0, 0.8);
     color: white;
     border: 2px solid #fff;
-    padding: 15px 20px;
+    padding: 12px 16px;
     border-radius: 50%;
     font-weight: bold;
-    font-size: 14px;
+    font-size: 12px;
 }
