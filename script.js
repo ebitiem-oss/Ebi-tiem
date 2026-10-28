@@ -1,42 +1,104 @@
-// Nivra Game Script with Sound Effects and Enhanced Controls
-console.log("Nivra Game Initialized with Sound System");
+console.log("Nivra SFG2 Edition Loaded");
 
-// Simple Web Audio API Sound Generator for Gunshots and Footsteps
-const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+let scene, camera, renderer;
+let coins = 5000;
 
-function playSound(type) {
-    if (audioCtx.state === 'suspended') {
-        audioCtx.resume();
-    }
-    const osc = audioCtx.createOscillator();
-    const gainNode = audioCtx.createGain();
-    osc.connect(gainNode);
-    gainNode.connect(audioCtx.destination);
+function openTeamSelect() {
+    document.getElementById('lobby-screen').classList.add('hidden');
+    document.getElementById('team-screen').classList.remove('hidden');
+}
 
-    if (type === 'shoot') {
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(300, audioCtx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(40, audioCtx.currentTime + 0.15);
-        gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
-        osc.start();
-        osc.stop(audioCtx.currentTime + 0.15);
-    } else if (type === 'click') {
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(600, audioCtx.currentTime);
-        gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
-        osc.start();
-        osc.stop(audioCtx.currentTime + 0.05);
+function closeTeamSelect() {
+    document.getElementById('team-screen').classList.add('hidden');
+    document.getElementById('lobby-screen').classList.remove('hidden');
+}
+
+function openShop() {
+    document.getElementById('shop-modal').classList.remove('hidden');
+}
+
+function closeShop() {
+    document.getElementById('shop-modal').classList.add('hidden');
+}
+
+function buyItem(item, price) {
+    if (coins >= price) {
+        coins -= price;
+        document.getElementById('player-coins').innerText = `💰 ${coins}`;
+        alert(`موفقیت‌آمیز! ${item} خریداری شد.`);
+        closeShop();
+    } else {
+        alert("سکه کافی نداری!");
     }
 }
 
-// Attach click sound to all buttons
-document.querySelectorAll('button, .btn').forEach(btn => {
-    btn.addEventListener('click', () => playSound('click'));
-});
+function startGame(team) {
+    document.getElementById('team-screen').classList.add('hidden');
+    document.getElementById('game-screen').classList.remove('hidden');
+    init3DGame();
+}
 
-// Three.js Game Initialization placeholder
-window.addEventListener('DOMContentLoaded', () => {
-    console.log("DOM fully loaded. Ready for 3D rendering.");
-});
+function exitGame() {
+    document.getElementById('game-screen').classList.add('hidden');
+    document.getElementById('lobby-screen').classList.remove('hidden');
+    if (renderer) {
+        document.getElementById('canvas-container').innerHTML = '';
+    }
+}
+
+function init3DGame() {
+    const container = document.getElementById('canvas-container');
+    scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x222233);
+
+    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    container.appendChild(renderer.domElement);
+
+    // نورپردازی
+    const light = new THREE.DirectionalLight(0xffffff, 1);
+    light.position.set(10, 20, 10);
+    scene.add(light);
+    scene.add(new THREE.AmbientLight(0x555555));
+
+    // زمین بازی
+    const floorGeo = new THREE.PlaneGeometry(50, 50);
+    const floorMat = new THREE.MeshStandardMaterial({ color: 0x444444 });
+    const floor = new THREE.Mesh(floorGeo, floorMat);
+    floor.rotation.x = -Math.PI / 2;
+    scene.add(floor);
+
+    // جعبه‌های مانع (شبیه نقشه‌های کانتر)
+    const boxGeo = new THREE.BoxGeometry(2, 2, 2);
+    const boxMat = new THREE.MeshStandardMaterial({ color: 0x883333 });
+    for (let i = 0; i < 5; i++) {
+        const box = new THREE.Mesh(boxGeo, boxMat);
+        box.position.set((Math.random() - 0.5) * 20, 1, (Math.random() - 0.5) * 20);
+        scene.add(box);
+    }
+
+    camera.position.set(0, 3, 10);
+
+    function animate() {
+        requestAnimationFrame(animate);
+        renderer.render(scene, camera);
+    }
+    animate();
+}
+
+function playerShoot() {
+    alert("بنگ! شلیک شد 💥");
+}
+
+function playerJump() {
+    console.log("پریدن!");
+}
+
+function playerReload() {
+    console.log("خشاب‌گذاری...");
+}
+
+function openProfile() { alert("پروفایل بازیکن نیورا #NEV-7482"); }
+function openSettings() { alert("تنظیمات بازی"); }
+function openFriends() { alert("سیستم دوستان و دعوت"); }

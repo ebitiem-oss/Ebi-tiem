@@ -3,123 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>نیورا - Nivra</title>
+    <title>نیورا - Nivra SFG Edition</title>
     <link rel="stylesheet" href="style.css">
-    <script src="/socket.io/socket.io.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
-    <!-- هدر بالای صفحه: پروفایل، تنظیمات و کد دوستان -->
-    <div id="top-bar">
-        <div id="profile-btn" onclick="openProfile()">
-            <span>👤 سرباز نیورا</span>
-            <span id="user-tag">#NEV-7482</span>
-        </div>
-        <div class="top-actions">
-            <button onclick="openFriends()" class="icon-btn">👥 دوستان</button>
-            <button onclick="openSettings()" class="icon-btn">⚙️</button>
-        </div>
-    </div>
-
-    <!-- لابی اصلی بازی (استایل کال‌آف‌دیوتی / کانتر) -->
-    <div id="lobby-screen">
-        <div class="lobby-sidebar">
-            <h1 class="game-title">NIVRA</h1>
-            <p class="game-subtitle">تاکتیکی آنلاین</p>
-            
-            <div class="menu-box">
-                <button class="menu-btn primary" onclick="startGame(1)">بازی تکی (Solo)</button>
-                <button class="menu-btn" onclick="startGame(2)">نبرد ۲ نفره</button>
-                <button class="menu-btn" onclick="startGame(4)">نبرد ۴ نفره</button>
-                <button class="menu-btn" onclick="startGame(8)">نبرد ۸ نفره</button>
+    <!-- لابی اصلی بازی (سبک SFG2) -->
+    <div id="lobby-screen" class="screen">
+        <div class="top-bar">
+            <div class="profile-box" onclick="openProfile()">
+                <img src="https://api.iconify.design/lucide:user-shield.svg?color=white" class="icon">
+                <span id="player-tag">#NEV-7482</span>
             </div>
+            <div class="currency-box">
+                <span id="player-coins">💰 5000</span>
+            </div>
+            <button class="icon-btn" onclick="openSettings()">⚙️</button>
         </div>
 
-        <div class="lobby-center">
-            <!-- پیش‌نمایش اسلحه و لباس -->
-            <div class="loadout-preview">
-                <div class="preview-card" onclick="openWeapons()">
-                    <h3>اسلحه فعال</h3>
-                    <p id="selected-weapon">M4A1 تاکتیکی</p>
-                </div>
-                <div class="preview-card" onclick="openSkins()">
-                    <h3>لباس / اسکین</h3>
-                    <p id="selected-skin">استتار شبانه</p>
-                </div>
+        <div class="center-content">
+            <div class="logo-area">
+                <h1 class="game-title">NIVRA : SFG 2</h1>
+                <p class="game-subtitle">نسخه تاکتیکی عملیات ویژه</p>
+            </div>
+
+            <div class="menu-buttons">
+                <button class="sfg-btn primary" onclick="openTeamSelect()">🎮 شروع بازی (چندنفره)</button>
+                <button class="sfg-btn" onclick="openShop()">🛒 فروشگاه اسلحه و لباس</button>
+                <button class="sfg-btn" onclick="openFriends()">👥 دوستان و دعوت</button>
             </div>
         </div>
     </div>
 
-    <!-- محیط بازی و HUD -->
-    <div id="game-container" style="display: none;">
+    <!-- صفحه انتخاب تیم -->
+    <div id="team-screen" class="screen hidden">
+        <h2>انتخاب تیم (Operation)</h2>
+        <div class="team-selection">
+            <div class="team-card terrorist" onclick="startGame('T')">
+                <h3>تروریست‌ها (Terrorists)</h3>
+                <p>مجهز به تجهیزات تهاجمی</p>
+            </div>
+            <div class="team-card counter" onclick="startGame('CT')">
+                <h3>ضدتروریست (Counter-Terrorists)</h3>
+                <p>نیروی ویژه حفاظتی</p>
+            </div>
+        </div>
+        <button class="sfg-btn back" onclick="closeTeamSelect()">بازگشت</button>
+    </div>
+
+    <!-- محیط بازی سه‌بعدی و کنترل‌ها -->
+    <div id="game-screen" class="screen hidden">
         <div id="canvas-container"></div>
         
-        <div id="hud">
-            <div class="hud-panel">سلامت: <span id="hp-val">100</span> | امتیاز: <span id="score-val">0</span></div>
-            <div class="hud-panel" id="minimap">مینی‌مپ</div>
+        <!-- رابط کاربری درون بازی (HUD) -->
+        <div class="hud-top">
+            <div class="score-board">T: 0 | CT: 0</div>
+            <div class="timer">⏱️ 03:00</div>
+            <button class="sfg-btn small" onclick="openBuyMenu()">🛒 خرید</button>
+            <button class="sfg-btn small red" onclick="exitGame()">خروج</button>
         </div>
 
-        <div id="joystick-container"></div>
-        <button id="fire-btn">شلیک</button>
-    </div>
-
-    <!-- مدال پروفایل و کد دوستان -->
-    <div id="profile-modal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <h2>پروفایل سرباز</h2>
-            <p>کد اختصاصی شما: <strong id="my-tag-code" style="color: #38bdf8;">#NEV-7482</strong></p>
-            <label>تغییر نام: <input type="text" id="username-input" value="سرباز نیورا"></label>
-            <button onclick="closeProfile()" class="menu-btn">ذخیره</button>
+        <!-- کنترل‌های لمسی -->
+        <div id="joystick-zone"></div>
+        <div class="touch-controls">
+            <button class="control-btn" onclick="playerShoot()">💥 شلیک</button>
+            <button class="control-btn" onclick="playerJump()">⬆️ پرش</button>
+            <button class="control-btn" onclick="playerReload()">🔄 خشاب</button>
         </div>
     </div>
 
-    <!-- مدال لیست دوستان و افزودن -->
-    <div id="friends-modal" class="modal" style="display: none;">
+    <!-- مودال فروشگاه اسلحه -->
+    <div id="shop-modal" class="modal hidden">
         <div class="modal-content">
-            <h2>مدیریت دوستان</h2>
-            <div class="add-friend-box">
-                <input type="text" id="friend-tag-input" placeholder="وارد کردن کد دوست (مثلاً #NEV-1234)">
-                <button onclick="addFriend()" class="menu-btn">افزودن</button>
+            <h2>فروشگاه تجهیزات SFG2</h2>
+            <div class="shop-grid">
+                <div class="shop-item" onclick="buyItem('M4A1', 2500)">
+                    <h4>M4A1 تاکتیکی</h4>
+                    <p>قیمت: ۲۵۰۰ 💰</p>
+                </div>
+                <div class="shop-item" onclick="buyItem('AK47', 2700)">
+                    <h4>AK-47 آتشین</h4>
+                    <p>قیمت: ۲۷۰۰ 💰</p>
+                </div>
+                <div class="shop-item" onclick="buyItem('AWM', 5000)">
+                    <h4>اسنایپر AWM</h4>
+                    <p>قیمت: ۵۰۰۰ 💰</p>
+                </div>
             </div>
-            <div id="friends-list">
-                <p style="color: #94a3b8; font-size: 13px;">هنوز دوستی اضافه نشده است.</p>
-            </div>
-            <button onclick="closeFriends()" class="menu-btn" style="background: #475569;">بستن</button>
-        </div>
-    </div>
-
-    <!-- مدال انتخاب اسلحه -->
-    <div id="weapons-modal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <h2>انتخاب اسلحه</h2>
-            <div class="selection-grid">
-                <button class="sel-item active" onclick="selectWeapon('M4A1 تاکتیکی')">M4A1 تاکتیکی</button>
-                <button class="sel-item" onclick="selectWeapon('AK-47 آتشین')">AK-47 آتشین</button>
-                <button class="sel-item" onclick="selectWeapon('اسنایپر AWM')">اسنایپر AWM</button>
-            </div>
-            <button onclick="closeWeapons()" class="menu-btn">تایید</button>
-        </div>
-    </div>
-
-    <!-- مدال انتخاب لباس -->
-    <div id="skins-modal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <h2>انتخاب لباس و اسکین</h2>
-            <div class="selection-grid">
-                <button class="sel-item active" onclick="selectSkin('استتار شبانه')">استتار شبانه</button>
-                <button class="sel-item" onclick="selectSkin('پوشش بیابانی')">پوشش بیابانی</button>
-                <button class="sel-item" onclick="selectSkin('لباس ویژه سایبر')">لباس ویژه سایبر</button>
-            </div>
-            <button onclick="closeSkins()" class="menu-btn">تایید</button>
-        </div>
-    </div>
-
-    <!-- مدال تنظیمات -->
-    <div id="settings-modal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <h2>تنظیمات</h2>
-            <label>صدا: <input type="range" min="0" max="100" value="80"></label>
-            <button onclick="closeSettings()" class="menu-btn">بازگشت</button>
+            <button class="sfg-btn" onclick="closeShop()">بستن</button>
         </div>
     </div>
 
