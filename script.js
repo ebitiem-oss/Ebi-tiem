@@ -1,7 +1,15 @@
-console.log("Nivra SFG2 Edition Loaded");
+let scene, camera, renderer, player;
+let enemies = [];
+let bullets = [];
+let scoreT = 0, scoreCT = 0;
+let playerTeam = 'CT';
+let playerCoins = 5000;
+let playerWeapon = 'M4A1 تاکتیکی';
 
-let scene, camera, renderer;
-let coins = 5000;
+function setMode(mode) {
+    document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+}
 
 function openTeamSelect() {
     document.getElementById('lobby-screen').classList.add('hidden');
@@ -13,29 +21,11 @@ function closeTeamSelect() {
     document.getElementById('lobby-screen').classList.remove('hidden');
 }
 
-function openShop() {
-    document.getElementById('shop-modal').classList.remove('hidden');
-}
-
-function closeShop() {
-    document.getElementById('shop-modal').classList.add('hidden');
-}
-
-function buyItem(item, price) {
-    if (coins >= price) {
-        coins -= price;
-        document.getElementById('player-coins').innerText = `💰 ${coins}`;
-        alert(`موفقیت‌آمیز! ${item} خریداری شد.`);
-        closeShop();
-    } else {
-        alert("سکه کافی نداری!");
-    }
-}
-
 function startGame(team) {
+    playerTeam = team;
     document.getElementById('team-screen').classList.add('hidden');
     document.getElementById('game-screen').classList.remove('hidden');
-    init3DGame();
+    initThreeJS();
 }
 
 function exitGame() {
@@ -46,59 +36,120 @@ function exitGame() {
     }
 }
 
-function init3DGame() {
+function openShop() { document.getElementById('shop-modal').classList.remove('hidden'); }
+function closeShop() { document.getElementById('shop-modal').classList.add('hidden'); }
+
+function buyItem(name, price) {
+    if (playerCoins >= price) {
+        playerCoins -= price;
+        playerWeapon = name;
+        document.getElementById('player-coins').innerText = '💰 ' + playerCoins;
+        alert(name + ' با موفقیت خریداری شد!');
+        closeShop();
+    } else {
+        alert('سکه کافی نداری!');
+    }
+}
+
+function openBuyMenu() {
+    openShop();
+}
+
+function initThreeJS() {
     const container = document.getElementById('canvas-container');
+    container.innerHTML = '';
+
     scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x222233);
+    scene.background = new THREE.Color(0x111115);
 
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(0, 2, 5);
+
     renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     container.appendChild(renderer.domElement);
 
     // نورپردازی
-    const light = new THREE.DirectionalLight(0xffffff, 1);
-    light.position.set(10, 20, 10);
-    scene.add(light);
-    scene.add(new THREE.AmbientLight(0x555555));
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+    scene.add(ambientLight);
 
-    // زمین بازی
+    const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    dirLight.position.set(10, 20, 10);
+    scene.add(dirLight);
+
+    // زمین (نقشه بازی)
     const floorGeo = new THREE.PlaneGeometry(50, 50);
-    const floorMat = new THREE.MeshStandardMaterial({ color: 0x444444 });
+    const floorMat = new THREE.MeshStandardMaterial({ color: 0x333333, roughness: 0.8 });
     const floor = new THREE.Mesh(floorGeo, floorMat);
     floor.rotation.x = -Math.PI / 2;
     scene.add(floor);
 
-    // جعبه‌های مانع (شبیه نقشه‌های کانتر)
+    // جعبه‌ها و موانع (شبیه Dust2)
     const boxGeo = new THREE.BoxGeometry(2, 2, 2);
-    const boxMat = new THREE.MeshStandardMaterial({ color: 0x883333 });
+    const boxMat = new THREE.MeshStandardMaterial({ color: 0x8b5a2b });
     for (let i = 0; i < 5; i++) {
         const box = new THREE.Mesh(boxGeo, boxMat);
-        box.position.set((Math.random() - 0.5) * 20, 1, (Math.random() - 0.5) * 20);
+        box.position.set((Math.random() - 0.5) * 30, 1, (Math.random() - 0.5) * 30);
         scene.add(box);
     }
 
-    camera.position.set(0, 3, 10);
+    // ساخت بات‌های دشمن
+    createEnemies();
 
-    function animate() {
-        requestAnimationFrame(animate);
-        renderer.render(scene, camera);
-    }
+    // حلقه رندر
     animate();
 }
 
+function createEnemies() {
+    const enemyGeo = new THREE.BoxGeometry(1, 2, 1);
+    const enemyMat = new THREE.MeshStandardMaterial({ color: playerTeam === 'CT' ? 0xff3333 : 0x3388ff });
+    
+    for (let i = 0; i < 4; i++) {
+        const enemy = new THREE.Mesh(enemyGeo, enemyMat);
+        enemy.position.set((Math.random() - 0.5) * 20, 1, -10 - Math.random() * 10);
+        scene.add(enemy);
+        enemies.push(enemy);
+    }
+}
+
 function playerShoot() {
-    alert("بنگ! شلیک شد 💥");
+    // شلیک به جلو
+    if (enemies.length > 0) {
+        const target = enemies[0];
+        scene.remove(target);
+        enemies.shift();
+        scoreCT += 100;
+        document.querySelector('.score-board').innerText = `تیم T: ${scoreT} | تیم CT: ${scoreCT}`;
+        
+        if (enemies.length === 0) {
+            setTimeout(() => {
+                alert('تبریک! برنده این راند شدید!');
+                createEnemies();
+            }, 500);
+        }
+    }
 }
 
 function playerJump() {
-    console.log("پریدن!");
+    if (camera.position.y <= 2) {
+        camera.position.y += 1.5;
+        setTimeout(() => { camera.position.y = 2; }, 300);
+    }
 }
 
 function playerReload() {
-    console.log("خشاب‌گذاری...");
+    alert('خشاب‌گذاری مجدد سلاح ' + playerWeapon + '...');
 }
 
-function openProfile() { alert("پروفایل بازیکن نیورا #NEV-7482"); }
-function openSettings() { alert("تنظیمات بازی"); }
-function openFriends() { alert("سیستم دوستان و دعوت"); }
+function animate() {
+    requestAnimationFrame(animate);
+    renderer.render(scene, camera);
+}
+
+window.addEventListener('resize', () => {
+    if (camera && renderer) {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+});
