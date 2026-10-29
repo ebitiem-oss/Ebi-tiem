@@ -2,139 +2,174 @@
 <html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>نیورا | Nivra Shooter</title>
-    <link rel="stylesheet" href="style.css">
-    <!-- بارگذاری کتابخانه Three.js برای گرافیک سه‌بعدی -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>نیورا - Nivra Game</title>
+    <style>
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            overflow: hidden; background-color: #0e1420;
+            font-family: Tahoma, sans-serif; user-select: none; -webkit-user-select: none;
+        }
+        #canvas-container { width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: 1; }
+        #joystick-base {
+            position: absolute; left: 40px; bottom: 40px; width: 120px; height: 120px;
+            background: rgba(255, 255, 255, 0.1); border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%; z-index: 10; touch-action: none;
+        }
+        #joystick-stick {
+            position: absolute; top: 30px; left: 30px; width: 60px; height: 60px;
+            background: rgba(52, 152, 219, 0.6); border: 2px solid #3498db;
+            border-radius: 50%; pointer-events: none; transition: transform 0.05s linear;
+        }
+        .action-container {
+            position: absolute; right: 40px; bottom: 30px; display: flex; gap: 15px; z-index: 10; align-items: flex-end;
+        }
+        .round-btn {
+            width: 55px; height: 55px; background: rgba(30, 41, 59, 0.8); border: 2px solid #475569;
+            color: white; border-radius: 50%; font-size: 18px; display: flex; align-items: center;
+            justify-content: center; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        .fire-btn {
+            width: 90px; height: 90px; background: rgba(231, 76, 60, 0.85); border: 3px solid #c0392b;
+            color: white; border-radius: 50%; font-size: 20px; font-weight: bold; display: flex;
+            align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 6px 12px rgba(0,0,0,0.4);
+        }
+        #hud-top {
+            position: absolute; top: 15px; left: 20px; right: 20px; display: flex;
+            justify-content: space-between; color: white; z-index: 10; font-weight: bold;
+            text-shadow: 1px 1px 2px black; pointer-events: none;
+        }
+        .hud-panel {
+            background: rgba(15, 23, 42, 0.7); padding: 8px 15px; border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.1); pointer-events: auto;
+        }
+        .top-action-btn {
+            background: #2563eb; color: white; border: none; padding: 6px 12px;
+            border-radius: 6px; cursor: pointer; font-weight: bold; margin-left: 5px;
+        }
+        .modal-panel {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 450px; background: #1e293b; border: 2px solid #334155; border-radius: 12px;
+            padding: 20px; color: white; z-index: 100; display: none; flex-direction: column;
+            gap: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+        .modal-panel input, .modal-panel select {
+            background: #0f172a; border: 1px solid #475569; color: white; padding: 10px;
+            border-radius: 6px; font-size: 14px;
+        }
+        .modal-panel button {
+            background: #2563eb; color: white; border: none; padding: 10px;
+            border-radius: 6px; cursor: pointer; font-weight: bold;
+        }
+        .store-item {
+            background: #0f172a; border: 1px solid #334155; padding: 10px; border-radius: 8px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        #security-lock-screen {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.95); z-index: 1000; display: none;
+            flex-direction: column; align-items: center; justify-content: center;
+            color: #ef4444; font-size: 24px; gap: 15px;
+        }
+    </style>
 </head>
 <body>
 
-    <!-- لابی اصلی بازی -->
-    <div id="lobby-screen" class="screen">
-        <div class="top-bar">
-            <div class="profile-badge">
-                <span class="wolf-icon">🐺</span>
-                <span id="player-name">EbiTiem</span>
-                <span class="tag-code">#NEV-7482</span>
-            </div>
-            <div class="currency-badge" id="player-coins">💰 5000</div>
-            <button class="icon-btn" onclick="openSettings()">⚙️</button>
+    <div id="canvas-container"></div>
+
+    <div id="hud-top">
+        <div class="hud-panel">
+            سکه: <span id="coin-display" style="color: #facc15;">1000</span> | اسلحه: <span id="weapon-indicator" style="color: #38bdf8;">کلاشینکف</span>
         </div>
-
-        <div class="lobby-content">
-            <div class="logo-container">
-                <h1 class="game-title">NIVRA | نیورا</h1>
-                <p class="game-subtitle">بازی تاکتیکی آنلاین</p>
-            </div>
-
-            <div class="mode-selector">
-                <button class="mode-btn active" onclick="setMode('solo')">تک‌نفره (Solo)</button>
-                <button class="mode-btn" onclick="setMode('duo')">۲ نفره</button>
-                <button class="mode-btn" onclick="setMode('squad4')">۴ نفره</button>
-                <button class="mode-btn" onclick="setMode('squad8')">۸ نفره</button>
-            </div>
-
-            <div class="action-buttons">
-                <button class="btn-primary" onclick="openTeamSelect()">شروع بازی (Matchmaking)</button>
-                <button class="btn-secondary" onclick="openShop()">فروشگاه سلاح و اسکین</button>
-            </div>
+        <div class="hud-panel">
+            حالت: <span id="gamemode-display" style="color: #4ade80;">دث‌مچ (۸ نفره)</span>
+        </div>
+        <div class="hud-panel">
+            <button class="top-action-btn" id="btn-open-store" style="background: #eab308;">🛒 فروشگاه</button>
+            <button class="top-action-btn" id="btn-open-modes">🎮 لابی و حالت‌ها</button>
+            <button class="top-action-btn" id="btn-open-messenger">💬 پیام‌رسان</button>
+            <button class="top-action-btn" id="btn-open-settings">⚙️ تنظیمات</button>
         </div>
     </div>
 
-    <!-- صفحه انتخاب تیم (Counter-Terrorist vs Terrorist) -->
-    <div id="team-screen" class="screen hidden">
-        <div class="team-container">
-            <h2>انتخاب تیم</h2>
-            <div class="team-cards">
-                <div class="team-card ct" onclick="startGame('CT')">
-                    <h3>نیروهای ویژه (CT)</h3>
-                    <p>پاسبانان قانون و امنیت</p>
-                </div>
-                <div class="team-card t" onclick="startGame('T')">
-                    <h3>تروریست‌ها (T)</h3>
-                    <p>نیروی مهاجم و تهاجمی</p>
-                </div>
-            </div>
-            <button class="btn-back" onclick="closeTeamSelect()">بازگشت</button>
-        </div>
+    <div id="joystick-base">
+        <div id="joystick-stick"></div>
     </div>
 
-    <!-- صفحه بازی سه‌بعدی -->
-    <div id="game-screen" class="screen hidden">
-        <div id="canvas-container"></div>
-        
-        <!-- هداپ (HUD) داخل بازی -->
-        <div class="game-hud">
-            <div class="score-board">تیم T: 0 | تیم CT: 0</div>
-            <button class="pause-btn" onclick="openSettings()">⚙️</button>
-        </div>
-
-        <!-- کنترل‌های لمسی موبایل (جوی‌استیک و دکمه‌های شلیک) -->
-        <div class="mobile-controls">
-            <div class="joystick-area" id="joystick-zone">
-                <div class="dpad">
-                    <button class="d-btn" ontouchstart="moveForward=true" ontouchend="moveForward=false">⬆️</button>
-                    <div class="d-row">
-                        <button class="d-btn" ontouchstart="moveLeft=true" ontouchend="moveLeft=false">⬅️</button>
-                        <button class="d-btn" ontouchstart="moveRight=true" ontouchend="moveRight=false">➡️</button>
-                    </div>
-                    <button class="d-btn" ontouchstart="moveBackward=true" ontouchend="moveBackward=false">⬇️</button>
-                </div>
-            </div>
-
-            <div class="action-area">
-                <button class="action-btn" onclick="playerJump()">پرش 🦘</button>
-                <button class="action-btn" onclick="playerReload()">خشاب 🔄</button>
-                <!-- دکمه شلیک پیشرفته: تپ برای تک‌تیر، نگه داشتن برای رگبار -->
-                <button class="fire-btn" ontouchstart="startShooting()" ontouchend="stopShooting()" onmousedown="startShooting()" onmouseup="stopShooting()"> آتش 🔥</button>
-            </div>
-        </div>
+    <div class="action-container">
+        <div class="round-btn" id="btn-knife">🔪</div>
+        <div class="round-btn" id="btn-switch">🔫</div>
+        <div class="round-btn" id="btn-reload">🔄</div>
+        <div class="fire-btn" id="btn-fire">شلیک</div>
     </div>
 
-    <!-- مدال تنظیمات (صدا و چیدمان دکمه‌ها) -->
-    <div id="settings-modal" class="modal hidden">
-        <div class="modal-content">
-            <h2>⚙️ تنظیمات بازی</h2>
-            <div class="setting-item">
-                <label>صدای بازی (SFX):</label>
-                <input type="range" min="0" max="100" value="80" onchange="updateVolume(this.value)">
-            </div>
-            <div class="setting-item">
-                <label>حساسیت چرخش دوربین:</label>
-                <input type="range" min="1" max="10" value="5" onchange="updateSensitivity(this.value)">
-            </div>
-            <div class="setting-item">
-                <label>چیدمان دکمه‌ها (HUD Layout):</label>
-                <button class="btn-small" onclick="alert('حالت چیدمان آزاد فعال شد. دکمه‌ها را جابجا کنید.')">ویرایش چیدمان</button>
-            </div>
-            <button class="btn-primary" onclick="closeSettings()">ذخیره و بازگشت</button>
-            <button class="btn-danger" onclick="exitGame()">خروج از مسابقه</button>
+    <div class="modal-panel" id="store-panel">
+        <h3>فروشگاه و خرید اشتراک (Store)</h3>
+        <div class="store-item">
+            <span>🌟 اشتراک VIP ماهانه (نامحدود + نشان ویژه)</span>
+            <button onclick="buyItem('vip')" style="background: #eab308; color: black;">خرید (۵۰۰ سکه)</button>
         </div>
+        <div class="store-item">
+            <span>🔥 اسلحه لیزری پیشرفته (دمیج بالا)</span>
+            <button onclick="buyItem('laser_rifle')">خرید (۲۵۰ سکه)</button>
+        </div>
+        <button style="background: #64748b; margin-top: 10px;" id="btn-close-store">بستن</button>
     </div>
 
-    <!-- فروشگاه اسلحه -->
-    <div id="shop-modal" class="modal hidden">
-        <div class="modal-content">
-            <h2>🛒 فروشگاه تجهیزات</h2>
-            <div class="shop-items">
-                <div class="shop-item">
-                    <span>M4A1 تاکتیکی</span>
-                    <button onclick="buyItem('M4A1 تاکتیکی', 1500)">خرید (1500 💰)</button>
-                </div>
-                <div class="shop-item">
-                    <span>AK-47 آتشین</span>
-                    <button onclick="buyItem('AK-47 آتشین', 2000)">خرید (2000 💰)</button>
-                </div>
-                <div class="shop-item">
-                    <span>AWM اسنایپر</span>
-                    <button onclick="buyItem('AWM اسنایپر', 3500)">خرید (3500 💰)</button>
-                </div>
-            </div>
-            <button class="btn-primary" onclick="closeShop()">بستن</button>
-        </div>
+    <div class="modal-panel" id="gamemodes-panel">
+        <h3>تنظیمات لابی و مسابقه</h3>
+        <label>حالت بازی:</label>
+        <select id="select-game-mode">
+            <option value="deathmatch">دث‌مچ آزاد (Deathmatch)</option>
+            <option value="bomb">بمب‌گذاری (Bomb Defusal)</option>
+            <option value="gun game">گان گیم (Gun Game)</option>
+        </select>
+        <label>ظرفیت اتاق (لابی):</label>
+        <select id="select-max-players">
+            <option value="1">تکی (1 نفره تمرینی)</option>
+            <option value="4">تیمی ۴ نفره</option>
+            <option value="8" selected>مسابقه بزرگ ۸ نفره</option>
+        </select>
+        <button id="btn-apply-gamemode">اعمال تنظیمات لابی</button>
+        <button style="background: #64748b;" id="btn-close-modes">بستن</button>
     </div>
 
+    <div class="modal-panel" id="profile-panel">
+        <h3>تنظیمات پروفایل و امنیتی</h3>
+        <label>نام کاربری:</label>
+        <input type="text" id="input-username" placeholder="نام شما">
+        <label>آیدی اختصاصی (رایگان):</label>
+        <input type="text" id="input-userid" placeholder="@ebi_id">
+        <label>رمز عبور:</label>
+        <input type="password" id="input-password" placeholder="رمز عبور">
+        <button id="btn-save-profile">ذخیره تغییرات</button>
+        <button style="background: #64748b;" id="btn-close-profile">بستن</button>
+    </div>
+
+    <div class="modal-panel" id="messenger-panel" style="width: 500px; height: 350px;">
+        <h3>پیام‌رسان امن نیورا (ضد اسکرین‌شات)</h3>
+        <div style="display: flex; gap: 5px;">
+            <input type="text" id="input-friend-id" placeholder="آیدی دوست مثلاً @ebi_123" style="flex: 1;">
+            <button id="btn-add-friend">اتصال به دوست</button>
+        </div>
+        <div id="chat-messages-box" style="flex: 1; background: #0f172a; border: 1px solid #334155; border-radius: 6px; padding: 10px; overflow-y: auto; font-size: 13px;">
+            <div style="color: #94a3b8;">لطفاً با وارد کردن آیدی دوست خود، چت امن پی‌وی را آغاز کنید.</div>
+        </div>
+        <div style="display: flex; gap: 5px;">
+            <input type="text" id="input-chat-msg" placeholder="پیام امن..." style="flex: 1;">
+            <button id="btn-send-msg">ارسال</button>
+        </div>
+        <button style="background: #64748b; margin-top: 5px;" id="btn-close-messenger">بستن</button>
+    </div>
+
+    <div id="security-lock-screen">
+        <div>🔒 حساب کاربری به دلیل ۳ بار ورود رمز اشتباه قفل شد.</div>
+        <div id="countdown-timer" style="font-size: 40px; font-weight: bold; color: white;">30:00</div>
+        <div style="font-size: 16px; color: #94a3b8;">لطفاً تا پایان زمان معکوس صبر کنید.</div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
