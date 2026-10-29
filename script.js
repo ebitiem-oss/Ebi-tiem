@@ -618,3 +618,38 @@ if (socket) {
     document.getElementById('gamemode-display').innerText = `${modeText} (${capacityText})`;
   });
 }
+
+// افزودن المان‌های گرافیکی پیشرفته به محیط بازی
+function enhanceEnvironment() {
+    if (!scene) return;
+
+    // ایجاد نورپردازی تاکتیکی محیطی
+    const ambientLight = new THREE.AmbientLight(0x1e293b, 1.2);
+    scene.add(ambientLight);
+
+    const dirLight = new THREE.DirectionalLight(0x38bdf8, 1.5);
+    dirLight.position.set(20, 40, 20);
+    scene.add(dirLight);
+
+    // ساخت موانع بتنی و جعبه‌های سنگر در نقشه
+    const boxGeo = new THREE.BoxGeometry(3, 3, 3);
+    const boxMat = new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.7 });
+
+    const positions = [
+        { x: 8, z: 8 }, { x: -8, z: 12 }, { x: 12, z: -8 },
+        { x: -12, z: -10 }, { x: 0, z: 15 }, { x: -15, z: 0 }
+    ];
+
+    positions.forEach(pos => {
+        const obstacle = new THREE.Mesh(boxGeo, boxMat);
+        obstacle.position.set(pos.x, 1.5, pos.z);
+        obstacle.castShadow = true;
+        obstacle.receiveShadow = true;
+        scene.add(obstacle);
+    });
+}
+
+// اجرای بهبود گرافیکی پس از لود صفحه
+window.addEventListener('load', () => {
+    setTimeout(enhanceEnvironment, 500);
+});
