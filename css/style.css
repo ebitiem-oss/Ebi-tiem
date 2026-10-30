@@ -1,0 +1,252 @@
+:root{
+  --bg:#05080f;
+  --panel:#0b1324;
+  --panel2:#0c1b2f;
+  --text:#e8f2ff;
+  --muted:#92a8c4;
+  --c1:#00e5ff;
+  --c2:#00ff9d;
+  --line:rgba(255,255,255,.08);
+  --shadow: 0 18px 55px rgba(0,0,0,.55);
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  background: radial-gradient(1200px 900px at 60% -10%, rgba(0,229,255,.20), transparent 55%),
+              radial-gradient(900px 700px at 20% 30%, rgba(0,255,157,.10), transparent 60%),
+              var(--bg);
+  color:var(--text);
+}
+
+.app{
+  min-height:100vh;
+  padding-bottom:78px; /* space for bottom nav */
+}
+
+.topbar{
+  position:sticky; top:0;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:14px 14px;
+  backdrop-filter: blur(10px);
+  background: linear-gradient(to bottom, rgba(5,8,15,.85), rgba(5,8,15,.25));
+  border-bottom:1px solid var(--line);
+  z-index:10;
+}
+
+.brand{display:flex; align-items:center; gap:10px}
+.brand .dot{
+  width:10px; height:10px; border-radius:50%;
+  background: linear-gradient(135deg, var(--c1), var(--c2));
+  box-shadow: 0 0 18px rgba(0,229,255,.45), 0 0 22px rgba(0,255,157,.25);
+}
+.brand .title{font-weight:800; letter-spacing:.5px}
+
+.icon-btn{
+  border:1px solid var(--line);
+  background: rgba(11,19,36,.6);
+  color: var(--text);
+  border-radius:12px;
+  padding:8px 10px;
+  box-shadow: var(--shadow);
+}
+
+.screen{padding:14px}
+.page{display:none}
+.page.active{display:block}
+
+.h2{margin:6px 0 10px 0; font-size:20px}
+.card{
+  border:1px solid var(--line);
+  background: linear-gradient(180deg, rgba(11,19,36,.85), rgba(11,19,36,.55));
+  border-radius:16px;
+  padding:14px;
+  box-shadow: var(--shadow);
+}
+.card.neon{
+  border-color: rgba(0,229,255,.22);
+  box-shadow: 0 0 0 1px rgba(0,255,157,.10) inset, var(--shadow);
+}
+.card-title{font-weight:800; margin-bottom:6px}
+.card-sub{color:var(--muted); font-size:13px; line-height:1.6}
+
+.page-head{margin-bottom:10px}
+.hint{color:var(--muted); font-size:12px}
+
+.grid{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap:12px;
+  margin: 12px 0;
+}
+
+.game-card{
+  text-align:right;
+  border-radius:18px;
+  border:1px solid rgba(0,229,255,.16);
+  background: linear-gradient(135deg, rgba(0,229,255,.13), rgba(0,255,157,.06));
+  padding:16px 14px;
+  color:var(--text);
+  box-shadow: 0 12px 40px rgba(0,0,0,.5);
+}
+.gc-title{font-weight:900; font-size:18px; margin-bottom:6px}
+.gc-sub{color:var(--muted); font-size:12px}
+
+.bottom-nav{
+  position:fixed;
+  left:0; right:0; bottom:0;
+  display:grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap:8px;
+  padding:10px 10px calc(10px + env(safe-area-inset-bottom));
+  background: rgba(5,8,15,.92);
+  border-top:1px solid var(--line);
+  backdrop-filter: blur(10px);
+}
+.nav-item{
+  border:1px solid var(--line);
+  background: rgba(11,19,36,.7);
+  color:var(--muted);
+  padding:10px 6px;
+  border-radius:16px;
+  font-weight:700;
+}
+.nav-item.active{
+  color:var(--text);
+  border-color: rgba(0,229,255,.25);
+  background: linear-gradient(135deg, rgba(0,229,255,.25), rgba(0,255,157,.12));
+  box-shadow: 0 0 20px rgba(0,229,255,.15);
+}
+
+/* community layout */
+.community-wrap{
+  display:grid;
+  grid-template-columns: 1fr;
+  gap:12px;
+}
+@media(min-width:900px){
+  .community-wrap{grid-template-columns: 1.3fr .7fr;}
+}
+
+.chatlist, .profile-panel{
+  border:1px solid var(--line);
+  background: linear-gradient(180deg, rgba(11,19,36,.88), rgba(11,19,36,.55));
+  border-radius:18px;
+  box-shadow: var(--shadow);
+}
+
+.chatlist{padding:12px}
+.chatlist-top{
+  display:flex; align-items:center; justify-content:space-between;
+  gap:10px; padding:6px 4px 10px;
+}
+.chatlist-title{font-size:20px; font-weight:900}
+.chatlist-actions{display:flex; gap:8px}
+
+.searchbar{
+  display:flex; gap:8px; align-items:center;
+  border:1px solid rgba(0,229,255,.18);
+  background: rgba(12,27,47,.6);
+  border-radius:16px;
+  padding:10px;
+  margin-bottom:10px;
+}
+.searchbar .tag{
+  font-weight:900;
+  color: var(--c1);
+  border:1px solid rgba(0,229,255,.25);
+  border-radius:12px;
+  padding:6px 8px;
+}
+.searchbar input{
+  flex:1;
+  border:none; outline:none;
+  background:transparent;
+  color:var(--text);
+  font-size:14px;
+}
+.pill{
+  border:none;
+  border-radius:14px;
+  padding:8px 10px;
+  color:#001018;
+  background: linear-gradient(135deg, var(--c1), var(--c2));
+  font-weight:900;
+}
+
+.chats{display:flex; flex-direction:column; gap:10px}
+.chat-item{
+  width:100%;
+  text-align:right;
+  display:grid;
+  grid-template-columns: 42px 1fr 18px;
+  gap:10px;
+  align-items:center;
+  border-radius:16px;
+  border:1px solid rgba(255,255,255,.06);
+  background: rgba(12,27,47,.45);
+  padding:10px;
+  color:var(--text);
+}
+.chat-item.active{
+  border-color: rgba(0,229,255,.25);
+  box-shadow: 0 0 0 1px rgba(0,255,157,.10) inset;
+}
+.chat-item.secure{
+  border-color: rgba(0,255,157,.22);
+}
+.avatar{
+  width:42px; height:42px; border-radius:14px;
+  display:grid; place-items:center;
+  background: radial-gradient(circle at 30% 30%, rgba(0,229,255,.28), rgba(0,255,157,.10));
+  border:1px solid rgba(0,229,255,.16);
+  font-weight:900;
+}
+.chat-meta .row{
+  display:flex; justify-content:space-between; align-items:center;
+  gap:10px;
+}
+.name{font-weight:900}
+.time{color:var(--muted); font-size:12px}
+.sub{color: rgba(0,255,157,.9); font-size:12px; margin-top:2px}
+.msg{color:var(--muted); font-size:12px; margin-top:3px}
+.dot-online{
+  width:10px; height:10px; border-radius:50%;
+  background: var(--c1);
+  box-shadow: 0 0 14px rgba(0,229,255,.45);
+}
+.lock{font-size:14px; opacity:.9}
+
+.profile-panel{
+  padding:12px;
+}
+.pp-head{
+  border-radius:16px;
+  padding:12px;
+  border:1px solid rgba(0,229,255,.14);
+  background: rgba(12,27,47,.55);
+  margin-bottom:10px;
+}
+.pp-name{font-weight:1000; font-size:18px}
+.pp-status{color: rgba(0,255,157,.9); margin-top:4px; font-size:12px}
+.pp-box{
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:16px;
+  padding:12px;
+  background: rgba(12,27,47,.35);
+  margin:10px 0;
+}
+.pp-label{color:var(--muted); font-size:12px}
+.pp-value{font-weight:900; margin-top:6px}
+.pp-btn{
+  width:100%;
+  margin-top:10px;
+  border-radius:16px;
+  border:1px solid rgba(0,229,255,.16);
+  background: rgba(12,27,47,.55);
+  color: var(--text);
+  padding:12px;
+  font-weight:900;
+}

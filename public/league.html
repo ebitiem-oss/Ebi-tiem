@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نیورا - لیگ هفتگی</title>
+    <style>
+        :root { --bg:#0b0f19; --card:#131c31; --blue:#00d2ff; --glow:rgba(0,210,255,.4); }
+        * { box-sizing: border-box; }
+        body { background:var(--bg); color:#fff; font-family:Tahoma; margin:0; padding:10px 10px 80px; display:flex; flex-direction:column; align-items:center; }
+        h2 { color:var(--blue); text-shadow:0 0 10px var(--glow); }
+        .prize { background:linear-gradient(135deg,#1a2a4a,#0d1b33); border:1px solid var(--blue); border-radius:14px; padding:14px; width:100%; max-width:450px; text-align:center; margin-bottom:12px; }
+        .prize b { color:gold; font-size:18px; }
+        .timer { color:#ffb84d; font-size:13px; margin-top:6px; }
+        .register-btn { background:var(--blue); color:#001; border:none; border-radius:10px; padding:12px 30px; font-weight:bold; font-size:15px; cursor:pointer; width:100%; max-width:450px; box-shadow:0 0 12px var(--glow); }
+        .game-select { width:100%; max-width:450px; margin:10px 0; display:none; }
+        .game-select select { width:100%; padding:10px; border-radius:10px; border:1px solid var(--blue); background:var(--card); color:#fff; font-size:14px; }
+        table { width:100%; max-width:450px; border-collapse:collapse; margin-top:14px; background:var(--card); border-radius:12px; overflow:hidden; }
+        th, td { padding:9px 6px; text-align:center; font-size:12px; border-bottom:1px solid #223; }
+        th { background:#0f1b33; color:var(--blue); }
+        tr.me td { background:#12305a; color:var(--blue); font-weight:bold; }
+        .r1 { color:gold; } .r2 { color:silver; } .r3 { color:#cd7f32; }
+        .nav-bar { position:fixed; bottom:0; left:0; right:0; background:#0f172a; border-top:1px solid var(--blue); display:flex; justify-content:space-around; padding:10px 0; }
+        .nav-item { color:#aaa; font-size:12px; background:none; border:none; text-decoration:none; }
+        .nav-item.active { color:var(--blue); }
+        #toast { position:fixed; top:15px; left:50%; transform:translateX(-50%); background:var(--blue); color:#001; padding:10px 20px; border-radius:10px; font-size:13px; display:none; z-index:999; }
+    </style>
+</head>
+<body>
+    <div id="toast"></div>
+    <h2>🏆 لیگ هفتگی نیورا</h2>
+
+    <div class="prize">
+        جایزه نفر اول: <b>۵۰۰,۰۰۰ تومان</b><br>
+        <span style="font-size:12px;color:#8ab;">هفته‌ای ۵۰ نفر | رتبه بر اساس امتیاز کل بازی‌ها</span>
+        <div class="timer" id="weekTimer">⏳ پایان هفته: ...</div>
+    </div>
+
+    <button class="register-btn" id="regBtn" onclick="registerLeague()">ثبت‌نام در لیگ (۵۰,۰۰۰ تومان)</button>
+
+    <div class="game-select" id="gameSelect">
+        <select id="chosenGame">
+            <option value="hokm">حکم</option>
+            <option value="shlem">شلم</option>
+            <option value="etlo">اتلو</option>
+            <option value="football">فوتبال</option>
+            <option value="checkers">چکرز</option>
+            <option value="nard">تخته نرد</option>
+        </select>
+        <button class="register-btn" style="margin-top:8px" onclick="confirmRegister()">تأیید و شروع</button>
+    </div>
+
+    <table>
+        <thead><tr><th>رتبه</th><th>بازیکن</th><th>امتیاز</th><th>بازی</th></tr></thead>
+        <tbody id="leagueTable"></tbody>
+    </table>
+
+    <div class="nav-bar">
+        <button class="nav-item" onclick="location.href='index.html'">🏠 خانه</button>
+        <button class="nav-item active" onclick="location.href='league.html'">🏆 مسابقات</button>
+        <button class="nav-item" onclick="location.href='wallet.html'">💰 کیف پول</button>
+        <button class="nav-item" onclick="location.href='settings.html'">⚙️ تنظیمات</button>
+    </div>
+
+<script>
+// ---------- وضعیت لیگ ----------
+const WEEK_MS = 7*24*60*60*1000;
+function getLeague(){
+    let L = JSON.parse(localStorage.getItem('nivra_league')||'null');
+    const now = Date.now();
+    if(!L || now > L.endTime){
+        // شروع هفته جدید + تولید ۴۹ حریف مجازی
+        const names = ['آریا','سام','رضا','میلاد','کیان','پارسا','بهرام','شهاب','نیما','امیر','حسام','کوروش','بابک','فرزاد','سعید','یاسین','آرمین','وحید','رامین','سینا','فرهاد','مهدی','هومن','بهنام','کاوه','داریوش','علی','ایمان','پویا','شهروز','مانی','رضوان','اردلان','سیامک','جمشید','بامداد','تورج','خسرو','نعمت','جهان','افشین','بردیا','سروش','هیربد','آبتین','بختیار','سیاوش','رادمهر','کیارش'];
+        const bots = names.map(n=>({name:n, score:Math.floor(Math.random()*180), games:Math.floor(Math.random()*20)+3}));
+        L = {endTime: now+WEEK_MS, registered:false, game:null, players:bots};
+        localStorage.setItem('nivra_league', JSON.stringify(L));
+    }
+    return L;
+}
+function saveLeague(L){ localStorage.setItem('nivra_league', JSON.stringify(L)); }
+
+// ---------- نمایش جدول ----------
+function renderTable(){
+    const L = getLeague();
+    const me = localStorage.getItem('nivra_id') || 'کاربر نیورا';
+    const myScore = Number(localStorage.getItem('nivra_league_score')||0);
+    const list = [...L.players, {name:me, score:myScore, games:Number(localStorage.getItem('nivra_league_games')||0), isMe:true}];
+    list.sort((a,b)=>b.score-a.score);
+    document.getElementById('leagueTable').innerHTML = list.map((p,i)=>
+        `<tr class="${p.isMe?'me':''}"><td class="${i===0?'r1':i===1?'r2':i===2?'r3':''}">${i+1}</td><td>${p.name}</td><td>${p.score}</td><td>${p.games}</td></tr>`
+    ).join('');
+    document.getElementById('regBtn').style.display = L.registered ? 'none' : 'block';
+}
+
+// ---------- ثبت‌نام ----------
+function registerLeague(){
+    const bal = Number(localStorage.getItem('nivra_wallet')||0);
+    if(bal < 50000){ toast('موجودی کیف پول کافی نیست! ابتدا شارژ کنید 💰'); return; }
+    localStorage.setItem('nivra_wallet', bal-50000);
+    document.getElementById('gameSelect').style.display='block';
+    document.getElementById('regBtn').style.display='none';
+    toast('۵۰,۰۰۰ تومان کسر شد. بازی خود را انتخاب کنید 🎮');
+}
+function confirmRegister(){
+    const L = getLeague();
+    L.registered = true; L.game = document.getElementById('chosenGame').value;
+    saveLeague(L);
+    toast('ثبت‌نام انجام شد! امتیازهایتان اینجا رتبه می‌گیرد 🏆');
+    renderTable();
+}
+
+// ---------- تایمر هفته ----------
+function tick(){
+    const L = getLeague();
+    const left = L.endTime - Date.now();
+    const d=Math.floor(left/86400000), h=Math.floor(left%86400000/3600000), m=Math.floor(left%3600000/60000), s=Math.floor(left%60000/1000);
+    document.getElementById('weekTimer').innerText = `⏳ پایان هفته: ${d} روز و ${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+}
+function toast(msg){ const t=document.getElementById('toast'); t.innerText=msg; t.style.display='block'; setTimeout(()=>t.style.display='none',2500); }
+
+setInterval(tick,1000); tick(); renderTable();
+</script>
+</body>
+</html>

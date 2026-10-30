@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نیورا - انتخاب آیدی</title>
+    <style>
+        body { background:#0b0f19; color:#fff; font-family:Tahoma; display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100vh; margin:0; }
+        .box { background:#131c31; border:1px solid #00d2ff; border-radius:14px; padding:25px; width:90%; max-width:380px; text-align:center; }
+        h2 { color:#00d2ff; }
+        input { width:100%; padding:12px; border-radius:10px; border:1px solid #00d2ff; background:#0d1b33; color:#fff; font-size:15px; text-align:center; margin:10px 0; }
+        button { background:#00d2ff; color:#001; border:none; border-radius:10px; padding:12px 25px; font-weight:bold; font-size:14px; cursor:pointer; width:100%; }
+        .note { font-size:11px; color:#89a; margin-top:10px; line-height:1.8; }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h2 id="title">🖋 انتخاب آیدی شما</h2>
+        <input id="userId" placeholder="مثلاً: Ebi_Tiem" maxlength="20">
+        <button onclick="saveId()">ذخیره و ورود</button>
+        <div class="note" id="note">
+            ⚠️ آیدی فقط <b>یک بار</b> قابل انتخاب است.<br>
+            برای تغییر مجدد آیدی، به اشتراک <b>پریمیوم 🌟</b> نیاز دارید.
+        </div>
+    </div>
+<script>
+// اگر قبلاً آیدی ثبت شده، مستقیم برو خانه
+if(localStorage.getItem('nivra_id') && localStorage.getItem('nivra_entry_done')==='1'){
+    location.href='index.html';
+}
+function saveId(){
+    const v = document.getElementById('userId').value.trim();
+    if(v.length < 3){ alert('آیدی حداقل ۳ حرف باشد'); return; }
+    if(localStorage.getItem('nivra_id')){ alert('آیدی قبلاً ثبت شده و قابل تغییر نیست (مگر با پریمیوم 🌟)'); return; }
+    localStorage.setItem('nivra_id', v);
+    localStorage.setItem('nivra_entry_done','1');
+    location.href='index.html';
+}
+</script>
+</body>
+</html>

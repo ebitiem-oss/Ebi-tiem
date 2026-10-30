@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نیورا - تنظیمات</title>
+    <style>
+        :root { --bg:#0b0f19; --card:#131c31; --blue:#00d2ff; --glow:rgba(0,210,255,.4); --danger:#ff4d4d; }
+        body { background:var(--bg); color:#fff; font-family:Tahoma; margin:0; padding:10px 10px 80px; display:flex; flex-direction:column; align-items:center; }
+        h2 { color:var(--blue); text-shadow:0 0 10px var(--glow); }
+        .box { background:var(--card); border:1px solid var(--blue); border-radius:14px; padding:15px; width:100%; max-width:450px; margin-bottom:12px; box-sizing:border-box; }
+        .title { font-size:14px; font-weight:bold; color:var(--blue); margin-bottom:8px; }
+        .row { display:flex; justify-content:space-between; align-items:center; font-size:13px; margin:10px 0; }
+        input { width:60%; padding:8px; border-radius:8px; border:1px solid var(--blue); background:#0d1b33; color:#fff; text-align:center; }
+        .btn { background:var(--blue); color:#001; border:none; border-radius:8px; padding:8px 15px; font-weight:bold; cursor:pointer; }
+        .danger-btn { background:var(--danger); color:#fff; border:none; border-radius:10px; padding:12px; width:100%; font-weight:bold; cursor:pointer; font-size:14px; }
+        .link-box { word-break:break-all; background:#0d1b33; padding:8px; border-radius:6px; font-size:12px; color:#00d2ff; margin-top:5px; border:1px dashed var(--blue); }
+        .nav-bar { position:fixed; bottom:0; left:0; right:0; background:#0f172a; border-top:1px solid var(--blue); display:flex; justify-content:space-around; padding:10px 0; }
+        .nav-item { color:#aaa; font-size:12px; background:none; border:none; text-decoration:none; cursor:pointer; }
+        .nav-item.active { color:var(--blue); }
+    </style>
+</head>
+<body>
+
+    <h2>⚙️ تنظیمات نیورا</h2>
+
+    <!-- اطلاعات حساب و تغییر آیدی -->
+    <div class="box">
+        <div class="title">👤 حساب کاربری</div>
+        <div class="row">
+            <span>آیدی فعلی:</span>
+            <span id="currentId" style="color:var(--blue); font-weight:bold;">...</span>
+        </div>
+        <div class="row" style="flex-direction:column; align-items:stretch; gap:8px; margin-top:12px;">
+            <input type="text" id="newIdInput" placeholder="آیدی جدید...">
+            <button class="btn" onclick="changeId()">تغییر آیدی (نیاز به پریمیوم 🌟 یا اولین بار)</button>
+        </div>
+    </div>
+
+    <!-- لینک عمومی پروژه -->
+    <div class="box">
+        <div class="title">🌐 لینک عمومی پروژه (گیت‌هاب)</div>
+        <div style="font-size:12px; color:#bbb;">برای دسترسی به نیورا روی دستگاه‌های دیگر:</div>
+        <div class="link-box" id="pubLink">https://ebitiem-oss.github.io/Ebi-tiem/</div>
+        <button class="btn" style="width:100%; margin-top:10px;" onclick="copyLink()">📋 کپی لینک عمومی</button>
+    </div>
+
+    <!-- خروج از حساب -->
+    <div class="box" style="border-color:var(--danger);">
+        <div class="title" style="color:var(--danger);">🚪 مدیریت نشست</div>
+        <button class="danger-btn" onclick="logout()">خروج از حساب (پاکسازی نشست)</button>
+    </div>
+
+    <div class="nav-bar">
+        <button class="nav-item" onclick="location.href='index.html'">🏠 خانه</button>
+        <button class="nav-item" onclick="location.href='league.html'">🏆 مسابقات</button>
+        <button class="nav-item" onclick="location.href='wallet.html'">💰 کیف پول</button>
+        <button class="nav-item active" onclick="location.href='settings.html'">⚙️ تنظیمات</button>
+    </div>
+
+<script>
+    // نمایش آیدی فعلی
+    const id = localStorage.getItem('nivra_id') || 'تعیین نشده';
+    document.getElementById('currentId').innerText = id;
+
+    function changeId(){
+        const newId = document.getElementById('newIdInput').value.trim();
+        if(newId.length < 3){ alert('آیدی باید حداقل ۳ حرف باشد'); return; }
+        
+        // بررسی اشتراک پریمیوم یا وضعیت تغییر اول
+        const isPremium = localStorage.getItem('nivra_premium') === 'true';
+        const hasChangedBefore = localStorage.getItem('nivra_id_changed') === 'true';
+
+        if(hasChangedBefore && !isPremium){
+            alert('⚠️ شما قبلاً آیدی خود را تغییر داده‌اید! برای تغییرات بعدی نیاز به اشتراک پریمیوم 🌟 دارید.');
+            return;
+        }
+
+        localStorage.setItem('nivra_id', newId);
+        localStorage.setItem('nivra_id_changed', 'true');
+        document.getElementById('currentId').innerText = newId;
+        alert('آیدی با موفقیت تغییر کرد ✅');
+    }
+
+    function logout(){
+        if(confirm('آیا مطمئن هستید که می‌خواهید از حساب خارج شوید؟ (اطلاعات ورود ریست می‌شود)')){
+            localStorage.removeItem('nivra_entry_done');
+            localStorage.removeItem('nivra_id');
+            localStorage.removeItem('nivra_id_changed');
+            location.href = 'lock.html';
+        }
+    }
+
+    function copyLink(){
+        const link = document.getElementById('pubLink').innerText;
+        navigator.clipboard.writeText(link).then(() => {
+            alert('لینک عمومی با موفقیت کپی شد! 📋');
+        });
+    }
+</script>
+
+</body>
+</html>

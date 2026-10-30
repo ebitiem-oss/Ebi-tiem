@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نیورا - صفحه اصلی بازی‌ها</title>
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --card-bg: #131c31;
+            --accent-blue: #00d2ff;
+            --accent-glow: rgba(0, 210, 255, 0.4);
+            --text-color: #ffffff;
+        }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: Tahoma, sans-serif;
+            margin: 0;
+            padding: 10px 10px 70px 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .header {
+            width: 100%;
+            max-width: 450px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            background: var(--card-bg);
+            padding: 10px 15px;
+            border-radius: 12px;
+            border: 1px solid var(--accent-blue);
+            box-sizing: border-box;
+        }
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+        .profile-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            border: 2px solid var(--accent-blue);
+            object-fit: cover;
+            background: #222;
+        }
+        .username {
+            font-size: 14px;
+            font-weight: bold;
+            color: var(--accent-blue);
+        }
+        .settings-btn {
+            background: none;
+            border: none;
+            font-size: 22px;
+            cursor: pointer;
+            filter: drop-shadow(0 0 5px var(--accent-glow));
+        }
+        .section-title {
+            width: 100%;
+            max-width: 450px;
+            font-size: 15px;
+            color: var(--accent-blue);
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        .grid-menu {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            width: 100%;
+            max-width: 450px;
+        }
+        .menu-card {
+            background: var(--card-bg);
+            border: 1px solid var(--accent-blue);
+            border-radius: 12px;
+            padding: 18px 10px;
+            text-align: center;
+            cursor: pointer;
+            box-shadow: 0 0 8px rgba(0,0,0,0.5);
+            transition: 0.2s;
+        }
+        .menu-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 12px var(--accent-blue);
+        }
+        .menu-title { font-weight: bold; font-size: 15px; color: var(--accent-blue); margin-bottom: 5px; }
+        .menu-desc { font-size: 11px; color: #aaa; }
+        
+        /* Bottom Navbar */
+        .nav-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #0f172a;
+            border-top: 1px solid var(--accent-blue);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            z-index: 100;
+        }
+        .nav-item {
+            color: #aaa;
+            font-size: 12px;
+            text-align: center;
+            cursor: pointer;
+            text-decoration: none;
+            background: none;
+            border: none;
+        }
+        .nav-item.active, .nav-item:hover {
+            color: var(--accent-blue);
+            text-shadow: 0 0 8px var(--accent-glow);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="user-info" onclick="document.getElementById('avatarInput').click()">
+            <img id="userAvatar" class="profile-avatar" src="" alt="پروفایل">
+            <input type="file" id="avatarInput" accept="image/*" style="display:none" onchange="changeAvatar(event)">
+            <span class="username" id="usernameDisplay">کاربر نیورا</span>
+        </div>
+        <button class="settings-btn" onclick="location.href='settings.html'" title="تنظیمات">⚙️</button>
+    </div>
+
+    <div class="section-title">بازی‌های نیورا</div>
+    <div class="grid-menu">
+        <div class="menu-card" onclick="location.href='hokm.html'">
+            <div class="menu-title">حکم ۴ نفره</div>
+            <div class="menu-desc">حاکم، امتیاز و رقابت</div>
+        </div>
+        <div class="menu-card" onclick="location.href='league.html'">
+            <div class="menu-title">شلم</div>
+            <div class="menu-desc">امتیازی و هیجان‌انگیز</div>
+        </div>
+        <div class="menu-card" onclick="location.href='league.html'">
+            <div class="menu-title">تخته نرد</div>
+            <div class="menu-desc">سنتی با تاس آنلاین</div>
+        </div>
+        <div class="menu-card" onclick="location.href='league.html'">
+            <div class="menu-title">فوتبال دستی</div>
+            <div class="menu-desc">رقابت سریع و مهیج</div>
+        </div>
+        <div class="menu-card" onclick="location.href='league.html'">
+            <div class="menu-title">چکرز</div>
+            <div class="menu-desc">فکری و استراتژیک</div>
+        </div>
+        <div class="menu-card" onclick="location.href='league.html'">
+            <div class="menu-title">اتلو</div>
+            <div class="menu-desc">تسخیر خانه‌های حریف</div>
+        </div>
+    </div>
+
+    <div class="nav-bar">
+        <button class="nav-item active" onclick="location.href='index.html'">🏠 خانه</button>
+        <button class="nav-item" onclick="location.href='league.html'">🎮 مسابقات</button>
+        <button class="nav-item" onclick="location.href='wallet.html'">💰 کیف پول</button>
+        <button class="nav-item" onclick="location.href='lock.html'">⚙️ امنیت</button>
+    </div>
+
+    <script>
+        // بارگذاری عکس پروفایل از لوکال استوریج
+        const savedAvatar = localStorage.getItem('nivra_avatar');
+        if (savedAvatar) {
+            document.getElementById('userAvatar').src = savedAvatar;
+        } else {
+            document.getElementById('userAvatar').src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="45" height="45" viewBox="0 0 24 24" fill="#00d2ff"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>';
+        }
+
+        // بارگذاری نام کاربری
+        const savedName = localStorage.getItem('nivra_username');
+        if (savedName) {
+            document.getElementById('usernameDisplay').innerText = savedName;
+        }
+
+        function changeAvatar(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    localStorage.setItem('nivra_avatar', e.target.result);
+                    document.getElementById('userAvatar').src = e.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+    </script>
+
+</body>
+</html>
