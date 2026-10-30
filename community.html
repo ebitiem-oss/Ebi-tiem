@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>جامعه و پیام‌رسان - نیورا</title>
+  <style>
+    :root { color-scheme: dark; --bg:#030712; --panel:#0b1329; --line:#1e3a8a; --text:#f8fafc; --muted:#94a3b8; --accent:#38bdf8; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--bg); color:var(--text); font-family:Tahoma; padding:12px; padding-bottom:80px; }
+    .header { background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:12px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center; }
+    .pv-request { background:rgba(56,189,248,0.1); border:1px solid var(--accent); border-radius:12px; padding:10px; margin-bottom:12px; display:flex; gap:8px; }
+    .pv-request input { flex:1; background:#030712; border:1px solid var(--line); border-radius:8px; padding:8px; color:var(--text); font-size:12px; outline:none; }
+    .btn { background:var(--accent); color:#030712; border:none; padding:0 14px; border-radius:8px; font-weight:bold; font-size:12px; cursor:pointer; }
+    .chat-list { display:flex; flex-direction:column; gap:8px; }
+    .chat-item { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:10px; display:flex; align-items:center; gap:10px; cursor:pointer; }
+    .avatar { width:40px; height:40px; border-radius:50%; background:var(--accent); color:#030712; display:grid; place-items:center; font-weight:bold; }
+    .fab { position:fixed; bottom:75px; left:20px; width:50px; height:50px; background:var(--accent); color:#030712; border-radius:50%; display:grid; place-items:center; font-size:24px; font-weight:bold; cursor:pointer; box-shadow:0 4px 15px rgba(56,189,248,0.4); z-index:90; }
+    .modal { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(3,7,18,0.85); display:none; align-items:center; justify-content:center; z-index:200; }
+    .modal-box { background:var(--panel); border:1px solid var(--accent); border-radius:16px; padding:16px; width:85%; max-width:300px; display:flex; flex-direction:column; gap:10px; }
+    .modal-box input { background:#030712; border:1px solid var(--line); border-radius:8px; padding:10px; color:var(--text); outline:none; }
+    .nav-bar { position:fixed; bottom:0; left:0; right:0; height:60px; background:rgba(11,19,41,0.98); border-top:1px solid var(--line); display:flex; justify-content:space-around; align-items:center; z-index:100; }
+    .nav-item { color:var(--muted); text-decoration:none; font-size:11px; display:flex; flex-direction:column; align-items:center; gap:2px; }
+    .nav-item.active { color:var(--accent); font-weight:bold; }
+    .nav-item span { font-size:16px; }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h3 style="margin:0; font-size:15px;">پیام‌رسان و جامعه نیورا</h3>
+  </div>
+
+  <div class="pv-request">
+    <input type="text" id="target-id" placeholder="شناسه آیدی (مثل @friend)...">
+    <button class="btn" onclick="sendPvRequest()">ارسال درخواست پی‌وی</button>
+  </div>
+
+  <div class="chat-list" id="chat-list">
+    <div class="chat-item" onclick="alert('ورود به چت پشتیبانی نیورا')">
+      <div class="avatar">پ</div>
+      <div>
+        <div style="font-weight:bold; font-size:13px;">پشتیبانی نیورا</div>
+        <div style="font-size:11px; color:var(--muted);">سلام! چطور می‌توانیم کمک کنیم؟</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="fab" onclick="toggleMenu()">+</div>
+
+  <div class="modal" id="action-modal" onclick="if(event.target===this) toggleMenu()">
+    <div class="modal-box">
+      <h4 style="margin:0; color:var(--accent);">افزودن مورد جدید</h4>
+      <input type="text" id="add-name" placeholder="نام یا عنوان...">
+      <input type="text" id="add-val" placeholder="شماره تماس یا شناسه...">
+      <button class="btn" style="padding:10px;" onclick="addItem('contact')">افزودن مخاطب</button>
+      <button class="btn" style="padding:10px; background:#8b5cf6;" onclick="addItem('group')">ایجاد گروه جدید</button>
+      <button class="btn" style="padding:10px; background:#ec4899;" onclick="addItem('channel')">ایجاد کانال جدید</button>
+    </div>
+  </div>
+
+  <nav class="nav-bar">
+    <a href="index.html" class="nav-item"><span>🏠</span>خانه</a>
+    <a href="tournaments.html" class="nav-item"><span>🏆</span>مسابقات</a>
+    <a href="community.html" class="nav-item active"><span>💬</span>جامعه</a>
+    <a href="wallet.html" class="nav-item"><span>💰</span>کیف پول</a>
+  </nav>
+
+  <script>
+    function toggleMenu() {
+      const m = document.getElementById('action-modal');
+      m.style.display = m.style.display === 'flex' ? 'none' : 'flex';
+    }
+
+    function sendPvRequest() {
+      const id = document.getElementById('target-id').value.trim();
+      if(!id) return alert('لطفاً آیدی مورد نظر را وارد کنید.');
+      alert('درخواست چت امن به ' + id + ' ارسال شد. پس از تایید در لیست ظاهر می‌شود.');
+      document.getElementById('target-id').value = '';
+    }
+
+    function addItem(type) {
+      const name = document.getElementById('add-name').value.trim();
+      if(!name) return alert('لطفاً نام را وارد کنید.');
+      
+      const list = document.getElementById('chat-list');
+      list.innerHTML += `
+        <div class="chat-item">
+          <div class="avatar">${type==='contact'?'👤':type==='group'?'👥':'📢'}</div>
+          <div>
+            <div style="font-weight:bold; font-size:13px;">${name}</div>
+            <div style="font-size:11px; color:var(--muted);">${type==='contact'?'مخاطب جدید':type==='group'?'گروه':'کانال'}</div>
+          </div>
+        </div>
+      `;
+      document.getElementById('add-name').value = '';
+      document.getElementById('add-val').value = '';
+      toggleMenu();
+    }
+  </script>
+</body>
+</html>

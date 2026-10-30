@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>کیف پول - نیورا</title>
+<style>
+  :root { color-scheme: dark; --bg:#030712; --panel:#0b1329; --line:#1e3a8a; --text:#f8fafc; --muted:#94a3b8; --accent:#38bdf8; --gold:#facc15; --purple:#a855f7; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font-family:Tahoma; padding:12px; padding-bottom:80px; }
+  h2 { font-size:16px; margin:8px 0 14px; }
+  .card { background:linear-gradient(135deg,#1e3a8a,#0b1329); border:1px solid var(--line); border-radius:16px; padding:16px; margin-bottom:12px; }
+  .balance { font-size:26px; font-weight:bold; color:var(--accent); }
+  .balance span { font-size:12px; color:var(--muted); font-weight:normal; }
+  .btn { background:var(--accent); color:#030712; border:none; padding:10px 14px; border-radius:10px; font-weight:bold; font-size:13px; cursor:pointer; width:100%; }
+  .toggle { width:100%; padding:12px; border-radius:12px; border:1px solid var(--line); background:var(--panel); color:var(--text); font-weight:bold; font-size:13px; cursor:pointer; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; }
+  .panel { display:none; background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:12px; margin-bottom:12px; }
+  .field { display:flex; flex-direction:column; gap:4px; margin-bottom:10px; }
+  .field label { font-size:11px; color:var(--muted); }
+  .field input { background:#030712; border:1px solid var(--line); border-radius:8px; padding:10px; color:var(--text); font-size:13px; outline:none; font-family:Tahoma; }
+  .sub { padding:12px; border-radius:12px; border:1px solid var(--line); margin-bottom:10px; background:#0b1329; }
+  .sub h4 { margin:0 0 4px; font-size:14px; display:flex; gap:8px; align-items:center; }
+  .sub p { margin:0 0 10px; font-size:11px; color:var(--muted); line-height:1.7; }
+  .sub .price { font-size:16px; font-weight:bold; color:var(--gold); margin-bottom:8px; }
+  .sub .price small { font-size:11px; color:var(--muted); font-weight:normal; }
+  .row { display:flex; gap:8px; }
+  .nav-bar { position:fixed; bottom:0; left:0; right:0; height:60px; background:rgba(11,19,41,0.98); border-top:1px solid var(--line); display:flex; justify-content:space-around; align-items:center; z-index:100; }
+  .nav-item { color:var(--muted); text-decoration:none; font-size:11px; display:flex; flex-direction:column; align-items:center; gap:2px; }
+  .nav-item.active { color:var(--accent); font-weight:bold; }
+  .nav-item span { font-size:16px; }
+  .toast { position:fixed; bottom:80px; left:50%; transform:translateX(-50%); background:#22c55e; color:#030712; font-size:12px; font-weight:bold; padding:10px 18px; border-radius:30px; display:none; z-index:300; }
+  .note { font-size:10px; color:var(--muted); line-height:1.8; margin-top:8px; }
+</style>
+</head>
+<body>
+
+<h2>💰 کیف پول نیورا</h2>
+
+<div class="card">
+  <div style="font-size:11px; color:var(--muted); margin-bottom:6px;">موجودی حساب مدیر / شما</div>
+  <div class="balance"><span id="balance">0</span> <span>تومان</span></div>
+</div>
+
+<button class="toggle" onclick="t('deposit')">
+  <span>💳 افزایش اختصاصی کیف پول</span><span id="arrow-deposit">▾</span>
+</button>
+<div class="panel" id="deposit">
+  <div style="font-size:12px; margin-bottom:10px; color:var(--accent);">
+    شارژ امن حساب (اطلاعات کارت شما کاملاً مخفی و محافظت شده است):
+  </div>
+  <div style="background:#030712; border:1px dashed var(--line); border-radius:8px; padding:10px; margin-bottom:10px; font-size:12px; text-align:center; color:var(--muted);">
+    🔒 درگاه امن محلی (فقط به حساب شما واریز می‌شود)
+  </div>
+
+  <div class="field">
+    <label>شماره کارت مبدا</label>
+    <input id="ccard" type="tel" inputmode="numeric" placeholder="16 رقم بدون خط تیره">
+  </div>
+  <div class="row">
+    <div class="field" style="flex:1">
+      <label>CVV2</label>
+      <input id="cvv2" type="tel" maxlength="4" inputmode="numeric" placeholder="۳ یا ۴ رقم">
+    </div>
+    <div class="field" style="flex:1">
+      <label>تاریخ انقضا</label>
+      <input id="exp" type="tel" maxlength="5" inputmode="numeric" placeholder="MM/YY">
+    </div>
+  </div>
+  <div class="row">
+    <div class="field" style="flex:1">
+      <label>رمز دوم پویا</label>
+      <input id="pass2" type="tel" maxlength="6" inputmode="numeric" placeholder="رمز دوم">
+    </div>
+    <div class="field" style="flex:1">
+      <label>شماره موبایل</label>
+      <input id="phone2" type="tel" maxlength="11" inputmode="numeric" placeholder="09xxxxxxxxx">
+    </div>
+  </div>
+  <div class="field">
+    <label>مبلغ واریز (تومان)</label>
+    <input id="amount" type="tel" inputmode="numeric" placeholder="حداقل ۵۰,۰۰۰">
+  </div>
+  <button class="btn" onclick="doDeposit()">تایید و شارژ مستقیم کیف پول</button>
+  <div class="note">
+    سیستم امنیتی: شماره کارت و مشخصات شما به هیچ عنوان به سایر کاربران نمایش داده نمی‌شود. تمام واریزی‌های مسابقات و شارژها به حساب شما منظور می‌گردد.
+  </div>
+</div>
+
+<button class="toggle" onclick="t('subs')">
+  <span>👑 مدیریت اشتراک‌ها</span><span id="arrow-subs">▾</span>
+</button>
+<div class="panel" id="subs">
+
+  <div class="sub">
+    <h4>⭐ اشتراک عادی (ماهانه)</h4>
+    <p>نمایش ستاره زرد کنار نام شما.</p>
+    <div class="price">۵۰,۰۰۰ <small>تومان / ماه</small></div>
+    <button class="btn" onclick="buySub('star')">فعال‌سازی با کیف پول</button>
+  </div>
+
+  <div class="sub" style="border-color:var(--purple)">
+    <h4 style="color:var(--purple)">🌟 اشتراک ویژه (ماهانه)</h4>
+    <p>۱. ستاره بنفش کنار نام<br>۲. تغییر رایگان آیدی</p>
+    <div class="price" style="color:var(--purple)">۱۲۰,۰۰۰ <small>تومان / ماه</small></div>
+    <button class="btn" style="background:var(--purple); color:#fff" onclick="buySub('premium')">فعال‌سازی با کیف پول</button>
+  </div>
+
+  <div style="font-size:11px; color:var(--muted); line-height:1.9; border-top:1px solid var(--line); padding-top:10px;">
+    وضعیت اشتراک شما: <b id="sub-status">بدون اشتراک</b>
+  </div>
+</div>
+
+<div class="toast" id="toast">انجام شد</div>
+
+<nav class="nav-bar">
+  <a href="index.html" class="nav-item"><span>🏠</span>خانه</a>
+  <a href="tournaments.html" class="nav-item"><span>🏆</span>مسابقات</a>
+  <a href="community.html" class="nav-item"><span>💬</span>جامعه</a>
+  <a href="wallet.html" class="nav-item active"><span>💰</span>کیف پول</a>
+</nav>
+
+<script>
+  const K = { bal: 'nivra_balance', sub: 'nivra_sub' };
+  const get = (k, d) => localStorage.getItem(k) ?? d;
+  const set = (k, v) => localStorage.setItem(k, v);
+
+  function render() {
+    document.getElementById('balance').textContent = Number(get(K.bal, 0)).toLocaleString('fa-IR');
+    const s = get(K.sub, 'None');
+    document.getElementById('sub-status').textContent = s === 'star' ? '⭐ عادی' : s === 'premium' ? '🌟 ویژه' : 'بدون اشتراک';
+  }
+
+  function t(id) {
+    const p = document.getElementById(id);
+    const arrow = document.getElementById('arrow-' + id);
+    const open = p.style.display === 'block';
+    p.style.display = open ? 'none' : 'block';
+    if (arrow) arrow.textContent = open ? '▾' : '▴';
+  }
+
+  function toast(msg, ok) {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.style.background = ok ? '#22c55e' : '#ef4444';
+    el.style.display = 'block';
+    clearTimeout(window._tt);
+    window._tt = setTimeout(() => el.style.display = 'none', 2200);
+  }
+
+  function doDeposit() {
+    const card = document.getElementById('ccard').value.replace(/\D/g,'');
+    const cvv  = document.getElementById('cvv2').value.trim();
+    const exp  = document.getElementById('exp').value.trim();
+    const pass = document.getElementById('pass2').value.trim();
+    const phone= document.getElementById('phone2').value.replace(/\D/g,'');
+    const amt  = Number(document.getElementById('amount').value.replace(/\D/g,''));
+
+    if (card.length !== 16) return toast('شماره کارت باید ۱۶ رقم باشد', false);
+    if (cvv.length < 3) return toast('CVV2 نامعتبر است', false);
+    if (!/^\d{2}\/?\d{2}$/.test(exp)) return toast('تاریخ انقضا معتبر نیست', false);
+    if (pass.length < 4) return toast('رمز دوم نامعتبر است', false);
+    if (phone.length !== 11 || !phone.startsWith('09')) return toast('شماره موبایل نامعتبر است', false);
+    if (!amt || amt < 50000) return toast('حداقل مبلغ ۵۰,۰۰۰ تومان است', false);
+
+    set(K.bal, String(Number(get(K.bal, 0)) + amt));
+    toast('مبلغ ' + amt.toLocaleString('fa-IR') + ' تومان به کیف پول شما واریز شد', true);
+    render();
+  }
+
+  function buySub(type) {
+    const price = type === 'star' ? 50000 : 120000;
+    const bal = Number(get(K.bal, 0));
+    if (bal < price) return toast('موجودی کافی نیست؛ ابتدا کیف پول را شارژ کن', false);
+    set(K.bal, String(bal - price));
+    set(K.sub, type);
+    toast(type === 'star' ? 'اشتراک عادی فعال شد ⭐' : 'اشتراک ویژه فعال شد 🌟', true);
+    render();
+  }
+
+  render();
+</script>
+</body>
+</html>

@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>لیگ بزرگ ۵۰ نفره - نیورا</title>
+<style>
+  :root { --bg:#030712; --panel:#0b1329; --text:#f8fafc; --accent:#38bdf8; --gold:#facc15; --line:#1e3a8a; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font-family:Tahoma; padding:12px; padding-bottom:80px; }
+  h2 { font-size:18px; margin-bottom:15px; color:var(--accent); border-right: 4px solid var(--accent); padding-right: 10px; }
+  
+  .tournament-card {
+    background: linear-gradient(135deg, #1e293b, #0f172a);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 15px;
+    margin-bottom: 15px;
+  }
+  .prize { color: var(--gold); font-weight: bold; font-size: 14px; margin-bottom: 12px; }
+  .stats { font-size: 11px; color: #94a3b8; margin-bottom: 15px; display:flex; justify-content:space-between; }
+  
+  .game-select {
+    width: 100%; background: #0b1329; border: 1px solid var(--accent);
+    color: var(--text); padding: 8px; border-radius: 8px; margin-bottom: 12px; font-size: 12px;
+  }
+
+  .btn-join {
+    background: var(--accent); color: #030712; border: none; padding: 10px;
+    border-radius: 10px; width: 100%; font-weight: bold; font-size: 13px; cursor: pointer;
+  }
+
+  /* جدول رتبه‌بندی */
+  .leaderboard { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 10px; margin-top: 15px; }
+  .leaderboard h3 { font-size: 14px; color: var(--accent); margin-top: 0; margin-bottom: 10px; border-bottom: 1px solid var(--line); padding-bottom: 6px; }
+  .rank-row { display: flex; justify-content: space-between; padding: 8px 4px; font-size: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .rank-row:nth-child(1) { color: var(--gold); font-weight: bold; }
+  
+  .nav-bar { position:fixed; bottom:0; left:0; right:0; height:60px; background:rgba(11,19,41,0.98); border-top:1px solid var(--line); display:flex; justify-content:space-around; align-items:center; z-index:100; }
+  .nav-item { color:#94a3b8; text-decoration:none; font-size:11px; display:flex; flex-direction:column; align-items:center; }
+  .nav-item.active { color:var(--accent); font-weight:bold; }
+  
+  .toast {
+    position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
+    background: #1e293b; color: var(--text); padding: 10px 20px;
+    border-radius: 8px; border: 1px solid var(--accent); font-size: 12px;
+    display: none; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  }
+</style>
+</head>
+<body>
+
+<h2>لیگ هفتگی ۵۰ نفره نیورا</h2>
+
+<div class="tournament-card">
+  <h3>جام رقابتی سراسری</h3>
+  <div class="prize">🏆 جایزه نفر اول: ۵۰۰,۰۰۰ تومان</div>
+  <div class="stats">
+    <span>ورودی: ۵۰,۰۰۰ تومان</span>
+    <span>ظرفیت: <span id="capacity">۱۲</span> / ۵۰ نفر</span>
+  </div>
+  
+  <select id="gameChoice" class="game-select">
+    <option value="hokm">بازی حکم</option>
+    <option value="shlem">بازی شلم</option>
+    <option value="etlo">بازی اتلو</option>
+    <option value="football">فوتبال</option>
+    <option value="checkers">چکرز</option>
+    <option value="takhte">تخته نرد</option>
+  </select>
+
+  <button id="joinBtn" class="btn-join" onclick="joinTournament()">ثبت‌نام در لیگ (۵۰,۰۰۰ تومان)</button>
+</div>
+
+<div class="leaderboard">
+  <h3>📊 جدول رتبه‌بندی زنده (۷ روزه)</h3>
+  <div id="leaderboardList">
+    <!-- پر می‌شود با جاوااسکریپت -->
+  </div>
+</div>
+
+<div id="toast" class="toast">پیام سیستم</div>
+
+<nav class="nav-bar">
+  <a href="index.html" class="nav-item"><span>🏠</span>خانه</a>
+  <a href="tournaments.html" class="nav-item active"><span>🏆</span>مسابقات</a>
+  <a href="community.html" class="nav-item"><span>💬</span>جامعه</a>
+  <a href="wallet.html" class="nav-item"><span>💰</span>کیف پول</a>
+</nav>
+
+<script>
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.display = 'block';
+  setTimeout(() => { t.style.display = 'none'; }, 3000);
+}
+
+function loadLeaderboard() {
+  const list = document.getElementById('leaderboardList');
+  let players = JSON.parse(localStorage.getItem('nivra_league_players') || '[]');
+  
+  if (players.length === 0) {
+    // ایجاد لیست پیش‌فرض ۵۰ نفره بات‌ها و کاربر
+    players = [
+      { name: 'ایبی (شما)', score: 120, isUser: true },
+      { name: 'کوروش', score: 110 },
+      { name: 'آرش', score: 95 },
+      { name: 'سارا', score: 90 },
+      { name: 'رضا_پرو', score: 85 }
+    ];
+    for(let i=6; i<=50; i++) {
+      players.push({ name: 'بازیکن_' + i, score: Math.floor(Math.random() * 70) });
+    }
+    localStorage.setItem('nivra_league_players', JSON.stringify(players));
+  }
+
+  // مرتب‌سازی بر اساس امتیاز
+  players.sort((a, b) => b.score - a.score);
+
+  list.innerHTML = '';
+  players.slice(0, 10).forEach((p, index) => {
+    const row = document.createElement('div');
+    row.className = 'rank-row';
+    row.innerHTML = `<span>${index + 1}. ${p.name}</span> <span>${p.score} امتیاز</span>`;
+    list.appendChild(row);
+  });
+
+  const joined = localStorage.getItem('nivra_joined_league') === 'true';
+  if (joined) {
+    document.getElementById('joinBtn').textContent = 'ثبت‌نام شده (ورود به بازی)';
+    document.getElementById('capacity').textContent = '۱۳';
+  }
+}
+
+function joinTournament() {
+  const joined = localStorage.getItem('nivra_joined_league') === 'true';
+  const selectedGame = document.getElementById('gameChoice').value;
+  
+  if (joined) {
+    window.location.href = selectedGame + '.html';
+    return;
+  }
+
+  let balance = parseInt(localStorage.getItem('nivra_balance') || '0');
+  const fee = 50000;
+
+  if (balance < fee) {
+    showToast('موجودی کیف پول کافی نیست! ابتدا کیف پول را شارژ کنید.');
+    return;
+  }
+
+  balance -= fee;
+  localStorage.setItem('nivra_balance', balance);
+  localStorage.setItem('nivra_joined_league', 'true');
+  localStorage.setItem('nivra_tournament_game', selectedGame);
+
+  showToast('ثبت‌نام با موفقیت انجام شد! ۵۰,۰۰۰ تومان کسر گردید.');
+  
+  setTimeout(() => {
+    window.location.href = selectedGame + '.html';
+  }, 1500);
+}
+
+loadLeaderboard();
+</script>
+
+</body>
+</html>

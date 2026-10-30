@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>حکم ۴ نفره - نیورا</title>
+  <style>
+    :root { color-scheme: dark; --bg:#030712; --panel:#0b1329; --line:#1e3a8a; --text:#f8fafc; --muted:#94a3b8; --accent:#38bdf8; --gold:#fbbf24; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--bg); color:var(--text); font-family:Tahoma; padding:12px; text-align:center; padding-bottom:80px; overflow-x:hidden; }
+    .top-header { display:flex; justify-content:space-between; align-items:center; background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:10px 14px; margin-bottom:12px; font-size:12px; }
+    
+    .game-table { background:radial-gradient(circle, #0f172a 0%, #030712 100%); border:2px solid var(--line); border-radius:24px; height:280px; position:relative; margin-bottom:14px; box-shadow:inset 0 0 30px rgba(56,189,248,0.15); }
+    
+    .player-seat { position:absolute; font-size:11px; color:var(--muted); background:rgba(11,19,41,0.85); border:1px solid var(--line); padding:4px 10px; border-radius:8px; display:flex; align-items:center; gap:6px; }
+    .seat-top { top:10px; left:50%; transform:translateX(-50%); }
+    .seat-left { top:50%; left:10px; transform:translateY(-50%); }
+    .seat-right { top:50%; right:10px; transform:translateY(-50%); }
+    .seat-bottom { bottom:10px; left:50%; transform:translateX(-50%); border-color:var(--accent); color:var(--accent); font-weight:bold; }
+    
+    .table-card { position:absolute; width:46px; height:66px; background:#fff; color:#000; border-radius:6px; display:flex; flex-direction:column; align-items:center; justify-content:center; font-weight:bold; font-size:13px; box-shadow:0 4px 12px rgba(0,0,0,0.6); }
+    .tc-top { top:45px; left:50%; transform:translateX(-50%); }
+    .tc-bottom { bottom:50px; left:50%; transform:translateX(-50%); }
+    .tc-left { top:50%; left:65px; transform:translateY(-50%); }
+    .tc-right { top:50%; right:65px; transform:translateY(-50%); }
+
+    .hand-area { display:flex; justify-content:center; gap:4px; flex-wrap:wrap; min-height:85px; padding:0 4px; }
+    .card-el { background:#fff; color:#000; width:46px; height:70px; border-radius:6px; display:flex; flex-direction:column; align-items:center; justify-content:center; font-weight:bold; font-size:14px; cursor:pointer; box-shadow:0 4px 10px rgba(0,0,0,0.5); transition:transform 0.2s; }
+    .card-el:active { transform: translateY(-8px); }
+    .card-red { color:#ef4444; }
+
+    .modal-overlay { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(3,7,18,0.92); display:flex; align-items:center; justify-content:center; z-index:200; }
+    .modal-box { background:var(--panel); border:2px solid var(--accent); border-radius:20px; padding:20px; width:90%; max-width:320px; box-shadow:0 10px 30px rgba(56,189,248,0.3); }
+    .suit-grid { display:grid; grid-template-columns:repeat(2, 1fr); gap:10px; margin-top:14px; }
+    .suit-btn { background:#1e293b; border:1px solid var(--line); border-radius:12px; padding:14px; font-size:15px; color:var(--text); cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; font-weight:bold; }
+    .suit-btn:hover { background:var(--line); border-color:var(--accent); }
+
+    .btn { background:var(--accent); color:#030712; border:none; padding:10px 20px; border-radius:10px; font-weight:bold; font-size:13px; cursor:pointer; margin-top:10px; }
+    
+    .nav-bar { position:fixed; bottom:0; left:0; right:0; height:60px; background:rgba(11,19,41,0.98); border-top:1px solid var(--line); display:flex; justify-content:space-around; align-items:center; z-index:100; }
+    .nav-item { color:var(--muted); text-decoration:none; font-size:11px; display:flex; flex-direction:column; align-items:center; gap:2px; }
+    .nav-item span { font-size:16px; }
+  </style>
+</head>
+<body>
+
+  <div class="modal-overlay" id="hokm-modal">
+    <div class="modal-box">
+      <h3 style="margin:0 0 6px; color:var(--accent);">حکم را انتخاب کنید</h3>
+      <p style="font-size:11px; color:var(--muted); margin:0;">با توجه به کارت اول، خال حکم را مشخص کنید:</p>
+      <div class="suit-grid">
+        <button class="suit-btn" onclick="selectHokm('♥')">دل <span style="color:#ef4444; font-size:20px;">♥</span></button>
+        <button class="suit-btn" onclick="selectHokm('♠')">پیک <span style="font-size:20px;">♠</span></button>
+        <button class="suit-btn" onclick="selectHokm('♦')">خشت <span style="color:#ef4444; font-size:20px;">♦</span></button>
+        <button class="suit-btn" onclick="selectHokm('♣')">گشنیز <span style="font-size:20px;">♣</span></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="top-header">
+    <div>حاکم: <span id="hakem-name" style="color:var(--gold);">شما</span></div>
+    <div>حکم: <span id="hokm-display" style="color:var(--accent);">دل ♥</span></div>
+    <div>دست‌ها: ما <span id="my-tricks">0</span> - <span id="bot-tricks">0</span> حریف</div>
+  </div>
+
+  <div style="font-size:12px; color:var(--muted); margin-bottom:6px;" id="game-status">نوبت شماست، کارتی از دست خود بازی کنید:</div>
+
+  <div class="game-table" id="game-table">
+    <div class="player-seat seat-top">🤖 یار (بالا)</div>
+    <div class="player-seat seat-left">🤖 حریف ۱</div>
+    <div class="player-seat seat-right">🤖 حریف ۲</div>
+    <div class="player-seat seat-bottom">⭐ شما (پایین)</div>
+  </div>
+
+  <div style="font-size:12px; color:var(--muted); margin-bottom:6px;">کارت‌های شما:</div>
+  <div class="hand-area" id="player-hand"></div>
+
+  <nav class="nav-bar">
+    <a href="index.html" class="nav-item"><span>🏠</span>خانه</a>
+    <a href="tournaments.html" class="nav-item"><span>🏆</span>مسابقات</a>
+    <a href="community.html" class="nav-item"><span>💬</span>جامعه</a>
+    <a href="wallet.html" class="nav-item"><span>💰</span>کیف پول</a>
+  </nav>
+
+  <script>
+    const suits = ['♠', '♥', '♦', '♣'];
+    const suitNames = {'♠':'پیک ♠', '♥':'دل ♥', '♦':'خشت ♦', '♣':'گشنیز ♣'};
+    const ranks = ['7','8','9','10','J','Q','K','A'];
+
+    let hand = [];
+    let currentHokm = '♥';
+    let myTricks = 0;
+    let botTricks = 0;
+    let isPlaying = false;
+
+    function startNewRound() {
+      hand = [];
+      // تولید ۵ کارت یکتا برای شروع دست
+      while(hand.length < 5) {
+        const c = {
+          suit: suits[Math.floor(Math.random()*suits.length)],
+          rank: ranks[Math.floor(Math.random()*ranks.length)]
+        };
+        if(!hand.some(x => x.suit === c.suit && x.rank === c.rank)) {
+          hand.push(c);
+        }
+      }
+      myTricks = 0;
+      botTricks = 0;
+      document.getElementById('my-tricks').textContent = '0';
+      document.getElementById('bot-tricks').textContent = '0';
+      renderHand();
+      document.getElementById('hokm-modal').style.display = 'flex';
+    }
+
+    function selectHokm(s) {
+      currentHokm = s;
+      document.getElementById('hokm-display').textContent = suitNames[s];
+      document.getElementById('hokm-modal').style.display = 'none';
+      document.getElementById('game-status').textContent = 'نوبت شماست، کارتی بازی کنید.';
+    }
+
+    function renderHand() {
+      const container = document.getElementById('player-hand');
+      container.innerHTML = hand.map((c, idx) => `
+        <div class="card-el ${c.suit==='♥'||c.suit==='♦'?'card-red':''}" onclick="playCard(${idx})">
+          <span>${c.rank}</span>
+          <span style="font-size:18px;">${c.suit}</span>
+        </div>
+      `).join('');
+    }
+
+    function playCard(idx) {
+      if(isPlaying) return;
+      isPlaying = true;
+
+      const card = hand.splice(idx, 1)[0];
+      renderHand();
+
+      const table = document.getElementById('game-table');
+      table.innerHTML = `
+        <div class="player-seat seat-top">🤖 یار (بالا)</div>
+        <div class="player-seat seat-left">🤖 حریف ۱</div>
+        <div class="player-seat seat-right">🤖 حریف ۲</div>
+        <div class="player-seat seat-bottom">⭐ شما (پایین)</div>
+        <div class="table-card tc-bottom ${card.suit==='♥'||card.suit==='♦'?'card-red':''}"><span>${card.rank}</span><span>${card.suit}</span></div>
+      `;
+
+      document.getElementById('game-status').textContent = 'بازیکنان دیگر در حال بازی...';
+
+      setTimeout(() => {
+        table.innerHTML += `<div class="table-card tc-top"><span>K</span><span>${currentHokm}</span></div>`;
+      }, 500);
+
+      setTimeout(() => {
+        table.innerHTML += `<div class="table-card tc-left"><span>10</span><span>♠</span></div>`;
+        table.innerHTML += `<div class="table-card tc-right"><span>9</span><span>♦</span></div>`;
+      }, 1000);
+
+      setTimeout(() => {
+        // تعیین برنده این دست بدون آلرت مداوم
+        if(Math.random() > 0.35) {
+          myTricks++;
+        } else {
+          botTricks++;
+        }
+        document.getElementById('my-tricks').textContent = myTricks;
+        document.getElementById('bot-tricks').textContent = botTricks;
+
+        table.innerHTML = `
+          <div class="player-seat seat-top">🤖 یار (بالا)</div>
+          <div class="player-seat seat-left">🤖 حریف ۱</div>
+          <div class="player-seat seat-right">🤖 حریف ۲</div>
+          <div class="player-seat seat-bottom">⭐ شما (پایین)</div>
+        `;
+
+        // چک کردن اتمام کارت‌ها یا رسیدن به امتیاز پیروزی
+        if(hand.length === 0 || myTricks >= 3 || botTricks >= 3) {
+          if(myTricks >= botTricks) {
+            alert('🎉 تبریک! تیم شما این دور را با موفقیت برد و حاکم عوض شد.');
+          } else {
+            alert('⚠️ تیم حریف این دور را برد. حاکم تغییر کرد.');
+          }
+          startNewRound();
+        } else {
+          document.getElementById('game-status').textContent = 'نوبت شماست، کارتی بازی کنید.';
+        }
+        isPlaying = false;
+      }, 1600);
+    }
+
+    startNewRound();
+  </script>
+</body>
+</html>

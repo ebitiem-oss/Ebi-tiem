@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بازی‌های نیورا - Nivra Games</title>
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --card-bg: #131c31;
+            --accent-blue: #00d2ff;
+            --accent-glow: rgba(0, 210, 255, 0.4);
+            --text-color: #ffffff;
+        }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: Tahoma, sans-serif;
+            margin: 0;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        h2 { color: var(--accent-blue); text-shadow: 0 0 10px var(--accent-glow); margin-bottom: 15px; }
+        .games-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            width: 100%;
+            max-width: 450px;
+        }
+        .game-card {
+            background: var(--card-bg);
+            border: 1px solid var(--accent-blue);
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            transition: 0.2s;
+        }
+        .game-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 15px var(--accent-blue);
+        }
+        .game-title {
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 5px;
+            color: var(--accent-blue);
+        }
+        .game-desc {
+            font-size: 12px;
+            color: #aaa;
+        }
+        .back-btn {
+            margin-top: 25px;
+            background: var(--accent-blue);
+            color: #0b0f19;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 0 10px var(--accent-glow);
+        }
+    </style>
+</head>
+<body>
+
+    <h2>انتخاب بازی - نیورا</h2>
+
+    <div class="games-grid">
+        <div class="game-card" onclick="location.href='hokm.html'">
+            <div class="game-title">حکم ۴ نفره</div>
+            <div class="game-desc">کلاسیک و حرفه‌ای با ربات‌های هوشمند</div>
+        </div>
+        <div class="game-card" onclick="alert('بازی شلم در حال آماده‌سازی است!')">
+            <div class="game-title">شلم</div>
+            <div class="game-desc">هیجان‌انگیز و امتیازی</div>
+        </div>
+        <div class="game-card" onclick="alert('بازی تخته نرد در حال آماده‌سازی است!')">
+            <div class="game-title">تخته نرد</div>
+            <div class="game-desc">سنتی و پرطرفدار با تاس آنلاین</div>
+        </div>
+        <div class="game-card" onclick="alert('بازی فوتبال در حال آماده‌سازی است!')">
+            <div class="game-title">فوتبال دستی</div>
+            <div class="game-desc">رقابت سریع و مهیج</div>
+        </div>
+        <div class="game-card" onclick="alert('بازی چکرز در حال آماده‌سازی است!')">
+            <div class="game-title">چکرز</div>
+            <div class="game-desc">فکری و استراتژیک</div>
+        </div>
+        <div class="game-card" onclick="alert('بازی اتلو در حال آماده‌سازی است!')">
+            <div class="game-title">اتلو</div>
+            <div class="game-desc">تسخیر خانه‌های حریف</div>
+        </div>
+    </div>
+
+    <button class="back-btn" onclick="location.href='index.html'">بازگشت به صفحه اصلی</button>
+
+</body>
+</html>

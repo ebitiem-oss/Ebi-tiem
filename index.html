@@ -2,291 +2,199 @@
 <html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>نیورا | Nivra</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نیورا - صفحه اصلی بازی‌ها</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: Tahoma, sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background: #0f172a; color: #f8fafc; overflow-x: hidden; height: 100vh; display: flex; flex-direction: column; }
-        header { background: #1e293b; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; }
-        header h1 { font-size: 18px; color: #38bdf8; }
+        :root {
+            --bg-color: #0b0f19;
+            --card-bg: #131c31;
+            --accent-blue: #00d2ff;
+            --accent-glow: rgba(0, 210, 255, 0.4);
+            --text-color: #ffffff;
+        }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: Tahoma, sans-serif;
+            margin: 0;
+            padding: 10px 10px 70px 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .header {
+            width: 100%;
+            max-width: 450px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            background: var(--card-bg);
+            padding: 10px 15px;
+            border-radius: 12px;
+            border: 1px solid var(--accent-blue);
+            box-sizing: border-box;
+        }
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+        .profile-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            border: 2px solid var(--accent-blue);
+            object-fit: cover;
+            background: #222;
+        }
+        .username {
+            font-size: 14px;
+            font-weight: bold;
+            color: var(--accent-blue);
+        }
+        .settings-btn {
+            background: none;
+            border: none;
+            font-size: 22px;
+            cursor: pointer;
+            filter: drop-shadow(0 0 5px var(--accent-glow));
+        }
+        .section-title {
+            width: 100%;
+            max-width: 450px;
+            font-size: 15px;
+            color: var(--accent-blue);
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        .grid-menu {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            width: 100%;
+            max-width: 450px;
+        }
+        .menu-card {
+            background: var(--card-bg);
+            border: 1px solid var(--accent-blue);
+            border-radius: 12px;
+            padding: 18px 10px;
+            text-align: center;
+            cursor: pointer;
+            box-shadow: 0 0 8px rgba(0,0,0,0.5);
+            transition: 0.2s;
+        }
+        .menu-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 12px var(--accent-blue);
+        }
+        .menu-title { font-weight: bold; font-size: 15px; color: var(--accent-blue); margin-bottom: 5px; }
+        .menu-desc { font-size: 11px; color: #aaa; }
         
-        .main-container { flex: 1; overflow-y: auto; padding-bottom: 70px; }
-        .tab-content { display: none; padding: 16px; }
-        .tab-content.active { display: block; }
-
-        /* Bottom Nav */
-        nav { position: fixed; bottom: 0; left: 0; right: 0; background: #1e293b; display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid #334155; z-index: 100; }
-        nav button { background: none; border: none; color: #94a3b8; font-size: 11px; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; flex: 1; }
-        nav button.active { color: #38bdf8; font-weight: bold; }
-        nav button span.icon { font-size: 20px; }
-
-        /* Cards & UI */
-        .card { background: #1e293b; border-radius: 12px; padding: 16px; margin-bottom: 12px; border: 1px solid #334155; }
-        .grid-6 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-        .game-card { background: #334155; border-radius: 10px; padding: 16px; text-align: center; cursor: pointer; border: 1px solid #475569; transition: 0.2s; }
-        .game-card:active { transform: scale(0.96); background: #475569; }
-        .game-card h3 { font-size: 15px; margin-bottom: 6px; color: #f1f5f9; }
-        .game-card p { font-size: 11px; color: #94a3b8; }
-
-        /* Profile & Settings specific */
-        .profile-avatar-container { display: flex; flex-direction: column; align-items: center; margin-bottom: 16px; }
-        .avatar-circle { width: 85px; height: 85px; border-radius: 50%; background: #334155; border: 2px solid #38bdf8; display: flex; justify-content: center; align-items: center; overflow: std; cursor: pointer; position: relative; background-size: cover; background-position: center; }
-        .avatar-circle span { font-size: 32px; }
-        .setting-group { margin-bottom: 12px; }
-        .setting-group label { display: block; font-size: 12px; color: #94a3b8; margin-bottom: 6px; }
-        .setting-input { width: 100%; background: #0f172a; border: 1px solid #475569; padding: 10px; border-radius: 8px; color: white; font-size: 14px; }
-
-        /* Modal & Lockout */
-        .modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.95); display: flex; justify-content: center; align-items: center; z-index: 1000; padding: 20px; }
-        .modal-box { background: #1e293b; padding: 24px; border-radius: 16px; width: 100%; max-width: 320px; text-align: center; border: 1px solid #475569; }
-        .pin-inputs { display: flex; justify-content: center; gap: 10px; margin: 16px 0; }
-        .pin-inputs input { width: 45px; height: 45px; font-size: 22px; text-align: center; background: #0f172a; border: 1px solid #475569; color: #fff; border-radius: 8px; }
-        .btn { background: #0284c7; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-size: 14px; cursor: pointer; width: 100%; margin-top: 10px; }
-        .btn:active { background: #0369a1; }
-        .error-msg { color: #f43f5e; font-size: 12px; margin-top: 8px; }
+        /* Bottom Navbar */
+        .nav-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #0f172a;
+            border-top: 1px solid var(--accent-blue);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            z-index: 100;
+        }
+        .nav-item {
+            color: #aaa;
+            font-size: 12px;
+            text-align: center;
+            cursor: pointer;
+            text-decoration: none;
+            background: none;
+            border: none;
+        }
+        .nav-item.active, .nav-item:hover {
+            color: var(--accent-blue);
+            text-shadow: 0 0 8px var(--accent-glow);
+        }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1 id="app-title">نیورا | Nivra</h1>
-        <span id="header-user" style="font-size: 13px; color: #94a3b8;">کاربر نیورا</span>
-    </header>
-
-    <div class="main-container">
-        <!-- Tab 1: Settings & Profile (Replaced Home) -->
-        <div id="tab-settings" class="tab-content active">
-            <div class="card">
-                <h3 style="margin-bottom: 14px; font-size: 16px;">تنظیمات و پروفایل کاربری</h3>
-                
-                <div class="profile-avatar-container">
-                    <div class="avatar-circle" id="avatar-preview" onclick="document.getElementById('avatar-input').click()">
-                        <span id="avatar-icon">👤</span>
-                    </div>
-                    <input type="file" id="avatar-input" accept="image/*" style="display: none;" onchange="loadAvatar(event)">
-                    <p style="font-size: 11px; color: #94a3b8; margin-top: 6px;">برای تغییر عکس روی تصویر کلیک کنید</p>
-                </div>
-
-                <div class="setting-group">
-                    <label>نام کاربری (۴ تا ۱۶ حرف)</label>
-                    <input type="text" id="username-input" class="setting-input" placeholder="نام کاربری خود را وارد کنید">
-                    <button class="btn" style="margin-top: 8px;" onclick="saveUsername()">ذخیره نام کاربری</button>
-                </div>
-
-                <div class="setting-group" style="margin-top: 16px;">
-                    <label>تغییر پین‌کد امنیت (۴ رقمی)</label>
-                    <input type="password" id="new-pin-input" class="setting-input" maxlength="4" placeholder="پین ۴ رقمی جدید">
-                    <button class="btn" style="background: #334155; margin-top: 8px;" onclick="saveNewPin()">تغییر رمز عبور</button>
-                </div>
-            </div>
-
-            <div class="card">
-                <h3 style="margin-bottom: 8px; font-size: 15px;">پشتیبانی و امنیت</h3>
-                <p style="font-size: 12px; color: #94a3b8; margin-bottom: 10px;">مسدودی ۳۰ دقیقه‌ای پس از ۳ بار ورود ناموفق پین.</p>
-                <button class="btn" style="background: #0284c7;" onclick="window.location.href='tel:09991990035'">تماس با پشتیبانی (09991990035)</button>
-            </div>
+    <div class="header">
+        <div class="user-info" onclick="document.getElementById('avatarInput').click()">
+            <img id="userAvatar" class="profile-avatar" src="" alt="پروفایل">
+            <input type="file" id="avatarInput" accept="image/*" style="display:none" onchange="changeAvatar(event)">
+            <span class="username" id="usernameDisplay">کاربر نیورا</span>
         </div>
+        <button class="settings-btn" onclick="location.href='settings.html'" title="تنظیمات">⚙️</button>
+    </div>
 
-        <!-- Tab 2: Games -->
-        <div id="tab-games" class="tab-content">
-            <h2 style="margin-bottom: 12px; font-size: 16px;">بازی‌های نیورا</h2>
-            <div class="grid-6">
-                <div class="game-card" onclick="alert('شروع بازی حکم')"><h3>حکم</h3><p>۴ نفره / آنلاین</p></div>
-                <div class="game-card" onclick="alert('شروع بازی شلم')"><h3>شلم</h3><p>حرفه ای</p></div>
-                <div class="game-card" onclick="alert('شروع بازی اتلو')"><h3>اتلو</h3><p>تخته و استراتژی</p></div>
-                <div class="game-card" onclick="alert('شروع بازی تخته')"><h3>تخته</h3><p>کلاسیک</p></div>
-                <div class="game-card" onclick="alert('شروع بازی تخته نرد')"><h3>تخته نرد</h3><p>حرفه ای</p></div>
-                <div class="game-card" onclick="alert('شروع بازی فوتبال')"><h3>فوتبال مینی</h3><p>آنلاین سریع</p></div>
-            </div>
+    <div class="section-title">بازی‌های نیورا</div>
+    <div class="grid-menu">
+        <div class="menu-card" onclick="location.href='hokm.html'">
+            <div class="menu-title">حکم ۴ نفره</div>
+            <div class="menu-desc">حاکم، امتیاز و رقابت</div>
         </div>
-
-        <!-- Tab 3: Tournaments -->
-        <div id="tab-tournaments" class="tab-content">
-            <h2 style="margin-bottom: 12px; font-size: 16px;">مسابقات فعال</h2>
-            <div class="card">
-                <h3>تورنمنت بزرگ حکم</h3>
-                <p style="font-size: 12px; color: #94a3b8; margin: 4px 0;">جایزه: ۵,۰۰۰,۰۰۰ تومان</p>
-                <button class="btn" onclick="alert('ثبت‌نام با موفقیت انجام شد!')">ثبت‌نام در مسابقه</button>
-            </div>
+        <div class="menu-card" onclick="location.href='league.html'">
+            <div class="menu-title">شلم</div>
+            <div class="menu-desc">امتیازی و هیجان‌انگیز</div>
         </div>
-
-        <!-- Tab 4: Community -->
-        <div id="tab-community" class="tab-content">
-            <h2 style="margin-bottom: 12px; font-size: 16px;">پیام‌رسان و جامعه</h2>
-            <div class="card" onclick="alert('ورود به پی‌وی ضد اسکرین‌شات سارا')">
-                <h3>🔒 پی‌وی امن (سارا)</h3>
-                <p style="font-size: 12px; color: #94a3b8;">آخرین پیام: سلام، کجایی؟</p>
-            </div>
-            <div class="card" onclick="alert('ورود به گروه گمینگ گیلد')">
-                <h3>👥 گمینگ گیلد (۴ نفره)</h3>
-                <p style="font-size: 12px; color: #94a3b8;">آرش: بریم کانتر؟</p>
-            </div>
+        <div class="menu-card" onclick="location.href='league.html'">
+            <div class="menu-title">تخته نرد</div>
+            <div class="menu-desc">سنتی با تاس آنلاین</div>
         </div>
-
-        <!-- Tab 5: Wallet -->
-        <div id="tab-wallet" class="tab-content">
-            <h2 style="margin-bottom: 12px; font-size: 16px;">کیف پول من</h2>
-            <div class="card" style="text-align: center;">
-                <p style="color: #94a3b8; font-size: 13px;">موجودی فعلی</p>
-                <h1 style="color: #38bdf8; margin: 10px 0; font-size: 26px;">۱۲۵,۰۰۰ تومان</h1>
-                <button class="btn" onclick="alert('درگاه پرداخت متصل شد')">افزایش موجودی</button>
-            </div>
+        <div class="menu-card" onclick="location.href='league.html'">
+            <div class="menu-title">فوتبال دستی</div>
+            <div class="menu-desc">رقابت سریع و مهیج</div>
+        </div>
+        <div class="menu-card" onclick="location.href='league.html'">
+            <div class="menu-title">چکرز</div>
+            <div class="menu-desc">فکری و استراتژیک</div>
+        </div>
+        <div class="menu-card" onclick="location.href='league.html'">
+            <div class="menu-title">اتلو</div>
+            <div class="menu-desc">تسخیر خانه‌های حریف</div>
         </div>
     </div>
 
-    <!-- Bottom Navigation -->
-    <nav>
-        <button onclick="switchTab('settings')" id="nav-settings" class="active"><span class="icon">⚙️</span>تنظیمات</button>
-        <button onclick="switchTab('games')" id="nav-games"><span class="icon">🎮</span>بازی‌ها</button>
-        <button onclick="switchTab('tournaments')" id="nav-tournaments"><span class="icon">🏆</span>مسابقات</button>
-        <button onclick="switchTab('community')" id="nav-community"><span class="icon">💬</span>جامعه</button>
-        <button onclick="switchTab('wallet')" id="nav-wallet"><span class="icon">💰</span>کیف پول</button>
-    </nav>
-
-    <!-- PIN Modal -->
-    <div id="pin-modal" class="modal" style="display: none;">
-        <div class="modal-box">
-            <h3 id="pin-title">تایید رمز عبور</h3>
-            <p id="pin-desc" style="font-size: 12px; color: #94a3b8; margin-top: 4px;">لطفاً پین ۴ رقمی خود را وارد کنید</p>
-            <div class="pin-inputs">
-                <input type="password" maxlength="1" id="p1" oninput="nextInput(this, 'p2')">
-                <input type="password" maxlength="1" id="p2" oninput="nextInput(this, 'p3')">
-                <input type="password" maxlength="1" id="p3" oninput="nextInput(this, 'p4')">
-                <input type="password" maxlength="1" id="p4" oninput="checkPin()">
-            </div>
-            <div id="pin-error" class="error-msg"></div>
-            <button id="forgot-btn" class="btn" style="background: #334155; margin-top: 15px; display: none;" onclick="window.location.href='tel:09991990035'">فراموشی رمز (تماس با پشتیبانی)</button>
-        </div>
+    <div class="nav-bar">
+        <button class="nav-item active" onclick="location.href='index.html'">🏠 خانه</button>
+        <button class="nav-item" onclick="location.href='league.html'">🎮 مسابقات</button>
+        <button class="nav-item" onclick="location.href='wallet.html'">💰 کیف پول</button>
+        <button class="nav-item" onclick="location.href='lock.html'">⚙️ امنیت</button>
     </div>
 
     <script>
-        let currentUser = localStorage.getItem('nivra_user') || 'کاربر نیورا';
-        let userPin = localStorage.getItem('nivra_pin') || '1234';
-        let failCount = parseInt(localStorage.getItem('nivra_fails') || '0');
-        let lockoutTime = parseInt(localStorage.getItem('nivra_lockout') || '0');
-        let savedAvatar = localStorage.getItem('nivra_avatar');
-
-        document.getElementById('username-input').value = currentUser;
-        document.getElementById('header-user').innerText = currentUser;
-
+        // بارگذاری عکس پروفایل از لوکال استوریج
+        const savedAvatar = localStorage.getItem('nivra_avatar');
         if (savedAvatar) {
-            let avatarEl = document.getElementById('avatar-preview');
-            avatarEl.style.backgroundImage = `url(${savedAvatar})`;
-            document.getElementById('avatar-icon').style.display = 'none';
+            document.getElementById('userAvatar').src = savedAvatar;
+        } else {
+            document.getElementById('userAvatar').src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="45" height="45" viewBox="0 0 24 24" fill="#00d2ff"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>';
         }
 
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('nav button').forEach(el => el.classList.remove('active'));
-            
-            document.getElementById('tab-' + tabId).classList.add('active');
-            document.getElementById('nav-' + tabId).classList.add('active');
-            window.scrollTo(0, 0);
+        // بارگذاری نام کاربری
+        const savedName = localStorage.getItem('nivra_username');
+        if (savedName) {
+            document.getElementById('usernameDisplay').innerText = savedName;
         }
 
-        function loadAvatar(event) {
-            let reader = new FileReader();
-            reader.onload = function() {
-                let avatarEl = document.getElementById('avatar-preview');
-                avatarEl.style.backgroundImage = `url(${reader.result})`;
-                document.getElementById('avatar-icon').style.display = 'none';
-                localStorage.setItem('nivra_avatar', reader.result);
-                alert('عکس پروفایل با موفقیت آپدیت شد.');
-            }
-            if (event.target.files[0]) {
-                reader.readAsDataURL(event.target.files[0]);
-            }
-        }
-
-        function saveUsername() {
-            let newName = document.getElementById('username-input').value.trim();
-            if (newName.length >= 4 && newName.length <= 16) {
-                currentUser = newName;
-                localStorage.setItem('nivra_user', currentUser);
-                document.getElementById('header-user').innerText = currentUser;
-                alert('نام کاربری با موفقیت ذخیره شد.');
-            } else {
-                alert('نام کاربری باید بین ۴ تا ۱۶ حرف باشد.');
-            }
-        }
-
-        function saveNewPin() {
-            let p = document.getElementById('new-pin-input').value;
-            if (p.length === 4 && !isNaN(p)) {
-                userPin = p;
-                localStorage.setItem('nivra_pin', userPin);
-                document.getElementById('new-pin-input').value = '';
-                alert('پین‌کد جدید با موفقیت ثبت شد.');
-            } else {
-                alert('پین‌کد باید دقیقاً ۴ رقم عددی باشد.');
-            }
-        }
-
-        function checkLockout() {
-            let now = Date.now();
-            if (lockoutTime > now) {
-                let leftSec = Math.ceil((lockoutTime - now) / 1000);
-                let min = Math.floor(leftSec / 60);
-                let sec = leftSec % 60;
-                document.getElementById('pin-error').innerText = `حساب مسدود است! ${min}:${sec < 10 ? '0' : ''}${sec} تا رفع مسدودی`;
-                document.getElementById('p1').disabled = true;
-                document.getElementById('p2').disabled = true;
-                document.getElementById('p3').disabled = true;
-                document.getElementById('p4').disabled = true;
-                setTimeout(checkLockout, 1000);
-            } else {
-                if (lockoutTime !== 0) {
-                    failCount = 0;
-                    localStorage.setItem('nivra_fails', '0');
-                    localStorage.setItem('nivra_lockout', '0');
-                    lockoutTime = 0;
+        function changeAvatar(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    localStorage.setItem('nivra_avatar', e.target.result);
+                    document.getElementById('userAvatar').src = e.target.result;
                 }
-                document.getElementById('p1').disabled = false;
-                document.getElementById('p2').disabled = false;
-                document.getElementById('p3').disabled = false;
-                document.getElementById('p4').disabled = false;
-                document.getElementById('pin-error').innerText = '';
-            }
-        }
-
-        function nextInput(current, nextFieldId) {
-            if (current.value.length === 1) {
-                document.getElementById(nextFieldId).focus();
-            }
-        }
-
-        function checkPin() {
-            let entered = document.getElementById('p1').value + document.getElementById('p2').value + document.getElementById('p3').value + document.getElementById('p4').value;
-            if (entered === userPin) {
-                document.getElementById('pin-modal').style.display = 'none';
-                failCount = 0;
-                localStorage.setItem('nivra_fails', '0');
-            } else {
-                failCount++;
-                localStorage.setItem('nivra_fails', failCount);
-                if (failCount >= 3) {
-                    lockoutTime = Date.now() + (30 * 60 * 1000);
-                    localStorage.setItem('nivra_lockout', lockoutTime);
-                    document.getElementById('forgot-btn').style.display = 'block';
-                    checkLockout();
-                } else {
-                    document.getElementById('pin-error').innerText = `رمز اشتباه است! (${3 - failCount} تلاش باقی‌مانده)`;
-                    clearPinInputs();
-                }
-            }
-        }
-
-        function clearPinInputs() {
-            ['p1', 'p2', 'p3', 'p4'].forEach(id => document.getElementById(id).value = '');
-            document.getElementById('p1').focus();
-        }
-
-        window.onload = function() {
-            checkLockout();
-            if (lockoutTime > Date.now()) {
-                document.getElementById('pin-modal').style.display = 'flex';
+                reader.readAsDataURL(file);
             }
         }
     </script>
+
 </body>
 </html>
